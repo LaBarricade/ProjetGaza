@@ -25,6 +25,7 @@ https://ui.shadcn.com/docs/installation/next
 ### Add Components
 You can now start adding components to your project.
 
+example :
 ```bash
 npx shadcn@latest add button
 ```
