@@ -1,15 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { SearchBar } from "@/app/search-bar";
 
-const fetchData = async () => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+export default function Home() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const res = await fetch(`${baseUrl}/api/baserow`);
-  const data = await res.json();
-  console.log(data);
-};
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || '';
+        const res = await fetch(`${baseUrl}/api/baserow`);
+        if (!res.ok) throw new Error("Erreur fetch API");
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        setData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export default async function Home() {
-  await fetchData()
+    fetchData();
+  }, []);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -18,6 +33,9 @@ export default async function Home() {
         <div>
           <h1>🍉 Girouettes</h1>
         </div>
+        {loading && <p>Chargement des données...</p>}
+        {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+        {!loading && !data && <p>Impossible de récupérer les données.</p>}
       </main>
     </div>
   );

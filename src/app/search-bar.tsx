@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export function SearchBar() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [, setResults] = useState([]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
