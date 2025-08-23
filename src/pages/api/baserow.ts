@@ -2,13 +2,14 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const token = process.env.BASEROW_API_TOKEN;
+  const url = process.env.BASEROW_URL;
 
   if (!token) {
     return res.status(500).json({ error: 'Missing Baserow API token' });
   }
 
   try {
-    const response = await fetch('https://api.baserow.io/api/database/rows/table/621488/?user_field_names=true', {
+    const response = await fetch(`${url}?user_field_names=true`, {
       headers: {
         Authorization: `Token ${token}`,
       },
