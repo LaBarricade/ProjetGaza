@@ -28,7 +28,7 @@ export function SearchBar({ onResults }: { onResults: (results: Quote[] | null) 
   }, [query, onResults]);
 
   return (
-    <div className="absolute top-0 w-full bg-white shadow-md z-50">
+    <div className="sticky top-0 w-full bg-white shadow-md z-50">
       <div className="w-full max-w-md mx-auto p-4">
         <div className="relative w-full">
           <Input
