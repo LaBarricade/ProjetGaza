@@ -1,28 +1,31 @@
 'use client';
 
+import { Quote } from "@/components/card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function SearchBar() {
+export function SearchBar({ onResults }: { onResults: (results: Quote[] | null) => void }) {
   const [query, setQuery] = useState("");
-  const [, setResults] = useState([]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (query.length === 0) return;
-
+      if (query.length === 0) {
+        onResults(null);
+        return;
+      }
+      
       const fetchData = async () => {
         const res = await fetch(`/api/baserow?search=${encodeURIComponent(query)}`);
         const data = await res.json();
-        setResults(data?.results || []);
+        onResults(data?.results || []);
       };
 
       fetchData();
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [query]);
+  }, [query, onResults]);
 
   return (
     <div className="absolute top-0 w-full bg-white shadow-md z-50">

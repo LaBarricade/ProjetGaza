@@ -8,8 +8,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Missing Baserow API token' });
   }
 
+  let queryParams = ''
+
+  if (req.query.search) {
+    queryParams += `&filter__field_5055140__contains=${req.query.search}`
+  }
+
   try {
-    const response = await fetch(`${url}?user_field_names=true`, {
+    const response = await fetch(`${url}?user_field_names=true${queryParams}`, {
       headers: {
         Authorization: `Token ${token}`,
       },
