@@ -41,9 +41,14 @@ export function QuoteCard({ quote }: { quote: Quote }) {
           {quote.Tag && (
             <p>
               <span className="font-medium">Tags :</span>{" "}
-              <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-xs">
-                {quote.Tag}
-              </span>
+              {quote.Tag.split(', ').map((tag) => (
+                <span
+                  key={tag}
+                  className="bg-primary/10 text-primary px-2 py-0.5 mr-1 rounded-full text-xs"
+                >
+                  {tag}
+                </span>
+              ))}
             </p>
           )}
         </div>

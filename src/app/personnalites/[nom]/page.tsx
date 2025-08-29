@@ -1,0 +1,125 @@
+"use client";
+
+import { getPersonalityList, Personality } from "@/app/personnalites/page";
+import { QuoteList } from "@/components/list";
+import React, { Usable, useRef } from "react";
+import { useEffect, useState } from "react";
+
+async function getPersonality(nom: string): Promise<Personality | null> {
+  const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
+  const data = await res.json();
+
+  if (!Array.isArray(data.results) || data.results.length === 0) return null;
+  
+  const personalities = getPersonalityList(data.results)
+  if (!Array.isArray(personalities) || personalities.length === 0) return null;
+
+  return personalities[0]
+}
+
+export default function PersonalityPage({ params }: { params: Usable<{ nom: string }> }) {
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const { nom } = React.use(params) as { nom: string }
+
+  const [personality, setPersonality] = useState<Personality | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // inject TimelineJS
+  const createTimeline = (personality: Personality) => {
+    if (!personality.citations?.length) return;
+
+    return {
+      title: { text: { headline: "Frise des citations", text: "" } },
+      events: personality.citations.map((q, i) => {
+        const [day, month, year] = q.date.split("/").map(Number);
+
+        return {
+          start_date: {
+            year,
+            month,
+            day,
+          },
+          text: { headline: q.source ?? `Citation #${i + 1}`, text: q.Citation },
+        }
+      }),
+    };
+  }
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js";
+    script.async = true;
+    script.onload = () => {
+      // @ts-expect-error parce que que chatgpt me dit que c'est ça qu'il faut faire et que je suis un garçon plutôt facile.
+      if (window.TL && timelineRef.current) {
+        // @ts-expect-error same
+        new window.TL.Timeline(timelineRef.current, createTimeline(personality));
+      }
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [personality]);
+  
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css";
+    document.head.appendChild(link);
+
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const p = await getPersonality(nom);
+        setPersonality(p);
+        if (p) createTimeline(p);
+      } catch (err) {
+        console.error("Fetch failed:", err);
+        setPersonality(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [nom]);
+
+  if (loading) return (
+    <div className="h-screen flex justify-center items-center">
+      <p>Chargement des données...</p>
+    </div>
+  )
+  if (!personality) return (
+    <div className="h-screen flex justify-center items-center">
+      <p>Personnalité non trouvée</p>
+    </div>
+  )
+
+  return (
+    <>
+      <div className="mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-4">{personality.nom}</h1>
+        <div className="space-y-2 text-gray-700">
+          <p><span className="font-semibold">Parti politique :</span> {personality.partiPolitique}</p>
+          <p><span className="font-semibold">Fonction :</span> {personality.fonction}</p>
+        </div>
+
+        {/* Timeline */}
+        {personality.citations.length > 0 && (
+          <div ref={timelineRef} style={{ width: "100%", height: "500px" }} />
+        )}
+
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold mb-2">Citations</h2>
+          {personality.citations.length > 0 && <QuoteList quotes={personality.citations} />}
+        </div>
+      </div>
+    </>
+  );
+}

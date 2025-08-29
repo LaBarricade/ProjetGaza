@@ -1,6 +1,17 @@
+import { Personality } from "@/app/personnalites/page";
 import { Quote, QuoteCard } from "@/components/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { toKebabCase } from "@/lib/kebab";
+import { useRouter } from "next/navigation";
 
-export default function QuoteList({ quotes }: { quotes: Quote[] }) {
+export function QuoteList({ quotes }: { quotes: Quote[] }) {
   return (
     <div className="w-screen max-w-full mx-auto px-4 sm:px-8 columns-1 md:columns-3 gap-6 mt-4">
       {quotes.map((q) => (
@@ -10,4 +21,37 @@ export default function QuoteList({ quotes }: { quotes: Quote[] }) {
       ))}
     </div>
   )
+}
+
+export function PersonalityList({ personalities }: { personalities: Personality[] }) {
+  const router = useRouter();
+
+  return (
+    <div className="w-full max-w-4xl mx-auto mt-6">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[50px]">#</TableHead>
+            <TableHead>Nom</TableHead>
+            <TableHead>Parti politique</TableHead>
+            <TableHead>Fonction</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {personalities.map((p, index) => (
+            <TableRow
+              key={p.nom}
+              className="hover:bg-muted/50 cursor-pointer transition-colors"
+              onClick={() => router.push(`/personnalites/${toKebabCase(p.nom)}`)}
+            >
+              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell>{p.nom}</TableCell>
+              <TableCell>{p.partiPolitique ?? "-"}</TableCell>
+              <TableCell>{p.fonction ?? "-"}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
 }
