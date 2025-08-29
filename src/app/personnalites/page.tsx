@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SearchBar } from "@/app/search-bar";
 import { PersonalityList } from "@/components/list";
 import { Quote } from "@/components/card";
+import { createPersonalityList } from "@/lib/create-personality-list";
 
 export type Personality = {
   nom: string;
@@ -11,33 +12,6 @@ export type Personality = {
   fonction?: string;
   citations: Quote[];
 };
-
-export const getPersonalityList = (results: Quote[] | null) => {
-  if (!results) {
-    return null;
-  }
-
-  const map = new Map<string, Personality>();
-
-  for (const r of results) {
-    const nom = r["Personnalité politique"];
-
-    if (!nom) continue
-
-    if (!map.has(nom)) {
-      map.set(nom, {
-        nom,
-        partiPolitique: r["Parti politique"],
-        fonction: r["Fonction"],
-        citations: [r],
-      });
-    } else {
-      map.get(nom)!.citations.push(r);
-    }
-  }
-
-  return Array.from(map.values());
-}
 
 export default function Home() {
   const [data, setData] = useState<Personality[] | null>(null);
@@ -47,7 +21,7 @@ export default function Home() {
   
 
   const handleResults = useCallback((results: Quote[] | null) => {
-    const personalities = getPersonalityList(results)
+    const personalities = createPersonalityList(results)
     setFilteredResults(personalities);
   }, []);
 
@@ -57,7 +31,7 @@ export default function Home() {
         const res = await fetch(`/api/baserow`);
         if (!res.ok) throw new Error("Erreur fetch API");
         const json = await res.json();
-        const personalities = getPersonalityList(json.results)
+        const personalities = createPersonalityList(json.results)
         setData(personalities);
       } catch (err) {
         console.error("Fetch failed:", err);

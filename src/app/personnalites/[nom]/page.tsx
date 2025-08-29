@@ -1,9 +1,10 @@
 "use client";
 
-import { getPersonalityList, Personality } from "@/app/personnalites/page";
+import { Personality } from "@/app/personnalites/page";
 import { QuoteList } from "@/components/list";
-import React, { Usable, useRef } from "react";
-import { useEffect, useState } from "react";
+import { createPersonalityList } from "@/lib/create-personality-list";
+import { useParams } from "next/navigation";
+import React, { useRef, useEffect, useState } from "react";
 
 async function getPersonality(nom: string): Promise<Personality | null> {
   const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
@@ -11,15 +12,17 @@ async function getPersonality(nom: string): Promise<Personality | null> {
 
   if (!Array.isArray(data.results) || data.results.length === 0) return null;
   
-  const personalities = getPersonalityList(data.results)
+  const personalities = createPersonalityList(data.results)
   if (!Array.isArray(personalities) || personalities.length === 0) return null;
 
   return personalities[0]
 }
 
-export default function PersonalityPage({ params }: { params: Usable<{ nom: string }> }) {
+export default function PersonalityPage() {
+  const params = useParams<{ nom: string }>()
+
   const timelineRef = useRef<HTMLDivElement>(null);
-  const { nom } = React.use(params) as { nom: string }
+  const { nom } = params?.nom ? params : {}
 
   const [personality, setPersonality] = useState<Personality | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,7 +80,7 @@ export default function PersonalityPage({ params }: { params: Usable<{ nom: stri
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const p = await getPersonality(nom);
+        const p = await getPersonality(nom as string);
         setPersonality(p);
         if (p) createTimeline(p);
       } catch (err) {
