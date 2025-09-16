@@ -9,21 +9,38 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { toKebabCase } from "@/lib/kebab";
+import { useEndReached } from "@/lib/use-reached-end";
 import { useRouter } from "next/navigation";
 
-export function QuoteList({ quotes }: { quotes: Quote[] }) {
+export function QuoteList({
+  quotes,
+  onEndReached,
+}: {
+  quotes: Quote[];
+  onEndReached?: () => void;
+}) {
+  const loaderRef = useEndReached(onEndReached);
+
   return (
-    <div className="w-screen max-w-full mx-auto px-4 sm:px-8 columns-1 md:columns-3 gap-6 mt-4">
-      {quotes.map((q) => (
-        <div key={q.id} className="mb-6 break-inside-avoid">
-          <QuoteCard quote={q} />
-        </div>
-      ))}
-    </div>
-  )
+    <>
+      <div className="w-screen max-w-full mx-auto px-4 sm:px-8 columns-1 md:columns-3 gap-6 mt-4">
+        {quotes.map((q) => (
+          <div key={q.id} className="mb-6 break-inside-avoid">
+            <QuoteCard quote={q} />
+          </div>
+        ))}
+      </div>
+
+      {onEndReached && <div ref={loaderRef} className="h-6" aria-hidden />}
+    </>
+  );
 }
 
-export function PersonalityList({ personalities }: { personalities: Personality[] }) {
+export function PersonalityList({
+  personalities,
+}: {
+  personalities: Personality[];
+}) {
   const router = useRouter();
 
   return (
@@ -52,6 +69,8 @@ export function PersonalityList({ personalities }: { personalities: Personality[
           ))}
         </TableBody>
       </Table>
+
+      {<div className="h-6" aria-hidden />}
     </div>
   );
 }

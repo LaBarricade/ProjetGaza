@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
+import { toKebabCase } from "@/lib/kebab"
+import Link from "next/link"
 
 export type Quote = {
   id: number
@@ -24,7 +26,11 @@ export function QuoteCard({ quote }: { quote: Quote }) {
   return (
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">{quote["Personnalité politique"]}</CardTitle>
+        <Link
+          href={"/personnalites/" + toKebabCase(quote["Personnalité politique"])}
+        >
+          <CardTitle className="text-lg font-semibold">{quote["Personnalité politique"]}</CardTitle>
+        </Link>
         <p className="text-sm text-muted-foreground">{quote["Parti politique"]} • {quote.Fonction}</p>
       </CardHeader>
 

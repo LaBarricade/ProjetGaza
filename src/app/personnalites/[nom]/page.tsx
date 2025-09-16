@@ -1,6 +1,7 @@
 "use client";
 
 import { Personality } from "@/app/personnalites/page";
+import { SearchBar } from "@/app/search-bar";
 import { QuoteList } from "@/components/list";
 import { createPersonalityList } from "@/lib/create-personality-list";
 import { useParams } from "next/navigation";
@@ -106,6 +107,7 @@ export default function PersonalityPage() {
 
   return (
     <>
+      <SearchBar />
       <div className="mx-auto p-6">
         <h1 className="text-3xl font-bold mb-4">{personality.nom}</h1>
         <div className="space-y-2 text-gray-700">

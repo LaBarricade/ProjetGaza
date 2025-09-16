@@ -14,28 +14,46 @@ export type BaserowData = {
 
 export default function Home() {
   const [data, setData] = useState<BaserowData | null>(null);
+  const [page, setPage] = useState(1);
   const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   const handleResults = useCallback((results: Quote[] | null) => {
+    setPage(1)
     setFilteredResults(results);
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/baserow`);
-        if (!res.ok) throw new Error("Erreur fetch API");
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error("Fetch failed:", err);
-        setData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async (pageToLoad: number = page) => {
+    try {
+      const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
+      if (!res.ok) throw new Error("Erreur fetch API");
+      const json = await res.json();
 
+      if (pageToLoad === 1) {
+        setData(json);
+      } else {
+        setData(prev => prev ? {
+          ...json,
+          results: [...prev.results, ...json.results],
+        } : json);
+      }
+    } catch (err) {
+      console.error("Fetch failed:", err);
+      setData(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (data && data?.count <= data?.results.length) return;
+    if (loading) return;
+    setLoading(true);
+    fetchData(page + 1)
+    setPage(prev => prev + 1);
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -46,8 +64,8 @@ export default function Home() {
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         {loading && <p>Chargement des données...</p>}
 
-        {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} />}
-        {!filteredResults && data && <QuoteList quotes={data.results} />}
+        {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
+        {!filteredResults && data && <QuoteList quotes={data.results} onEndReached={loadMore} />}
 
         {!loading && !data && <p>Impossible de récupérer les données.</p>}
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
