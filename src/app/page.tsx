@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBar } from "@/app/search-bar";
 import { QuoteList } from "@/components/list";
 import { Quote } from "@/components/card";
@@ -14,16 +14,16 @@ export type BaserowData = {
 
 export default function Home() {
   const [data, setData] = useState<BaserowData | null>(null);
-  const [page, setPage] = useState(1);
   const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const pageRef = useRef(1);
 
   const handleResults = useCallback((results: Quote[] | null) => {
-    setPage(1)
+    pageRef.current = 1;
     setFilteredResults(results);
   }, []);
 
-  const fetchData = async (pageToLoad: number = page) => {
+  const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
     try {
       const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
       if (!res.ok) throw new Error("Erreur fetch API");
@@ -43,19 +43,19 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setData, setLoading]);
 
   const loadMore = async () => {
     if (data && data?.count <= data?.results.length) return;
     if (loading) return;
     setLoading(true);
-    fetchData(page + 1)
-    setPage(prev => prev + 1);
+    fetchData(pageRef.current + 1)
+    pageRef.current += 1;
   };
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">

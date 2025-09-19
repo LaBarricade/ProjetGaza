@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBar } from "@/app/search-bar";
 import { PersonalityList } from "@/components/list";
 import { Quote } from "@/components/card";
@@ -18,15 +18,15 @@ export default function Home() {
   const [data, setData] = useState<BaserowData | null>(null);
   const [filteredResults, setFilteredResults] = useState<Personality[] | null>(null);
   const [loading, setLoading] = useState(true);
-  let page = 1;
+  const pageRef = useRef(1);
 
   const handleResults = useCallback((results: Quote[] | null) => {
-    page = 1
+    pageRef.current = 1
     const personalities = createPersonalityList(results)
     setFilteredResults(personalities);
   }, []);
 
-  const fetchData = async (pageToLoad: number = page) => {
+  const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
     try {
       const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
       if (!res.ok) throw new Error("Erreur fetch API");
@@ -48,15 +48,17 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setData, setLoading]);
 
-  const loadMore = async () => {
-    const newData = await fetchData(page + 1);
-    page += 1;
-
+  const loadMore = useCallback(async () => {
+    const newData = await fetchData(pageRef.current + 1);
     if (!newData) return false;
+
+    pageRef.current += 1;
+    await fetchData(pageRef.current);
     return newData.results.length > 0;
-  };
+
+  }, [fetchData]);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,7 +78,7 @@ export default function Home() {
     })();
 
     return () => { cancelled = true; }
-  }, []);
+  }, [fetchData, loadMore]);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
