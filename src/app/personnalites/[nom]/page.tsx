@@ -4,6 +4,7 @@ import { Personality } from "@/app/personnalites/page";
 import { SearchBar } from "@/app/search-bar";
 import { QuoteList } from "@/components/list";
 import { createPersonalityList } from "@/lib/create-personality-list";
+import { getPoliticalPortrait } from "@/lib/political-portrait";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
 
@@ -27,6 +28,8 @@ export default function PersonalityPage() {
 
   const [personality, setPersonality] = useState<Personality | null>(null);
   const [loading, setLoading] = useState(true);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
   // inject TimelineJS
   const createTimeline = (personality: Personality) => {
@@ -83,7 +86,10 @@ export default function PersonalityPage() {
       try {
         const p = await getPersonality(nom as string);
         setPersonality(p);
-        if (p) createTimeline(p);
+
+        if (p) {
+          createTimeline(p);
+        }
       } catch (err) {
         console.error("Fetch failed:", err);
         setPersonality(null);
@@ -93,6 +99,20 @@ export default function PersonalityPage() {
     };
     fetchData();
   }, [nom]);
+  
+  useEffect(() => {
+    if (personality) {
+      setImageUrlLoading(true);
+
+      const fetchImage = async () => {
+        const url = await getPoliticalPortrait(personality.nom as string);
+        setImageUrl(url);
+        setImageUrlLoading(false);
+      };
+
+      fetchImage();
+    }
+  }, [personality]);
 
   if (loading) return (
     <div className="h-screen flex justify-center items-center">
@@ -109,6 +129,15 @@ export default function PersonalityPage() {
     <>
       <SearchBar />
       <div className="mx-auto p-6">
+        {!imageUrlLoading ? (
+          imageUrl ? (
+            <img src={imageUrl} alt={`${personality.nom} portrait`} className="mb-4 w-32 h-32 object-cover rounded-full" />
+          ) : (
+            'Pas de photo trouvé'
+          )
+        ) : (
+          <p>Chargement de l'image...</p>
+        )}
         <h1 className="text-3xl font-bold mb-4">{personality.nom}</h1>
         <div className="space-y-2 text-gray-700">
           <p><span className="font-semibold">Parti politique :</span> {personality.partiPolitique}</p>
