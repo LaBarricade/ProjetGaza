@@ -132,7 +132,7 @@ export default function PersonalityPage() {
       <div className="mx-auto p-6">
         {!imageUrlLoading ? (
           imageUrl ? (
-            <Image src={imageUrl} alt={`${personality.nom} portrait`} className="mb-4 w-32 h-32 object-cover rounded-full" />
+            <Image src={imageUrl} alt={`${personality.nom} portrait`} className="mb-4 object-cover rounded-full" width={100} height={100} />
           ) : (
             'Pas de photo trouvé'
           )
