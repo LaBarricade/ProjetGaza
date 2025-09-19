@@ -7,6 +7,7 @@ import { createPersonalityList } from "@/lib/create-personality-list";
 import { getPoliticalPortrait } from "@/lib/political-portrait";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
+import Image from "next/image";
 
 async function getPersonality(nom: string): Promise<Personality | null> {
   const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
@@ -131,13 +132,13 @@ export default function PersonalityPage() {
       <div className="mx-auto p-6">
         {!imageUrlLoading ? (
           imageUrl ? (
-            <img src={imageUrl} alt={`${personality.nom} portrait`} className="mb-4 w-32 h-32 object-cover rounded-full" />
+            <Image src={imageUrl} alt={`${personality.nom} portrait`} className="mb-4 w-32 h-32 object-cover rounded-full" />
           ) : (
             'Pas de photo trouvé'
           )
-        ) : (
-          <p>Chargement de l'image...</p>
-        )}
+        ) :
+          <p>Chargement de l&apos;image...</p>
+        }
         <h1 className="text-3xl font-bold mb-4">{personality.nom}</h1>
         <div className="space-y-2 text-gray-700">
           <p><span className="font-semibold">Parti politique :</span> {personality.partiPolitique}</p>
