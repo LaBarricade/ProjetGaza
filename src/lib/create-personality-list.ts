@@ -16,7 +16,7 @@ export const createPersonalityList = (results: Quote[] | null) => {
     if (!map.has(nom)) {
       map.set(nom, {
         nom,
-        partiPolitique: r["Parti politique"],
+        partiPolitique: r["Parti politique"].value,
         fonction: r["Fonction"],
         citations: [r],
       });

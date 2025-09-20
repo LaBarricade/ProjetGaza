@@ -11,13 +11,25 @@ export type Quote = {
   Commune: string
   Département: string
   Région: string
-  "Parti politique": string
+  "Parti politique": {
+    color: string;
+    id: number;
+    value: string;
+  }
   Fonction: string
   Citation: string
   date: string
-  source: string
+  source: {
+    color: string;
+    id: number;
+    value: string;
+  }
   lien: string
-  Tag: string
+  Tag: {
+    color: string;
+    id: number;
+    value: string;
+  }[]
   Collecteur: string
   Commentaire: string
 }
@@ -31,7 +43,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
         >
           <CardTitle className="text-lg font-semibold">{quote["Personnalité politique"]}</CardTitle>
         </Link>
-        <p className="text-sm text-muted-foreground">{quote["Parti politique"]} • {quote.Fonction}</p>
+        <p className="text-sm text-muted-foreground">{quote["Parti politique"].value} • {quote.Fonction}</p>
       </CardHeader>
 
       <CardContent className="space-y-3">
@@ -44,15 +56,15 @@ export function QuoteCard({ quote }: { quote: Quote }) {
           <p><span className="font-medium">Département :</span> {quote.Département}</p>
           <p><span className="font-medium">Région :</span> {quote.Région}</p>
           <p><span className="font-medium">Date :</span> {quote.date}</p>
-          {quote.Tag && (
+          {!!quote.Tag.length && (
             <p>
               <span className="font-medium">Tags :</span>{" "}
-              {quote.Tag.split(', ').map((tag) => (
+              {quote.Tag.map((tag) => (
                 <span
-                  key={tag}
+                  key={tag.id}
                   className="bg-primary/10 text-primary px-2 py-0.5 mr-1 rounded-full text-xs"
                 >
-                  {tag}
+                  {tag.value}
                 </span>
               ))}
             </p>
@@ -61,7 +73,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
       </CardContent>
 
       <CardFooter className="flex justify-between items-center">
-        <span className="text-xs text-muted-foreground">{quote.source}</span>
+        <span className="text-xs text-muted-foreground">{quote.source?.value}</span>
         {quote.lien && (
           <Button asChild size="sm" variant="outline">
             <a href={quote.lien} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">

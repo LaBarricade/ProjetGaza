@@ -47,7 +47,7 @@ export default function PersonalityPage() {
             month,
             day,
           },
-          text: { headline: q.source ?? `Citation #${i + 1}`, text: q.Citation },
+          text: { headline: q.source?.value ?? `Citation #${i + 1}`, text: q.Citation },
         }
       }),
     };
