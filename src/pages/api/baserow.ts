@@ -10,25 +10,68 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let queryParams = ''
 
-  if (req.query.search) {
-    if (typeof req.query.search === 'string' && req.query.search.includes(' ')) {
-      req.query.search.split(' ').map((elem) => {
-        queryParams += `&filter__field_5623110__contains=${elem}`
-        queryParams += `&filter__field_5623109__contains=${elem}`
-      })
-    } else {
-      queryParams += `&filter__field_5623110__contains=${req.query.search}`
-      queryParams += `&filter__field_5623109__contains=${req.query.search}`
+  type BaserowFilter =
+  | {
+      field: string;
+      type: string;
+      value: string | boolean | number;
+      groups: BaserowFilter[];
     }
+  | {
+      filter_type: "AND" | "OR";
+      filters: BaserowFilter[];
+      groups: BaserowFilter[];
+    };
+
+  const orFilters: BaserowFilter[] = [];
+
+  if (req.query.search) {
+    const words = (req.query.search as string).split(" ");
+    words.forEach((word) => {
+      orFilters.push({
+        field: 'nom',
+        type: "contains",
+        value: word,
+        groups: [],
+      });
+      orFilters.push({
+        field: 'prénom',
+        type: "contains",
+        value: word,
+        groups: [],
+      });
+    });
+  }
+
+  const filters: BaserowFilter = {
+    filter_type: "AND",
+    filters: [],
+    groups: [{
+      filter_type: "AND",
+      filters: [{
+        type: "boolean",
+        field: 'est_publié',
+        value: "1",
+        groups: [],
+      }],
+      groups: [],
+    }],
+  };
+
+  if (orFilters.length > 0) {
+    filters.groups[0].groups.push({
+      filter_type: "OR",
+      filters: orFilters,
+      groups: [],
+    });
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
   const size = req.query.size ? Number(req.query.size) : 20;
-
-  queryParams += `&filter__field_5623108__equal=true&page=${page}&size=${size}`;
+  queryParams += `filters=${encodeURIComponent(JSON.stringify(filters))}&page=${page}&size=${size}`;
 
   try {
-    const response = await fetch(`${url}?user_field_names=true${queryParams}`, {
+    const response = await fetch(`${url}?user_field_names=true&${queryParams}`, {
       headers: {
         Authorization: `Token ${token}`,
       },
