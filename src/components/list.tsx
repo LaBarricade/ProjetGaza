@@ -27,14 +27,14 @@ export function QuoteList({
   onEndReached,
 }: {
   quotes: Quote[];
-  totalCount: number;
   onEndReached?: () => void;
+  totalCount?: number;
 }) {
   const loaderRef = useEndReached(onEndReached);
 
   return (
     <>
-      <CitationCount totalCount={totalCount} />
+      {totalCount && <CitationCount totalCount={totalCount} />}
       <div className="w-screen max-w-full mx-auto px-4 sm:px-8 columns-1 md:columns-3 gap-6 mb-6">
         {quotes.map((q) => (
           <div key={q.id} className="mb-6 break-inside-avoid">
