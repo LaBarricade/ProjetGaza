@@ -1,13 +1,13 @@
 "use client";
 
-import { Personality } from "@/app/personnalites/page";
 import { SearchBar } from "@/app/search-bar";
-import { QuoteList } from "@/components/list";
-import { createPersonalityList } from "@/lib/create-personality-list";
+import { QuoteList } from "@/components/list/quote-list";
+import { citationsByPersonality, Personality } from "@/lib/citations-group-by-personality";
 import { getPoliticalPortrait } from "@/lib/political-portrait";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
+import { Quote } from "@/components/card";
 
 async function getPersonality(nom: string): Promise<Personality | null> {
   const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
@@ -15,7 +15,7 @@ async function getPersonality(nom: string): Promise<Personality | null> {
 
   if (!Array.isArray(data.results) || data.results.length === 0) return null;
   
-  const personalities = createPersonalityList(data.results)
+  const personalities = citationsByPersonality(data.results)
   if (!Array.isArray(personalities) || personalities.length === 0) return null;
 
   return personalities[0]
@@ -38,7 +38,7 @@ export default function PersonalityPage() {
 
     return {
       title: { text: { headline: "Frise des citations", text: "" } },
-      events: personality.citations.map((q, i) => {
+      events: personality.citations.map((q: Quote, i: number) => {
         const [day, month, year] = q.date.split("/").map(Number);
 
         return {
@@ -106,7 +106,7 @@ export default function PersonalityPage() {
       setImageUrlLoading(true);
 
       const fetchImage = async () => {
-        const url = await getPoliticalPortrait(personality.nom as string);
+        const url = await getPoliticalPortrait(personality.fullName as string);
         setImageUrl(url);
         setImageUrlLoading(false);
       };
@@ -132,14 +132,14 @@ export default function PersonalityPage() {
       <div className="mx-auto p-6">
         {!imageUrlLoading ? (
           imageUrl ? (
-            <Image src={imageUrl} alt={`${personality.nom} portrait`} className="mb-4 object-cover rounded-full" width={100} height={100} />
+            <Image src={imageUrl} alt={`${personality.fullName} portrait`} className="mb-4 object-cover rounded-full" width={100} height={100} />
           ) : (
             'Pas de photo trouvé'
           )
         ) :
           <p>Chargement de l&apos;image...</p>
         }
-        <h1 className="text-3xl font-bold mb-4">{personality.nom}</h1>
+        <h1 className="text-3xl font-bold mb-4">{personality.fullName}</h1>
         <div className="space-y-2 text-gray-700">
           <p><span className="font-semibold">Parti politique :</span> {personality.partiPolitique}</p>
           <p><span className="font-semibold">Fonction :</span> {personality.fonction}</p>

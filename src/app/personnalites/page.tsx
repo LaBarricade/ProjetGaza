@@ -2,17 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBar } from "@/app/search-bar";
-import { PersonalityList } from "@/components/list";
+import { PersonalityList } from "@/components/list/personality-list";
 import { Quote } from "@/components/card";
-import { createPersonalityList } from "@/lib/create-personality-list";
+import { citationsByPersonality, Personality } from "@/lib/citations-group-by-personality";
 import { BaserowData } from "../page";
-
-export type Personality = {
-  nom: string;
-  partiPolitique?: string;
-  fonction?: string;
-  citations: Quote[];
-};
 
 export default function Home() {
   const [data, setData] = useState<BaserowData | null>(null);
@@ -22,13 +15,13 @@ export default function Home() {
 
   const handleResults = useCallback((results: Quote[] | null) => {
     pageRef.current = 1
-    const personalities = createPersonalityList(results)
+    const personalities = citationsByPersonality(results)
     setFilteredResults(personalities);
   }, []);
 
   const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
     try {
-      const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
+      const res = await fetch(`/api/baserow?page=${pageToLoad}&size=50`);
       if (!res.ok) throw new Error("Erreur fetch API");
       const json = await res.json();
 
@@ -84,11 +77,11 @@ export default function Home() {
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
       <SearchBar onResults={handleResults} />
 
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+      <main className="flex flex-col gap-[32px] min-h-full row-start-2 items-center sm:items-start">
         {loading && <p>Chargement des données...</p>}
 
         {filteredResults && filteredResults.length > 0 && <PersonalityList personalities={filteredResults} />}
-        {!filteredResults && data && <PersonalityList personalities={createPersonalityList(data.results)!} />}
+        {!filteredResults && data && <PersonalityList personalities={citationsByPersonality(data.results)!} />}
 
         {!loading && !data && <p>Impossible de récupérer les données.</p>}
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}

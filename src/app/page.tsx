@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SearchBar } from "@/app/search-bar";
-import { QuoteList } from "@/components/list";
 import { Quote } from "@/components/card";
+import { QuoteList } from "@/components/list/quote-list";
 
 export type BaserowData = {
   count: number
