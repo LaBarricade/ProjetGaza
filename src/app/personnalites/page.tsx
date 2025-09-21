@@ -74,7 +74,7 @@ export default function Home() {
   }, [fetchData, loadMore]);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
+    <div className="items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
       <SearchBar onResults={handleResults} />
 
       <main className="flex flex-col gap-[32px] min-h-full row-start-2 items-center sm:items-start">

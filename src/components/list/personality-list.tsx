@@ -17,7 +17,7 @@ export function PersonalityList({
   const router = useRouter();
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-6">
+    <div className="w-full max-w-screen p-4 mx-auto mt-6 overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>

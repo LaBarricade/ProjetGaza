@@ -13,10 +13,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.query.search) {
     if (typeof req.query.search === 'string' && req.query.search.includes(' ')) {
       req.query.search.split(' ').map((elem) => {
-        queryParams += `&filter__field_5055140__contains=${elem}`
+        queryParams += `&filter__field_5623110__contains=${elem}`
+        queryParams += `&filter__field_5623109__contains=${elem}`
       })
     } else {
-      queryParams += `&filter__field_5055140__contains=${req.query.search}`
+      queryParams += `&filter__field_5623110__contains=${req.query.search}`
+      queryParams += `&filter__field_5623109__contains=${req.query.search}`
     }
   }
 
