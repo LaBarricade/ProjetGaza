@@ -39,7 +39,7 @@ export default function PersonalityPage() {
     return {
       title: { text: { headline: "Frise des citations", text: "" } },
       events: personality.citations.map((q: Quote, i: number) => {
-        const [day, month, year] = q.date.split("/").map(Number);
+        const [year, month, day] = q.date.split("-").map(Number);
 
         return {
           start_date: {
@@ -132,7 +132,14 @@ export default function PersonalityPage() {
       <div className="mx-auto p-6">
         {!imageUrlLoading ? (
           imageUrl ? (
-            <Image src={imageUrl} alt={`${personality.fullName} portrait`} className="mb-4 object-cover rounded-full" width={100} height={100} />
+            <Image
+              src={imageUrl}
+              alt={`${personality.fullName} portrait`}
+              width={96}
+              height={96}
+              className="mb-4 object-cover rounded-full w-24 h-auto"
+              style={{ width: "100px", height: "auto" }}
+            />
           ) : (
             'Pas de photo trouvé'
           )
