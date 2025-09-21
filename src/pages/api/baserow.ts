@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const page = req.query.page ? Number(req.query.page) : 1;
   const size = req.query.size ? Number(req.query.size) : 20;
 
-  queryParams += `&page=${page}&size=${size}`;
+  queryParams += `&filter__field_5623108__equal=true&page=${page}&size=${size}`;
 
   try {
     const response = await fetch(`${url}?user_field_names=true${queryParams}`, {

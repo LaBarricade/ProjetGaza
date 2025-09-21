@@ -81,10 +81,11 @@ export default function Home() {
         {loading && <p>Chargement des données...</p>}
 
         {filteredResults && filteredResults.length > 0 && <PersonalityList personalities={filteredResults} />}
-        {!filteredResults && data && <PersonalityList personalities={citationsByPersonality(data.results)!} />}
+        {!filteredResults && data && data.results.length > 0 && <PersonalityList personalities={citationsByPersonality(data.results)!} />}
 
         {!loading && !data && <p>Impossible de récupérer les données.</p>}
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
+        {data && data.results.length === 0 && <p>Aucun résultat trouvé.</p>}
       </main>
     </div>
   );

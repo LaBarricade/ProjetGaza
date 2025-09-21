@@ -32,6 +32,7 @@ export type Quote = {
   }[]
   collecteur: string
   commentaire: string
+  est_publié: boolean
 }
 
 export function QuoteCard({ quote }: { quote: Quote }) {

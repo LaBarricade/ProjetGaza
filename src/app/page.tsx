@@ -65,10 +65,11 @@ export default function Home() {
         {loading && <p>Chargement des données...</p>}
 
         {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
-        {!filteredResults && data && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
+        {!filteredResults && data && data.results.length > 0 && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
 
         {!loading && !data && <p>Impossible de récupérer les données.</p>}
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
+        {data && data.results.length === 0 && <p>Aucun résultat trouvé.</p>}
       </main>
     </div>
   );

@@ -3,10 +3,11 @@
 import { Quote } from "@/components/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 
 type SearchBarProps = {
   onResults?: (results: Quote[] | null) => void; // facultatif
@@ -45,25 +46,27 @@ export function SearchBar({ onResults }: SearchBarProps) {
 
   return (
     <div className="sticky top-0 w-full flex items-center gap-4 p-4 bg-white shadow-md z-50">
-      <div className="flex gap-2">
+      {/* NavItems (desktop only) */}
+      <div className="hidden md:flex gap-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
-
-          return (<Button
+          return (
+            <Button
               key={item.href}
               asChild
               variant={isActive ? "default" : "ghost"}
               className="shrink-0"
             >
               <Link href={item.href}>{item.label}</Link>
-            </Button>)
+            </Button>
+          );
         })}
       </div>
 
-      {/* On n'affiche l'input que si onResults est défini */}
+      {/* Input (toujours centré) */}
       {onResults && (
         <div className="flex-1 flex justify-center">
-          <div className="relative w-64">
+          <div className="relative w-full max-w-xs md:max-w-sm">
             <Input
               type="text"
               placeholder="Rechercher"
@@ -76,13 +79,52 @@ export function SearchBar({ onResults }: SearchBarProps) {
         </div>
       )}
 
-      {/* Bouton wiki à droite */}
-      <div className="ml-auto">
+      {/* Wiki bouton (desktop) */}
+      <div className="ml-auto hidden md:block">
         <Button asChild variant="outline" className="shrink-0">
-          <Link href="https://fr.wikipedia.org/wiki/G%C3%A9nocide_%C3%A0_Gaza" target="_blank">
+          <Link
+            href="https://fr.wikipedia.org/wiki/G%C3%A9nocide_%C3%A0_Gaza"
+            target="_blank"
+          >
             Documentation externe
           </Link>
         </Button>
+      </div>
+
+      {/* Dropdown menu (mobile only) */}
+      <div className="ml-auto md:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <DropdownMenuItem key={item.href} asChild>
+                  <Link
+                    href={item.href}
+                    className={`w-full ${
+                      isActive ? "font-semibold text-primary" : ""
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </DropdownMenuItem>
+              );
+            })}
+            <DropdownMenuItem asChild>
+              <Link
+                href="https://fr.wikipedia.org/wiki/G%C3%A9nocide_%C3%A0_Gaza"
+                target="_blank"
+              >
+                Documentation externe
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
