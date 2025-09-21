@@ -30,8 +30,8 @@ export const citationsByPersonality = (results: Quote[] | null): Personality[] |
         prénom: quote.prénom,
         fullName: `${quote.prénom} ${quote.nom}`,
         fullNameKebabLink,
-        partiPolitique: quote["Parti politique"].value,
-        fonction: quote["Fonction"],
+        partiPolitique: quote.parti_politique.value,
+        fonction: quote.fonction,
         citations: [quote],
       });
     } else {

@@ -8,16 +8,16 @@ export type Quote = {
   order: string
   prénom: string
   nom: string
-  Commune: string
-  Département: string
-  Région: string
-  "Parti politique": {
+  commune: string
+  département: string
+  région: string
+  parti_politique: {
     color: string;
     id: number;
     value: string;
   }
-  Fonction: string
-  Citation: string
+  fonction: string
+  citation: string
   date: string
   source: {
     color: string;
@@ -25,13 +25,13 @@ export type Quote = {
     value: string;
   }
   lien: string
-  Tag: {
+  tag: {
     color: string;
     id: number;
     value: string;
   }[]
-  Collecteur: string
-  Commentaire: string
+  collecteur: string
+  commentaire: string
 }
 
 export function QuoteCard({ quote }: { quote: Quote }) {
@@ -43,23 +43,23 @@ export function QuoteCard({ quote }: { quote: Quote }) {
         >
           <CardTitle className="text-lg font-semibold">{quote.prénom + ' ' + quote.nom}</CardTitle>
         </Link>
-        <p className="text-sm text-muted-foreground">{quote["Parti politique"].value} • {quote.Fonction}</p>
+        <p className="text-sm text-muted-foreground">{quote.parti_politique.value} • {quote.fonction}</p>
       </CardHeader>
 
       <CardContent className="space-y-3">
         <blockquote className="italic text-sm border-l-4 pl-3 border-primary">
-          {quote.Citation}
+          {quote.citation}
         </blockquote>
 
         <div className="text-sm space-y-1">
-          <p><span className="font-medium">Commune :</span> {quote.Commune}</p>
-          <p><span className="font-medium">Département :</span> {quote.Département}</p>
-          <p><span className="font-medium">Région :</span> {quote.Région}</p>
+          <p><span className="font-medium">commune :</span> {quote.commune}</p>
+          <p><span className="font-medium">département :</span> {quote.département}</p>
+          <p><span className="font-medium">région :</span> {quote.région}</p>
           <p><span className="font-medium">Date :</span> {quote.date}</p>
-          {!!quote.Tag.length && (
+          {!!quote.tag.length && (
             <p>
               <span className="font-medium">Tags :</span>{" "}
-              {quote.Tag.map((tag) => (
+              {quote.tag.map((tag) => (
                 <span
                   key={tag.id}
                   className="bg-primary/10 text-primary px-2 py-0.5 mr-1 rounded-full text-xs"
