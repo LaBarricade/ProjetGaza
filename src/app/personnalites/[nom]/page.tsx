@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { Quote } from "@/components/card";
+import { LogoParti } from "@/components/logo/parti";
 
 async function getPersonality(nom: string): Promise<Personality | null> {
   const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
@@ -60,8 +61,14 @@ export default function PersonalityPage() {
     script.onload = () => {
       // @ts-expect-error parce que que chatgpt me dit que c'est ça qu'il faut faire et que je suis un garçon plutôt facile.
       if (window.TL && timelineRef.current) {
+        const options = {
+          lang: "fr",
+          initial_zoom: 2,
+          timenav_position: "bottom"
+        };
+
         // @ts-expect-error same
-        new window.TL.Timeline(timelineRef.current, createTimeline(personality));
+        new window.TL.Timeline(timelineRef.current, createTimeline(personality), options);
       }
     };
     document.body.appendChild(script);
@@ -148,7 +155,13 @@ export default function PersonalityPage() {
         }
         <h1 className="text-3xl font-bold mb-4">{personality.fullName}</h1>
         <div className="space-y-2 text-gray-700">
-          <p><span className="font-semibold">Parti politique :</span> {personality.partiPolitique}</p>
+          {personality.partiPolitique && (<div className="flex items-center">
+            <span className="font-semibold">Parti politique :</span>
+            <span className="ml-4">
+              <LogoParti parti={personality.partiPolitique} />
+            </span>
+          </div>)
+          }
           <p><span className="font-semibold">Fonction :</span> {personality.fonction}</p>
         </div>
 
