@@ -12,7 +12,7 @@ export const LogoParti = ({ parti }: { parti: string }) => {
         alt={`Logo du parti ${parti}`}
         width={96}
         height={96}
-        className="mb-4 object-cover rounded-full w-24 h-auto"
+        className="mb-4 object-cover w-24 h-auto"
         style={{ width: "100px", height: "auto" }}
       />
       <span className="ml-2 font-semibold">{parti}</span>

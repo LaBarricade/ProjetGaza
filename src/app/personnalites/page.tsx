@@ -74,11 +74,15 @@ export default function Home() {
   }, [fetchData, loadMore]);
 
   return (
-    <div className="items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
+    <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
       <SearchBar onResults={handleResults} />
 
-      <main className="flex flex-col gap-[32px] min-h-full row-start-2 items-center sm:items-start">
-        {loading && <p>Chargement des données...</p>}
+      <main className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
+        {loading && (
+          <div className="flex flex-1 items-center h-full">
+            <p>Chargement des données...</p>
+          </div>
+        )}
 
         {filteredResults && filteredResults.length > 0 && <PersonalityList personalities={filteredResults} />}
         {!filteredResults && data && data.results.length > 0 && <PersonalityList personalities={citationsByPersonality(data.results)!} />}
