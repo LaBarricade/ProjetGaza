@@ -4,7 +4,7 @@ import { Quote, QuoteCard } from "../card";
 
 function CitationCount({ totalCount }: { totalCount: number }) {
   return (
-    <h2 className="w-full text-3xl font-bold text-gray-800 my-4 sm:px-8">
+    <h2 className="w-full text-3xl font-bold text-gray-800 my-4 px-8">
       <CountUp end={totalCount} duration={1.2} /> citations
     </h2>
   )
