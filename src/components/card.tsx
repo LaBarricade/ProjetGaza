@@ -38,7 +38,7 @@ export type Quote = {
 }
 
 export function QuoteCard({ quote }: { quote: Quote }) {
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
   useEffect(() => {
