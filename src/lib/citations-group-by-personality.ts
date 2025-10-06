@@ -20,7 +20,7 @@ export const citationsByPersonality = (results: Quote[] | null): Personality[] |
   for (const quote of results) {
     if (!quote.nom || !quote.prénom) continue
 
-    const fullNameKebabLink = `${quote.prénom}-${quote.nom}`;
+    const fullNameKebabLink = `${quote.prénom}-${quote.nom.replaceAll(' ', '-')}`;
 
     if (!fullNameKebabLink) continue
 
