@@ -75,7 +75,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <SearchBar onResults={handleResults} />
+      <SearchBar onLoading={(loading) => setLoading(loading)}  onResults={handleResults} />
 
       <main className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
         {loading && (
@@ -87,7 +87,6 @@ export default function Home() {
         {filteredResults && filteredResults.length > 0 && <PersonalityList personalities={filteredResults} />}
         {!filteredResults && data && data.results.length > 0 && <PersonalityList personalities={citationsByPersonality(data.results)!} />}
 
-        {!loading && !data && <p>Impossible de récupérer les données.</p>}
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
         {data && data.results.length === 0 && <p>Aucun résultat trouvé.</p>}
       </main>

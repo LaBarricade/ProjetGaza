@@ -16,9 +16,10 @@ import {
 
 type SearchBarProps = {
   onResults?: (results: Quote[] | null) => void; // facultatif
+  onLoading?: (loading: boolean) => void;
 };
 
-export function SearchBar({ onResults }: SearchBarProps) {
+export function SearchBar({ onResults, onLoading }: SearchBarProps) {
   const [query, setQuery] = useState("");
 
   const pathname = usePathname();
@@ -29,11 +30,14 @@ export function SearchBar({ onResults }: SearchBarProps) {
   ];
 
   useEffect(() => {
-    if (!onResults) return; // si pas de callback, on ne fait rien
+    if (!onResults || !onLoading) return; // si pas de callback, on ne fait rien
+
+    onLoading(true)
 
     const timeout = setTimeout(() => {
       if (query.length === 0) {
         onResults(null);
+        onLoading(false)
         return;
       }
       
@@ -41,6 +45,7 @@ export function SearchBar({ onResults }: SearchBarProps) {
         const res = await fetch(`/api/baserow?search=${encodeURIComponent(query)}`);
         const data = await res.json();
         onResults(data?.results || []);
+        onLoading(false)
       };
 
       fetchData();

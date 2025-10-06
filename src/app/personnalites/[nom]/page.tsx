@@ -3,12 +3,13 @@
 import { SearchBar } from "@/app/search-bar";
 import { QuoteList } from "@/components/list/quote-list";
 import { citationsByPersonality, Personality } from "@/lib/citations-group-by-personality";
-import { getPoliticalPortrait } from "@/lib/political-portrait";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
-import Image from "next/image";
 import { Quote } from "@/components/card";
 import { LogoParti } from "@/components/logo/parti";
+import { getWikipediaImage } from "@/lib/wiki-img";
+
+const logoCache: { [key: string]: string } = {}
 
 async function getPersonality(nom: string): Promise<Personality | null> {
   const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
@@ -26,6 +27,7 @@ export default function PersonalityPage() {
   const params = useParams<{ nom: string }>()
 
   const timelineRef = useRef<HTMLDivElement>(null);
+  const [timelineData, setTimelineData] = useState<any>(null);
   const { nom } = params?.nom ? params : {}
 
   const [personality, setPersonality] = useState<Personality | null>(null);
@@ -33,51 +35,92 @@ export default function PersonalityPage() {
   const [imageUrl, setImageUrl] = useState(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
-  // inject TimelineJS
-  const createTimeline = (personality: Personality) => {
-    if (!personality.citations?.length) return;
+  useEffect(() => {
+    if (!personality?.citations?.length) return;
 
-    return {
-      title: { text: { headline: "Frise des citations", text: "" } },
-      events: personality.citations.map((q: Quote, i: number) => {
-        const [year, month, day] = q.date.split("-").map(Number);
+    (async () => {
+      const events = await Promise.all(
+        personality.citations.map(async (q: Quote, i: number) => {
+          const [year, month, day] = q.date.split("-").map(Number);
+          const logo = q.source?.value
+            ? await getWikipediaImage(q.source.value)
+            : null;
 
-        return {
-          start_date: {
-            year,
-            month,
-            day,
-          },
-          text: { headline: q.source?.value ?? `Citation #${i + 1}`, text: q.citation },
-        }
-      }),
-    };
-  }
+          if (logo) {
+            logoCache[q.source?.value] = logo
+          }
+
+          return {
+            start_date: { year, month, day },
+            text: {
+              headline: q.source?.value ?? `Citation #${i + 1}`,
+              text: q.citation,
+            },
+            ...(logo && {
+              media: {
+                url: logo,
+                thumbnail: logo,
+                caption: q.source?.value,
+              },
+            }),
+          };
+        })
+      );
+
+      setTimelineData({
+        title: { text: { headline: "Frise des citations", text: "" } },
+        events,
+      });
+    })();
+  }, [personality]);
 
   useEffect(() => {
+    if (!timelineData) return;
+
     const script = document.createElement("script");
     script.src = "https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js";
     script.async = true;
     script.onload = () => {
-      // @ts-expect-error parce que que chatgpt me dit que c'est ça qu'il faut faire et que je suis un garçon plutôt facile.
+      // @ts-expect-error TL est global
       if (window.TL && timelineRef.current) {
         const options = {
           lang: "fr",
           initial_zoom: 2,
-          timenav_position: "bottom"
+          timenav_position: "bottom",
         };
 
-        // @ts-expect-error same
-        new window.TL.Timeline(timelineRef.current, createTimeline(personality), options);
+        // @ts-expect-error TL est global
+        new window.TL.Timeline(timelineRef.current, timelineData, options);
+
+        setTimeout(() => {
+          const markers = document.querySelectorAll(".tl-timemarker-content");
+          if (!personality) return
+          [...markers].forEach((marker) => {
+            const source = (marker as HTMLElement).querySelector('.tl-headline')?.textContent as string
+            const logo = logoCache[source];
+            if (logo) {
+              (marker as HTMLElement).style.backgroundSize = 'cover';
+              (marker as HTMLElement).style.backgroundRepeat = 'no-repeat';
+              (marker as HTMLElement).style.backgroundPosition = 'bottom';
+              (marker as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+              (marker as HTMLElement).style.backgroundBlendMode = 'lighten';
+              (marker as HTMLElement).style.backgroundImage = `url(${logo})`;
+
+              const headline: HTMLElement = (marker as HTMLElement).querySelector('.tl-headline') as HTMLElement
+              (headline as HTMLElement).style.color = 'white';
+              (headline as HTMLElement).style.fontWeight = 'bold';
+            }
+          });
+        }, 500);
       }
     };
-    document.body.appendChild(script);
 
+    document.body.appendChild(script);
     return () => {
       document.body.removeChild(script);
     };
-  }, [personality]);
-  
+  }, [timelineData]);
+
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
@@ -94,10 +137,6 @@ export default function PersonalityPage() {
       try {
         const p = await getPersonality(nom as string);
         setPersonality(p);
-
-        if (p) {
-          createTimeline(p);
-        }
       } catch (err) {
         console.error("Fetch failed:", err);
         setPersonality(null);
@@ -113,7 +152,7 @@ export default function PersonalityPage() {
       setImageUrlLoading(true);
 
       const fetchImage = async () => {
-        const url = await getPoliticalPortrait(personality.fullName as string);
+        const url = await getWikipediaImage(personality.fullName as string);
         setImageUrl(url);
         setImageUrlLoading(false);
       };
@@ -138,8 +177,8 @@ export default function PersonalityPage() {
       <SearchBar />
       <div className="mx-auto p-6">
         {!imageUrlLoading ? (
-          imageUrl ? (
-            <Image
+          imageUrl && (
+            <img
               src={imageUrl}
               alt={`${personality.fullName} portrait`}
               width={96}
@@ -147,8 +186,6 @@ export default function PersonalityPage() {
               className="mb-4 object-cover rounded-full w-24 h-auto"
               style={{ width: "100px", height: "auto" }}
             />
-          ) : (
-            'Pas de photo trouvé'
           )
         ) :
           <p>Chargement de l&apos;image...</p>

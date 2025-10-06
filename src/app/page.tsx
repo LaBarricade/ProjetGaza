@@ -59,15 +59,14 @@ export default function Home() {
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
-      <SearchBar onResults={handleResults} />
+      <SearchBar onLoading={(loading) => setLoading(loading)} onResults={handleResults} />
 
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+      <main className="flex flex-col gap-[32px] row-start-2 justify-center sm:items-center">
         {loading && <p>Chargement des données...</p>}
 
         {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
         {!filteredResults && data && data.results.length > 0 && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
 
-        {!loading && !data && <p>Impossible de récupérer les données.</p>}
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
         {data && data.results.length === 0 && <p>Aucun résultat trouvé.</p>}
       </main>

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       new URL('http://commons.wikimedia.org/**'),
       new URL('https://upload.wikimedia.org/**'),
+      new URL('https://fr.wikipedia.org/**'),
     ],
   },
 };

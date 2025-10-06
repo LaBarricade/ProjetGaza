@@ -2,6 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { getWikipediaImage } from "@/lib/wiki-img"
 
 export type Quote = {
   id: number
@@ -36,6 +38,23 @@ export type Quote = {
 }
 
 export function QuoteCard({ quote }: { quote: Quote }) {
+  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrlLoading, setImageUrlLoading] = useState(false);
+
+  useEffect(() => {
+    if (quote.source?.value) {
+      setImageUrlLoading(true);
+
+      const fetchImage = async () => {
+        const url = await getWikipediaImage(quote.source.value as string);
+        setImageUrl(url);
+        setImageUrlLoading(false);
+      };
+
+      fetchImage();
+    }
+  }, [quote]);
+
   return (
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition">
       <CardHeader>
@@ -74,7 +93,23 @@ export function QuoteCard({ quote }: { quote: Quote }) {
       </CardContent>
 
       <CardFooter className="flex justify-between items-center">
-        <span className="text-xs text-muted-foreground">{quote.source?.value}</span>
+        <div className="flex flex-col items-center">
+          {!imageUrlLoading ? (
+            imageUrl && (
+              <img 
+                src={imageUrl}
+                alt={`${quote.source.value} logo`}
+                width={96}
+                height={96}
+                className="mb-4 object-cover w-24 h-auto"
+                style={{ width: "100px", height: "auto" }}
+              />
+            )
+          ) :
+            <p>Chargement de l&apos;image...</p>
+          }
+          <span className="text-xs text-muted-foreground">{quote.source?.value}</span>
+        </div>
         {quote.lien && (
           <Button asChild size="sm" variant="outline">
             <a href={quote.lien} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
