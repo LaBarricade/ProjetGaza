@@ -52,7 +52,7 @@ export function SearchBar({ onResults, onLoading }: SearchBarProps) {
     }, 300);
 
     return () => clearTimeout(timeout);
-  }, [query, onResults]);
+  }, [query, onResults, onLoading]);
 
   return (
     <div className="sticky top-0 w-full flex items-center gap-4 p-4 bg-white shadow-md z-50">

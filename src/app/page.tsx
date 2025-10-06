@@ -23,6 +23,8 @@ export default function Home() {
     setFilteredResults(results);
   }, []);
 
+  const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
+
   const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
     try {
       const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
@@ -59,7 +61,7 @@ export default function Home() {
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen pb-20 gap-16 font-[family-name:var(--font-geist-sans)]">
-      <SearchBar onLoading={(loading) => setLoading(loading)} onResults={handleResults} />
+      <SearchBar onLoading={handleLoading} onResults={handleResults} />
 
       <main className="flex flex-col gap-[32px] row-start-2 justify-center sm:items-center">
         {loading && <p>Chargement des données...</p>}
