@@ -27,12 +27,12 @@ export default function PersonalityPage() {
   const params = useParams<{ nom: string }>()
 
   const timelineRef = useRef<HTMLDivElement>(null);
-  const [timelineData, setTimelineData] = useState<any>(null);
+  const [timelineData, setTimelineData] = useState<Record<string, unknown> | null>(null);
   const { nom } = params?.nom ? params : {}
 
   const [personality, setPersonality] = useState<Personality | null>(null);
   const [loading, setLoading] = useState(true);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function PersonalityPage() {
     return () => {
       document.body.removeChild(script);
     };
-  }, [timelineData]);
+  }, [timelineData, personality]);
 
   useEffect(() => {
     const link = document.createElement("link");

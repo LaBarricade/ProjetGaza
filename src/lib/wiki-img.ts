@@ -19,7 +19,7 @@ export async function getWikipediaImage(keyword: string) {
     const pages = data.query?.pages;
     if (!pages) return null;
 
-    const firstPage = Object.values(pages)[0] as any;
+    const firstPage = Object.values(pages)[0] as { thumbnail: { source: string } };
     return firstPage?.thumbnail?.source || null;
   } catch (err) {
     console.error("Erreur Wikipédia:", err);
