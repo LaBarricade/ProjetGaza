@@ -59,9 +59,13 @@ export function QuoteCard({ quote }: { quote: Quote }) {
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition">
       <CardHeader>
         <Link
-          href={"/personnalites/" + `${quote.prénom}-${quote.nom.replaceAll(' ', '-')}`}
+          href={`/personnalites/${quote.prénom}-${quote.nom.replaceAll(' ', '-')}`}
+          className="relative inline-block group"
         >
-          <CardTitle className="text-lg font-semibold">{quote.prénom + ' ' + quote.nom}</CardTitle>
+          <CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 transition-colors duration-300 group-hover:text-neutral-600 dark:group-hover:text-neutral-400">
+            {quote.prénom + ' ' + quote.nom}
+          </CardTitle>
+          <span className="absolute left-1/2 bottom-0 w-0 h-[1px] bg-neutral-500/40 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
         </Link>
         <p className="text-sm text-muted-foreground">{quote.parti_politique.value} • {quote.fonction}</p>
       </CardHeader>
