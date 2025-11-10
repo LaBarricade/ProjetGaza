@@ -13,20 +13,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
-type SearchBarProps = {
+type TopBarProps = {
   onResults?: (results: Quote[] | null) => void; // facultatif
   onLoading?: (loading: boolean) => void;
 };
 
-export function SearchBar({ onResults, onLoading }: SearchBarProps) {
+export function TopBar({ onResults, onLoading }: TopBarProps) {
   const [query, setQuery] = useState("");
 
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/", label: "Citations" },
-    { href: "/personnalites", label: "Personnalités" },
+    { href: "/citations", label: "Citations" },
+    { href: "/personnalites", label: "Politiciens" },
+    { href: "/tags", label: "Tags" },
   ];
 
   useEffect(() => {
@@ -55,43 +57,44 @@ export function SearchBar({ onResults, onLoading }: SearchBarProps) {
   }, [query, onResults, onLoading]);
 
   return (
-    <div className="sticky top-0 w-full flex items-center gap-4 p-4 bg-white shadow-md z-50">
-      {/* NavItems (desktop only) */}
-      <div className="hidden md:flex gap-2">
+    <div className="sticky top-0 w-full flex items-center justify-between gap-4 bg-white shadow-md z-50">
+      {/* Logo + Titre */}
+      <div className="flex items-center gap-3 p-4">
+        {/* Logo placeholder */}
+
+        <Link href={'/'}>
+          <Image
+            src="/logo-with-text.png"
+            alt="Logo de La boussole de Gaza"
+            width={120}
+            height={50}
+          />
+        </Link>
+      </div>
+
+      {/* Navigation (desktop) */}
+      <div className="hidden md:flex items-center gap-3 ml-auto m-4">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Button
               key={item.href}
               asChild
-              variant={isActive ? "default" : "ghost"}
-              className="shrink-0"
+              variant="ghost"
+              className={`shrink-0 text-gray-700 border border-transparent hover:border-gray-300 hover:bg-transparent transition-colors duration-200 ${
+                isActive ? "font-semibold text-primary" : ""
+              }`}
             >
               <Link href={item.href}>{item.label}</Link>
             </Button>
           );
         })}
-      </div>
 
-      {/* Input (toujours centré) */}
-      {onResults && (
-        <div className="flex-1 flex justify-center">
-          <div className="relative w-full max-w-xs md:max-w-sm">
-            <Input
-              type="text"
-              placeholder="Rechercher"
-              className="pr-10"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
-          </div>
-        </div>
-      )}
-
-      {/* Wiki bouton (desktop) */}
-      <div className="ml-auto hidden md:block">
-        <Button asChild variant="outline" className="shrink-0">
+        <Button
+          asChild
+          variant="ghost"
+          className="shrink-0 text-gray-700 border border-transparent hover:border-gray-300 hover:bg-transparent transition-colors duration-200"
+        >
           <Link
             href="https://fr.wikipedia.org/wiki/G%C3%A9nocide_%C3%A0_Gaza"
             target="_blank"
@@ -101,8 +104,8 @@ export function SearchBar({ onResults, onLoading }: SearchBarProps) {
         </Button>
       </div>
 
-      {/* Dropdown menu (mobile only) */}
-      <div className="ml-auto md:hidden">
+      {/* Dropdown menu (mobile) */}
+      <div className="ml-auto md:hidden mr-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon">

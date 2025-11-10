@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SearchBar } from "@/app/search-bar";
+import { TopBar } from "@/app/top-bar";
 import { PersonalityList } from "@/components/list/personality-list";
 import { Quote } from "@/components/card";
 import { citationsByPersonality, Personality } from "@/lib/citations-group-by-personality";
@@ -77,7 +77,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <SearchBar onLoading={handleLoading}  onResults={handleResults} />
+      <TopBar onLoading={handleLoading}  onResults={handleResults} />
 
       <main className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
         {loading && (

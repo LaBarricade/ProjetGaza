@@ -4,7 +4,7 @@ import { Quote, QuoteCard } from "../card";
 
 function CitationCount({ totalCount }: { totalCount: number }) {
   return (
-    <h2 className="w-full text-3xl font-bold text-gray-800 my-4 px-8">
+    <h2 className="w-full text-3xl font-bold text-gray-800 mt-8 px-8">
       <CountUp end={totalCount} duration={1.2} /> citations
     </h2>
   )
@@ -24,7 +24,7 @@ export function QuoteList({
   return (
     <>
       {totalCount && <CitationCount totalCount={totalCount} />}
-      <div className="w-screen max-w-full mx-auto px-4 sm:px-8 columns-1 md:columns-3 gap-6 mb-6">
+      <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {quotes.map((q) => (
           <div key={q.id} className="mb-6 break-inside-avoid">
             <QuoteCard quote={q} />

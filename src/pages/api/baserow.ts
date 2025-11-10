@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const page = req.query.page ? Number(req.query.page) : 1;
   const size = req.query.size ? Number(req.query.size) : 20;
-  queryParams += `filters=${encodeURIComponent(JSON.stringify(filters))}&page=${page}&size=${size}`;
+  queryParams += `filters=${encodeURIComponent(JSON.stringify(filters))}&page=${page}&size=${size}&order_by=-date`;
 
   try {
     const response = await fetch(`${url}?user_field_names=true&${queryParams}`, {

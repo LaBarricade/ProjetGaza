@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchBar } from "@/app/search-bar";
+import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
 import { citationsByPersonality, Personality } from "@/lib/citations-group-by-personality";
 import { useParams } from "next/navigation";
@@ -174,7 +174,7 @@ export default function PersonalityPage() {
 
   return (
     <>
-      <SearchBar />
+      <TopBar />
       <div className="mx-auto p-6">
         {!imageUrlLoading ? (
           imageUrl && (

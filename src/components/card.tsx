@@ -59,9 +59,14 @@ export function QuoteCard({ quote }: { quote: Quote }) {
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition">
       <CardHeader>
         <Link
-          href={`/personnalites/${quote.prénom}-${quote.nom.replaceAll(' ', '-')}`}
+          href={`/personnalites/${quote.prénom}-${quote.nom?.replaceAll(' ', '-')}`}
           className="relative inline-block group"
         >
+          <div className="mb-4">
+            <span className="bg-primary/30 text-white font-medium px-2 py-0.5 rounded-full text-xs">
+              {quote.date}
+            </span>
+          </div>
           <CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 transition-colors duration-300 group-hover:text-neutral-600 dark:group-hover:text-neutral-400">
             {quote.prénom + ' ' + quote.nom}
           </CardTitle>
@@ -76,17 +81,16 @@ export function QuoteCard({ quote }: { quote: Quote }) {
         </blockquote>
 
         <div className="text-sm space-y-1">
-          <p><span className="font-medium">commune :</span> {quote.commune}</p>
+          {/* <p><span className="font-medium">commune :</span> {quote.commune}</p>
           <p><span className="font-medium">département :</span> {quote.département}</p>
-          <p><span className="font-medium">région :</span> {quote.région}</p>
-          <p><span className="font-medium">Date :</span> {quote.date}</p>
+          <p><span className="font-medium">région :</span> {quote.région}</p> */}
           {!!quote.tag.length && (
             <p>
-              <span className="font-medium">Tags :</span>{" "}
+              <span className="font-medium"></span>{" "}
               {quote.tag.map((tag) => (
                 <span
                   key={tag.id}
-                  className="bg-primary/10 text-primary px-2 py-0.5 mr-1 rounded-full text-xs"
+                  className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs"
                 >
                   {tag.value}
                 </span>
@@ -96,7 +100,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
         </div>
       </CardContent>
 
-      <CardFooter className="flex justify-between items-center">
+      <CardFooter className="flex justify-between items-end">
         <div className="flex flex-col items-center">
           {!imageUrlLoading ? (
             imageUrl && (
@@ -112,12 +116,12 @@ export function QuoteCard({ quote }: { quote: Quote }) {
           ) :
             <p>Chargement de l&apos;image...</p>
           }
-          <span className="text-xs text-muted-foreground">{quote.source?.value}</span>
+          <span className="text-xs text-muted-foreground">Source: {quote.source?.value}</span>
         </div>
         {quote.lien && (
           <Button asChild size="sm" variant="outline">
             <a href={quote.lien} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
-              Source <ExternalLink size={14} />
+              Voir <ExternalLink size={14} />
             </a>
           </Button>
         )}
