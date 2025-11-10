@@ -1,9 +1,8 @@
 'use client';
 
 import { Quote } from "@/components/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -21,7 +20,7 @@ type TopBarProps = {
 };
 
 export function TopBar({ onResults, onLoading }: TopBarProps) {
-  const [query, setQuery] = useState("");
+  const [query] = useState("");
 
   const pathname = usePathname();
 

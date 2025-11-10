@@ -22,7 +22,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [data, setData] = useState<BaserowData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [popularTags, setPopularTags] = useState(['déni de génocide', 'apartheid', 'complicité de crimes de guerre']);
+  const [popularTags] = useState(['déni de génocide', 'apartheid', 'complicité de crimes de guerre']);
 
   const fetchData = useCallback(async () => {
     try {
@@ -60,7 +60,7 @@ export default function Home() {
 
           <div className="flex flex-col justify-center items-center text-center">
             <h4 className="text-gray-600">Archive complète des déclarations politiques sur le conflit israélo-palestinien.</h4>
-            <h4 className="text-gray-600">Découvrez l'évolution des positions de vos élus dans le temps.</h4>
+            <h4 className="text-gray-600">Découvrez l&apos;évolution des positions de vos élus dans le temps.</h4>
           </div>
 
           <div className="flex w-full mt-4 justify-center">
@@ -107,7 +107,7 @@ export default function Home() {
                 <CountUp end={data?.count ?? 0} duration={1.2} />
               </div>
               <div className="text-center text-gray-500">
-                Jours d'archives
+                Jours d&apos;archives
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function Home() {
 
       <div className="p-4 bg-slate-700 text-white">
         <div className="flex flex-col justify-center items-center my-8">
-          <h2 className="text-3xl font-bold">Contribuez à l'archive</h2>
+          <h2 className="text-3xl font-bold">Contribuez à l&apos;archive</h2>
           <div className="w-full justify-center flex flex-wrap mt-4 gap-2">
             <p className="text-center max-w-2xl">
               Aidez-nous à enrichir cette archive en nous envoyant des déclarations politiques pertinentes. Votre contribution est précieuse pour documenter les positions des élus sur ce sujet crucial.
