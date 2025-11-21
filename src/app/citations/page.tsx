@@ -74,7 +74,12 @@ export default function Home() {
         {!filteredResults && data && data.results.length > 0 && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
 
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
-        {data && data.results.length === 0 && <p>Aucun résultat trouvé.</p>}
+        
+        {data && data.results.length === 0 && (
+          <div className="flex flex-1 items-center pt-16">
+            <p>Aucun résultat trouvé.</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ export function TopBar({ onResults, onLoading }: TopBarProps) {
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/actualités", label: "Actualités" },
+    { href: "/actualites", label: "Actualités" },
     { href: "/personnalites", label: "Politiciens" },
     { href: "/citations", label: "Citations" },
     { href: "https://baserow.io/form/f0E5WXs2bZZyKRfJIteDPHdv43QOH2BFNhjnNO4gQ6E", label: "Contribuer" },

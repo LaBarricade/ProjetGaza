@@ -2,35 +2,35 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { TopBar } from "@/app/top-bar";
-import { PersonalityList } from "@/components/list/personality-list";
-import { BaserowPersonalityData } from "../page";
-import { Quote } from "@/components/quote-card";
+import { NewsList } from "@/components/list/news-list";
 
-export type Personality = {
-  prénom: string;
-  nom: string;
-  fullName: string;
-  fullNameKebabLink: string;
-  partiPolitique?: string;
-  fonction?: string;
-  citations: Quote[];
+export type News = {
+  text: string;
+  date: string;
 };
 
-export default function Personalities() {
-  const [data, setData] = useState<BaserowPersonalityData | null>(null);
-  const [filteredResults] = useState<Personality[] | null>(null);
+type BaserowNewsData = {
+  count: number
+  next: null
+  previous: null
+  results: News[]
+}
+
+export default function News() {
+  const [data, setData] = useState<BaserowNewsData | null>(null);
+  const [filteredResults] = useState<News[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
 
   const fetchData = useCallback(async () => {
     try {
-      const personalitiesRes = await fetch(`/api/personalities`);
-      if (!personalitiesRes.ok) throw new Error("Erreur fetch API");
-      const personalities = await personalitiesRes.json();
-      setData(personalities);
+      const newsRes = await fetch(`/api/news`);
+      if (!newsRes.ok) throw new Error("Erreur fetch API");
+      const news = await newsRes.json();
+      setData(news);
 
-      return personalities
+      return news
     } catch (err) {
       console.error("Fetch failed:", err);
       setData(null);
@@ -57,8 +57,7 @@ export default function Personalities() {
           </div>
         )}
 
-        {!filteredResults && data && data.results.length > 0 && <PersonalityList personalities={data.results} />}
-
+        {!filteredResults && data && data.results.length > 0 && <NewsList news={data.results} />}
         {data && data.results.length === 0 && (
           <div className="flex flex-1 items-center h-full">
             <p>Aucun résultat trouvé.</p>
