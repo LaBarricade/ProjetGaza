@@ -64,7 +64,11 @@ export default function Home() {
       <TopBar onLoading={handleLoading} onResults={handleResults} />
 
       <div className="flex flex-col gap-[32px] row-start-2 justify-center sm:items-center m-4">
-        {loading && <p>Chargement des données...</p>}
+        {loading && (
+          <div className="flex flex-1 items-center pt-16">
+            <p>Chargement des données...</p>
+          </div>
+        )}
 
         {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
         {!filteredResults && data && data.results.length > 0 && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
