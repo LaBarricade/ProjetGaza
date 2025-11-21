@@ -1,41 +1,47 @@
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ExternalLink } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { getWikipediaImage } from "@/lib/wiki-img"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getWikipediaImage } from "@/lib/wiki-img";
 
 export type Quote = {
-  id: number
-  order: string
-  prénom: string
-  nom: string
-  commune: string
-  département: string
-  région: string
+  id: number;
+  order: string;
+  prénom: string;
+  nom: string;
+  commune: string;
+  département: string;
+  région: string;
   parti_politique: {
     color: string;
     id: number;
     value: string;
-  }
-  fonction: string
-  citation: string
-  date: string
+  };
+  fonction: string;
+  citation: string;
+  date: string;
   source: {
     color: string;
     id: number;
     value: string;
-  }
-  lien: string
+  };
+  lien: string;
   tag: {
     color: string;
     id: number;
     value: string;
-  }[]
-  collecteur: string
-  commentaire: string
-  est_publié: boolean
-}
+  }[];
+  collecteur: string;
+  commentaire: string;
+  est_publié: boolean;
+};
 
 export function QuoteCard({ quote }: { quote: Quote }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -58,21 +64,34 @@ export function QuoteCard({ quote }: { quote: Quote }) {
   return (
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition h-[500px] overflow-hidden flex flex-col">
       <CardHeader>
+        <div className="mb-4">
+          <span className="bg-primary/30 text-white font-medium px-2 py-0.5 rounded-full text-xs">
+            {quote.date}
+          </span>
+        </div>
         <Link
           href={`/personnalites/${quote.prénom} ${quote.nom}`}
-          className="relative inline-block group"
+          className="relative inline-block group -mx-2"
         >
-          <div className="mb-4">
-            <span className="bg-primary/30 text-white font-medium px-2 py-0.5 rounded-full text-xs">
-              {quote.date}
-            </span>
-          </div>
-          <CardTitle className="text-lg font-semibold text-neutral-800 dark:text-neutral-200 transition-colors duration-300 group-hover:text-neutral-600 dark:group-hover:text-neutral-400">
-            {quote.prénom + ' ' + quote.nom}
+          {/* Background simple */}
+          <span
+            className="absolute inset-0 rounded-lg bg-neutral-800/5 dark:bg-neutral-200/10
+               opacity-0 transition-opacity duration-200
+               group-hover:opacity-100"
+          ></span>
+
+          <CardTitle
+            className="relative px-2 py-1 rounded-lg
+               text-lg font-semibold text-neutral-800 dark:text-neutral-200
+               transition-colors duration-200
+               group-hover:text-neutral-600 dark:group-hover:text-neutral-400"
+          >
+            {quote.prénom + " " + quote.nom}
           </CardTitle>
-          <span className="absolute left-1/2 bottom-0 w-0 h-[1px] bg-neutral-500/40 transition-all duration-300 group-hover:w-full group-hover:left-0"></span>
         </Link>
-        <p className="text-sm text-muted-foreground">{quote.parti_politique.value} • {quote.fonction}</p>
+        <p className="text-sm text-muted-foreground">
+          {quote.parti_politique.value} • {quote.fonction}
+        </p>
       </CardHeader>
 
       <CardContent className="space-y-3 flex-1 overflow-hidden flex flex-col">
@@ -104,7 +123,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
         <div className="flex flex-col items-center">
           {!imageUrlLoading ? (
             imageUrl && (
-              <img 
+              <img
                 src={imageUrl}
                 alt={`${quote.source.value} logo`}
                 width={96}
@@ -113,19 +132,26 @@ export function QuoteCard({ quote }: { quote: Quote }) {
                 style={{ width: "100px", height: "auto" }}
               />
             )
-          ) :
+          ) : (
             <p>Chargement de l&apos;image...</p>
-          }
-          <span className="text-xs text-muted-foreground">Source: {quote.source?.value}</span>
+          )}
+          <span className="text-xs text-muted-foreground">
+            Source: {quote.source?.value}
+          </span>
         </div>
         {quote.lien && (
           <Button asChild size="sm" variant="outline">
-            <a href={quote.lien} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1">
+            <a
+              href={quote.lien}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1"
+            >
               Voir <ExternalLink size={14} />
             </a>
           </Button>
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }
