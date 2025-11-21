@@ -2,22 +2,20 @@
 
 import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
-import { citationsByPersonality, Personality } from "@/lib/citations-group-by-personality";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
-import { Quote } from "@/components/card";
+import { Quote } from "@/components/quote-card";
 import { LogoParti } from "@/components/logo/parti";
 import { getWikipediaImage } from "@/lib/wiki-img";
+import { Personality } from "../page";
 
 const logoCache: { [key: string]: string } = {}
 
 async function getPersonality(nom: string): Promise<Personality | null> {
-  const res = await fetch(`/api/baserow?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
+  const res = await fetch(`/api/personalities?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
   const data = await res.json();
 
-  if (!Array.isArray(data.results) || data.results.length === 0) return null;
-  
-  const personalities = citationsByPersonality(data.results)
+  const personalities = data.results
   if (!Array.isArray(personalities) || personalities.length === 0) return null;
 
   return personalities[0]

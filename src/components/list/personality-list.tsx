@@ -1,3 +1,4 @@
+import { Personality } from "@/app/personnalites/page";
 import {
   Table,
   TableBody,
@@ -6,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Personality } from "@/lib/citations-group-by-personality";
 import { useRouter } from "next/navigation";
 
 export function PersonalityList({
@@ -28,18 +28,20 @@ export function PersonalityList({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {personalities.map((p, index) => (
-            <TableRow
-              key={p.fullNameKebabLink}
-              className="hover:bg-muted/50 cursor-pointer transition-colors"
-              onClick={() => router.push(`/personnalites/${p.fullNameKebabLink}`)}
-            >
-              <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>{p.fullName}</TableCell>
-              <TableCell>{p.partiPolitique ?? "-"}</TableCell>
-              <TableCell>{p.fonction ?? "-"}</TableCell>
-            </TableRow>
-          ))}
+          {personalities.map((p, index) => {
+            return (
+              <TableRow
+                key={p.fullNameKebabLink}
+                className="hover:bg-muted/50 cursor-pointer transition-colors"
+                onClick={() => router.push(`/personnalites/${p.fullNameKebabLink}`)}
+              >
+                <TableCell className="font-medium">{index + 1}</TableCell>
+                <TableCell>{p.fullName}</TableCell>
+                <TableCell>{p.partiPolitique ?? "-"}</TableCell>
+                <TableCell>{p.fonction ?? "-"}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 

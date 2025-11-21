@@ -1,0 +1,61 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { baserowDefaultQueryFilters } from './baserow';
+import { Personality } from '@/app/personnalites/page';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const token = process.env.BASEROW_API_TOKEN;
+  const url = process.env.BASEROW_URL;
+
+  if (!token) {
+    return res.status(500).json({ error: 'Missing Baserow API token' });
+  }
+
+  const filters = baserowDefaultQueryFilters(req.query.search as string);
+  const queryParams = `filters=${encodeURIComponent(JSON.stringify(filters))}&order_by=-date`;
+
+  try {
+    const response = await fetch(`${url}?user_field_names=true&${queryParams}`, {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Failed to fetch Baserow data' });
+    }
+
+    const data = await response.json();
+
+    const map = new Map<string, Personality>();
+    
+    for (const quote of data.results) {
+      if (!quote.nom || !quote.prénom) continue
+  
+      const fullNameKebabLink = `${quote.prénom}-${quote.nom?.replaceAll(' ', '-')}`;
+      if (!fullNameKebabLink) continue
+  
+      if (!map.has(fullNameKebabLink)) {
+        map.set(fullNameKebabLink, {
+          nom: quote.nom,
+          prénom: quote.prénom,
+          fullName: `${quote.prénom} ${quote.nom}`,
+          fullNameKebabLink,
+          partiPolitique: quote.parti_politique.value,
+          fonction: quote.fonction,
+          citations: [quote],
+        });
+      } else {
+        map.get(fullNameKebabLink)!.citations.push(quote);
+      }
+    }
+
+    const dataRestult = {
+      results: Array.from(map.values()),
+      count: map.size,
+    }
+
+    res.status(200).json(dataRestult);
+  } catch (error) {
+    res.status(500).json({ error: 'Something went wrong', details: (error as Error).message });
+  }
+}

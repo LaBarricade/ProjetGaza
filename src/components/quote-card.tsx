@@ -56,7 +56,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
   }, [quote]);
 
   return (
-    <Card className="rounded-2xl shadow-md hover:shadow-lg transition">
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition h-[500px] overflow-hidden flex flex-col">
       <CardHeader>
         <Link
           href={`/personnalites/${quote.prénom}-${quote.nom?.replaceAll(' ', '-')}`}
@@ -75,8 +75,8 @@ export function QuoteCard({ quote }: { quote: Quote }) {
         <p className="text-sm text-muted-foreground">{quote.parti_politique.value} • {quote.fonction}</p>
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        <blockquote className="italic text-sm border-l-4 pl-3 border-primary">
+      <CardContent className="space-y-3 flex-1 overflow-hidden flex flex-col">
+        <blockquote className="italic text-sm border-l-4 px-4 pl-3 border-primary overflow-y-auto">
           {quote.citation}
         </blockquote>
 

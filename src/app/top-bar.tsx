@@ -1,6 +1,6 @@
 'use client';
 
-import { Quote } from "@/components/card";
+import { Quote } from "@/components/quote-card";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Link from "next/link";
@@ -25,9 +25,11 @@ export function TopBar({ onResults, onLoading }: TopBarProps) {
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/citations", label: "Citations" },
+    { href: "/actualités", label: "Actualités" },
     { href: "/personnalites", label: "Politiciens" },
-    { href: "/tags", label: "Tags" },
+    { href: "/citations", label: "Citations" },
+    { href: "https://baserow.io/form/f0E5WXs2bZZyKRfJIteDPHdv43QOH2BFNhjnNO4gQ6E", label: "Contribuer" },
+    { href: "/contact", label: "Contact" },
   ];
 
   useEffect(() => {
@@ -89,7 +91,7 @@ export function TopBar({ onResults, onLoading }: TopBarProps) {
           );
         })}
 
-        <Button
+        {/* <Button
           asChild
           variant="ghost"
           className="shrink-0 text-gray-700 border border-transparent hover:border-gray-300 hover:bg-transparent transition-colors duration-200"
@@ -100,7 +102,7 @@ export function TopBar({ onResults, onLoading }: TopBarProps) {
           >
             Documentation externe
           </Link>
-        </Button>
+        </Button> */}
       </div>
 
       {/* Dropdown menu (mobile) */}
@@ -127,14 +129,14 @@ export function TopBar({ onResults, onLoading }: TopBarProps) {
                 </DropdownMenuItem>
               );
             })}
-            <DropdownMenuItem asChild>
+            {/* <DropdownMenuItem asChild>
               <Link
                 href="https://fr.wikipedia.org/wiki/G%C3%A9nocide_%C3%A0_Gaza"
                 target="_blank"
               >
                 Documentation externe
               </Link>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

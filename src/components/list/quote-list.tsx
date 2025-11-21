@@ -1,6 +1,6 @@
 import { useEndReached } from "@/lib/use-reached-end";
 import CountUp from "react-countup";
-import { Quote, QuoteCard } from "../card";
+import { Quote, QuoteCard } from "../quote-card";
 
 function CitationCount({ totalCount }: { totalCount: number }) {
   return (

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TopBar } from "@/app/top-bar";
-import { Quote } from "@/components/card";
+import { Quote } from "@/components/quote-card";
 import { QuoteList } from "@/components/list/quote-list";
 
 export type BaserowData = {
