@@ -17,7 +17,7 @@ export const baserowDefaultQueryFilters = (search: string) => {
   let searchPersonalityFilters: BaserowFilter | null = null;
 
   if (search) {
-    const [firstName, name] = (search as string).split(" ");
+    const [firstName, name] = decodeURIComponent(search as string).split(" ");
 
     searchPersonalityFilters = {
       filter_type: "AND",

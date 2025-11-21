@@ -22,7 +22,7 @@ export function QuoteList({
   const loaderRef = useEndReached(onEndReached);
 
   return (
-    <>
+    <div className="w-full max-w-screen-lg p-4 mx-auto mt-6 space-y-6">
       {totalCount && <CitationCount totalCount={totalCount} />}
       <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {quotes.map((q) => (
@@ -33,6 +33,6 @@ export function QuoteList({
       </div>
 
       {onEndReached && <div ref={loaderRef} className="h-6" aria-hidden />}
-    </>
+    </div>
   );
 }

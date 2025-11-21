@@ -59,7 +59,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
     <Card className="rounded-2xl shadow-md hover:shadow-lg transition h-[500px] overflow-hidden flex flex-col">
       <CardHeader>
         <Link
-          href={`/personnalites/${quote.prénom}-${quote.nom?.replaceAll(' ', '-')}`}
+          href={`/personnalites/${quote.prénom} ${quote.nom}`}
           className="relative inline-block group"
         >
           <div className="mb-4">

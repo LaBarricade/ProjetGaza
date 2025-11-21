@@ -8,11 +8,12 @@ import { Quote } from "@/components/quote-card";
 import { LogoParti } from "@/components/logo/parti";
 import { getWikipediaImage } from "@/lib/wiki-img";
 import { Personality } from "../page";
+import { Footer } from "@/app/footer";
 
 const logoCache: { [key: string]: string } = {}
 
 async function getPersonality(nom: string): Promise<Personality | null> {
-  const res = await fetch(`/api/personalities?search=${encodeURIComponent(nom).replaceAll('-', ' ')}`);
+  const res = await fetch(`/api/personalities?search=${encodeURIComponent(nom)}`);
   const data = await res.json();
 
   const personalities = data.results
@@ -210,6 +211,7 @@ export default function PersonalityPage() {
           {personality.citations.length > 0 && <QuoteList quotes={personality.citations} />}
         </div>
       </div>
+      <Footer />
     </>
   );
 }

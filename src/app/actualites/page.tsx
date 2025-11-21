@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { TopBar } from "@/app/top-bar";
 import { NewsList } from "@/components/list/news-list";
+import { Footer } from "../footer";
 
 export type News = {
   text: string;
@@ -64,6 +65,8 @@ export default function News() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

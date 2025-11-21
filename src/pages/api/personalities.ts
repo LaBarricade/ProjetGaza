@@ -31,21 +31,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     for (const quote of data.results) {
       if (!quote.nom || !quote.prénom) continue
   
-      const fullNameKebabLink = `${quote.prénom}-${quote.nom?.replaceAll(' ', '-')}`;
-      if (!fullNameKebabLink) continue
+      const fullName = `${quote.prénom} ${quote.nom}`;
+      if (!fullName) continue
   
-      if (!map.has(fullNameKebabLink)) {
-        map.set(fullNameKebabLink, {
+      if (!map.has(fullName)) {
+        map.set(fullName, {
           nom: quote.nom,
           prénom: quote.prénom,
-          fullName: `${quote.prénom} ${quote.nom}`,
-          fullNameKebabLink,
+          fullName,
           partiPolitique: quote.parti_politique.value,
           fonction: quote.fonction,
           citations: [quote],
         });
       } else {
-        map.get(fullNameKebabLink)!.citations.push(quote);
+        map.get(fullName)!.citations.push(quote);
       }
     }
 

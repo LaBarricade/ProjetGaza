@@ -5,12 +5,12 @@ import { TopBar } from "@/app/top-bar";
 import { PersonalityList } from "@/components/list/personality-list";
 import { BaserowPersonalityData } from "../page";
 import { Quote } from "@/components/quote-card";
+import { Footer } from "../footer";
 
 export type Personality = {
   prénom: string;
   nom: string;
   fullName: string;
-  fullNameKebabLink: string;
   partiPolitique?: string;
   fonction?: string;
   citations: Quote[];
@@ -65,6 +65,8 @@ export default function Personalities() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

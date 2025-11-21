@@ -5,7 +5,7 @@ export function NewsList({ news }: { news: News[] }) {
   return (
     <div className="w-full max-w-screen-lg p-4 mx-auto mt-6 space-y-6">
       {news.map((item, index) => (
-        <Card 
+        <Card
           key={index} 
           className="border border-gray-200 hover:shadow-lg transition-shadow duration-300"
         >

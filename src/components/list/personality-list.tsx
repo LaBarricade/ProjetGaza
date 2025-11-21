@@ -31,9 +31,9 @@ export function PersonalityList({
           {personalities.map((p, index) => {
             return (
               <TableRow
-                key={p.fullNameKebabLink}
+                key={p.fullName}
                 className="hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => router.push(`/personnalites/${p.fullNameKebabLink}`)}
+                onClick={() => router.push(`/personnalites/${p.fullName}`)}
               >
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{p.fullName}</TableCell>

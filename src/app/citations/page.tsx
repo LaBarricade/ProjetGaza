@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { TopBar } from "@/app/top-bar";
 import { Quote } from "@/components/quote-card";
 import { QuoteList } from "@/components/list/quote-list";
+import { Footer } from "../footer";
 
 export type BaserowData = {
   count: number
@@ -60,12 +61,12 @@ export default function Home() {
   }, [fetchData]);
 
   return (
-    <div className="font-[family-name:var(--font-geist-sans)]">
+    <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
       <TopBar onLoading={handleLoading} onResults={handleResults} />
 
-      <div className="flex flex-col gap-[32px] row-start-2 justify-center sm:items-center m-4">
+      <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
         {loading && (
-          <div className="flex flex-1 items-center pt-16">
+          <div className="flex flex-1 items-center h-full">
             <p>Chargement des données...</p>
           </div>
         )}
@@ -76,11 +77,13 @@ export default function Home() {
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
         
         {data && data.results.length === 0 && (
-          <div className="flex flex-1 items-center pt-16">
+          <div className="flex flex-1 items-center h-full">
             <p>Aucun résultat trouvé.</p>
           </div>
         )}
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
