@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Projet Gaza",
+  title: "La boussole Gaza",
   description: "Regroupement de citations au sujet du génocide à Gaza",
 };
 

@@ -13,7 +13,10 @@ export function NewsList({ news }: { news: News[] }) {
             <span className="text-sm text-gray-500">{new Date(item.date).toLocaleDateString()}</span>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-800 leading-relaxed">{item.text}</p>
+            <p
+              className="text-gray-800 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: item.text }}
+            ></p>
           </CardContent>
           <CardFooter className="text-right">
             <span className="text-xs text-gray-400">Actualité #{index + 1}</span>
