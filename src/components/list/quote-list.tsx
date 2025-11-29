@@ -14,10 +14,12 @@ export function QuoteList({
   quotes,
   totalCount,
   onEndReached,
+  hidePersonality,
 }: {
   quotes: Quote[];
   onEndReached?: () => void;
   totalCount?: number;
+  hidePersonality?: boolean;
 }) {
   const loaderRef = useEndReached(onEndReached);
 
@@ -27,7 +29,7 @@ export function QuoteList({
       <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {quotes.map((q) => (
           <div key={q.id} className="mb-6 break-inside-avoid">
-            <QuoteCard quote={q} />
+            <QuoteCard quote={q} hidePersonality={hidePersonality} />
           </div>
         ))}
       </div>

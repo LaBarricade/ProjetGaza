@@ -175,32 +175,35 @@ export default function PersonalityPage() {
     <>
       <TopBar />
       <div className="mx-auto p-6">
-        {!imageUrlLoading ? (
-          imageUrl && (
-            <img
-              src={imageUrl}
-              alt={`${personality.fullName} portrait`}
-              width={96}
-              height={96}
-              className="mb-4 object-cover rounded-full w-24 h-auto"
-              style={{ width: "100px", height: "auto" }}
-            />
-          )
-        ) :
-          <p>Chargement de l&apos;image...</p>
-        }
-        <h1 className="text-3xl font-bold mb-4">{personality.fullName}</h1>
-        <div className="space-y-2 text-gray-700">
-          {personality.partiPolitique && (<div className="flex items-center">
-            <span className="font-semibold">Parti politique :</span>
-            <span className="ml-4">
-              <LogoParti parti={personality.partiPolitique} />
-            </span>
-          </div>)
+        <div className="flex flex-row">
+          {!imageUrlLoading ? (
+            imageUrl && (
+              <img
+                src={imageUrl}
+                alt={`${personality.fullName} portrait`}
+                width={96}
+                height={96}
+                className="mb-4 object-cover rounded-full w-24 h-auto"
+                style={{ width: "100px", height: "auto" }}
+              />
+            )
+          ) :
+            <p>Chargement de l&apos;image...</p>
           }
-          <p><span className="font-semibold">Fonction :</span> {personality.fonction}</p>
+          <div className="ml-8">
+            <h1 className="text-3xl font-bold mb-4">{personality.fullName}</h1>
+            <div className="space-y-2 text-gray-700">
+              {personality.partiPolitique && (<div className="flex items-center">
+                <span className="font-semibold">Parti politique :</span>
+                <span className="ml-4">
+                  <LogoParti parti={personality.partiPolitique} />
+                </span>
+              </div>)
+              }
+              <p><span className="font-semibold">Fonction :</span> {personality.fonction}</p>
+            </div>
+          </div>
         </div>
-
         {/* Timeline */}
         {personality.citations.length > 0 && (
           <div ref={timelineRef} style={{ width: "100%", height: "500px" }} />
@@ -208,7 +211,7 @@ export default function PersonalityPage() {
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Citations</h2>
-          {personality.citations.length > 0 && <QuoteList quotes={personality.citations} />}
+          {personality.citations.length > 0 && <QuoteList quotes={personality.citations} hidePersonality={true} />}
         </div>
       </div>
       <Footer />
