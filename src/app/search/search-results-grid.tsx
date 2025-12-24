@@ -48,6 +48,7 @@ import { PoliticianCard } from '@/components/politician-card';
 import { Quote, QuoteCard } from '@/components/quote-card';
 import { Personality } from '../personnalites/page';
 import  ScrollAreaComponent from '@/components/ui/scroll-area';
+import { Quote as QuoteIcon, UserRound } from 'lucide-react';
 
 interface SearchResultsGridProps {
   results: (Personality | Quote)[];
@@ -91,10 +92,10 @@ export function SearchResultsGrid({
   // When type is '', show both politicians (horizontal scroll) and quotes (grid)
   if (type === '') {
     return (
-      <div className="space-y-8">
+      <div className="space-y-12">
         {politicians.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Politiciens</h2>
+            <h2 className="text-xl flex items-center gap-2 font-semibold"><UserRound size={22} stroke='#636AE8' />Politiciens</h2>
             <ScrollAreaComponent>
               <div className="flex gap-4 pb-4">
                 {politicians.map((politician) => (
@@ -110,7 +111,7 @@ export function SearchResultsGrid({
 
         {quotes.length > 0 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Citations</h2>
+            <h2 className="text-xl font-semibold flex items-center gap-2"><QuoteIcon size={22} stroke='#636AE8'  />Citations</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {quotes.map((quote) => (
                 <QuoteCard key={quote.id} quote={quote} />

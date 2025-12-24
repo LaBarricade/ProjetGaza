@@ -1,5 +1,5 @@
 import { Input } from '@/components/ui/input';
-import { X } from 'lucide-react';
+import { Quote, X } from 'lucide-react';
 
 interface QuoteFilterProps {
   value: string[];
@@ -13,10 +13,10 @@ export function QuoteFilter({ value, onChange }: QuoteFilterProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold text-sm">Recherche de citations</h3>
+      <h3 className="font-semibold text-md flex items-center justify-start gap-2"><Quote size={18} />Citation</h3>
       <div className="relative">
         <Input
-          placeholder="Rechercher des citations..."
+          placeholder="Rechercher par citation..."
           value={value[0] || ''}
           onChange={(e) => handleInputChange(e.target.value)}
           className="h-9 pr-8"

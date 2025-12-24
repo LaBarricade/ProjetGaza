@@ -7,6 +7,7 @@ import { TagFilter } from './tag-filter';
 import { QuoteFilter } from './quote-filter';
 import { Personality, Tag as TagType } from '../personnalites/page';
 import { AnimatedTabs, AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
+import { Funnel } from 'lucide-react';
 
 interface FilterSidebarProps {
   filters: SearchFilters;
@@ -45,7 +46,7 @@ export function FilterSidebar({
     <div className="w-80 border-r h-full overflow-y-auto bg-background">
       <div className="sticky top-0 bg-background z-10 p-6 border-b">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="font-semibold text-lg">Filtres</h2>
+          <h2 className="font-semibold flex items-center gap-2 text-xl"><Funnel size={20} />Filtres</h2>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={onClear}>
               Effacer tout

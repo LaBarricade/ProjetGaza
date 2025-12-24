@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
-import { X } from 'lucide-react';
+import { UserRound, X } from 'lucide-react';
 import { Personality } from '../personnalites/page';
+import { Tag } from '@/components/ui/tag';
 
 interface PoliticianFilterProps {
   selected: number[];
@@ -50,11 +51,11 @@ export function PoliticianFilter({
 
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold text-sm">Politiciens</h3>
+      <h3 className="font-semibold text-md flex items-center justify-start gap-2"><UserRound size={18} />Politicien</h3>
       <div className="relative">
         <Input
           ref={inputRef}
-          placeholder="Rechercher des politiciens..."
+          placeholder="Rechercher par politicien..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -94,18 +95,27 @@ export function PoliticianFilter({
           {selected.map((id) => {
             const politician = availablePoliticians.find((p) => Number(p.id) === id);
             return (
-              <div
-                key={id}
-                className="flex items-center gap-2 bg-black text-white px-3 py-1 rounded-full text-xs"
-              >
+              // <div
+              //   key={id}
+              //   className="flex items-center gap-2 bg-black text-white px-3 py-1 rounded-full text-xs"
+              // >
+              //   {politician?.prénom} {politician?.nom}
+              //   <button
+              //     onClick={() => togglePolitician(id)}
+              //     className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
+              //   >
+              //     <X className="w-3 h-3" />
+              //   </button>
+              // </div>
+              <Tag key={id} size='sm' variant='solid' className='flex items-center gap-2'>
                 {politician?.prénom} {politician?.nom}
-                <button
-                  onClick={() => togglePolitician(id)}
-                  className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
+                 <button
+                   onClick={() => togglePolitician(id)}
+                   className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
+                 >
+                   <X className="w-3 h-3" />
+                 </button>
+              </Tag>
             );
           })}
         </div>

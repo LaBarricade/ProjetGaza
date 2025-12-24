@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Personality } from "./personnalites/page";
 import { Footer } from "./footer";
+import { useRouter } from "next/navigation";
 
 export type BaserowData = {
   count: number
@@ -31,6 +32,7 @@ export type BaserowQuoteData = {
 }
 
 export default function Home() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [data, setData] = useState<BaserowData | null>(null);
   const [personalities, setPersonalities] = useState<BaserowPersonalityData | null>(null);
@@ -61,6 +63,19 @@ export default function Home() {
     fetchData();
   }, [fetchData]);
 
+  //Search functionality
+    const handleSearch = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  }, [query, router]);
+
+  const handleTagClick = useCallback((tag: string) => {
+    router.push(`/search?tag=${encodeURIComponent(tag)}`);
+  }, [router]);
+
+
   return (
     <div className="font-[family-name:var(--font-geist-sans)]">
       <TopBar />
@@ -81,7 +96,7 @@ export default function Home() {
             <h4 className="text-gray-600">Découvrez l&apos;évolution des positions de vos élus dans le temps en fonction de leurs déclarations et de leurs votes.</h4>
           </div>
 
-          <div className="flex w-full mt-4 justify-center">
+          <form onSubmit={handleSearch} className="flex w-full mt-4 justify-center">
             <div className="relative w-full md:max-w-md">
               <Input
                 type="text"
@@ -90,9 +105,15 @@ export default function Home() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+                        <button 
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-primary transition-colors"
+              >
+                <Search className="h-5 w-5 text-gray-500 hover:text-primary" />
+              </button>
+              {/* <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" /> */}
             </div>
-          </div>
+          </form>
 
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <div className="min-w-1/3 flex-1 flex flex-col justify-center items-center bg-white rounded-sm p-4">
@@ -155,6 +176,7 @@ export default function Home() {
             {popularTags.map((tag) => (
               <span
                 key={tag}
+                onClick={() => handleTagClick(tag)}
                 className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs"
               >
                 {tag}

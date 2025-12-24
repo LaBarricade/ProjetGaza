@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import  ScrollAreaComponent  from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { X } from 'lucide-react';
+import { Tag as TagIcon } from 'lucide-react';
 import { Tag } from '@/components/ui/tag';
 import { Tag as TagType } from '../personnalites/page';
+
 
 
 interface TagFilterProps {
@@ -47,9 +49,9 @@ export function TagFilter({
 
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold text-sm">Tags</h3>
+      <h3 className="font-semibold flex items-center gap-2 justify-start text-md"><TagIcon size={18} />Tags</h3>
       <Input
-        placeholder="Search tags..."
+        placeholder="Rechercher par tags..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="h-9"
@@ -87,7 +89,7 @@ export function TagFilter({
               //     <X className="w-3 h-3" />
               //   </button>
               // </div>
-              <Tag key={tag} className={getTagColorCn(availableTags.find(t => t.value === tag)!)} size='md' variant='soft'>{tag}</Tag>
+              <Tag key={tag} className={getTagColorCn(availableTags.find(t => t.value === tag)!)} size='md' variant='outline'>{tag}</Tag>
             ))}
           </div>
           <Tabs

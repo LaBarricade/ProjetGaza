@@ -1,6 +1,6 @@
 "use client"
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FilterSidebar } from './filter-sidebar';
 import { SearchResultsGrid } from './search-results-grid';
 import { useSearchFilters } from './useSearchFilters';
@@ -10,6 +10,7 @@ import { Personality, Tag } from '../personnalites/page';
 import { getPersonalities } from '@/repositories/personalities';
 import { getQuotes } from '@/repositories/quotes';
 import { TopBar } from '../top-bar';
+import { Search } from 'lucide-react';
 
 const CANONICAL_FUNCTIONS = [
   "Président de la République",
@@ -40,11 +41,13 @@ const normalizeFunction = (fonction: string): string => {
 
 export default function SearchPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { filters, updateFilter, clearFilters } = useSearchFilters();
   const [loading, setLoading] = useState(true);
   const [baseFilterType, setBaseFilterType] = useState<'' | 'politicians' | 'quotes' | 'tags'>('');
   const [personalitiesList, setPersonalitiesList] = useState<Personality[]>([]);
   const [quotesList, setQuotesList] = useState<Quote[]>([]);
+  const [initialized, setInitialized] = useState(false);
 
   const AVAILABLE_FUNCTIONS = useMemo(() => {
     const functionsSet = new Set<string>();
@@ -93,6 +96,26 @@ export default function SearchPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+    // Initialize filters from URL parameters
+  useEffect(() => {
+    if (loading || initialized) return;
+
+    const q = searchParams?.get('q');
+    const tag = searchParams?.get('tag');
+
+    if (q) {
+      // Search in quote text
+      updateFilter('quotes', [q]);
+      setBaseFilterType('quotes');
+    } else if (tag) {
+      // Search by tag
+      updateFilter('tags', [tag]);
+      setBaseFilterType('tags');
+    }
+
+    setInitialized(true);
+  }, [searchParams, loading, initialized, updateFilter]);
 
   // Filter results based on active filters and base filter type
   const results = useMemo(() => {
@@ -214,7 +237,7 @@ export default function SearchPage() {
         <div className="flex-1 overflow-auto">
           <div className="p-8">
             <div className="mb-6">
-              <h1 className="text-3xl font-bold mb-2">Résultats de recherche</h1>
+              <h1 className="text-3xl font-bold flex items-center gap-3 mb-2"><Search size={35} stroke='#636AE8' strokeWidth={2}/>Résultats de la recherche</h1>
               <p className="text-muted-foreground">
                 {resultsCount} {resultLabel}
               </p>
