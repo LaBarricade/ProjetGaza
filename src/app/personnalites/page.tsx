@@ -8,13 +8,23 @@ import { Quote } from "@/components/quote-card";
 import { Footer } from "../footer";
 
 export type Personality = {
+  id?: number;
   prénom: string;
   nom: string;
   fullName: string;
   partiPolitique?: string;
   fonction?: string;
   citations: Quote[];
+  tag?: Tag[];
 };
+
+export type Tag = {
+  id?: number;
+  value: string;
+  color: string;
+}
+
+
 
 export default function Personalities() {
   const [data, setData] = useState<BaserowPersonalityData | null>(null);

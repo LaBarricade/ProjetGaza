@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SearchFilters } from '@/types/search';
+import { SearchFilters } from './search';
 
 const initialFilters: SearchFilters = {
   politicians: [],
@@ -9,9 +9,27 @@ const initialFilters: SearchFilters = {
   quotes: [],
 };
 
+/**
+ * Hook for managing search filters.
+ *
+ * @returns {
+ *   filters: Current search filters.
+ *   updateFilter: Update a single filter.
+ *   addFilter: Add a value to a filter.
+ *   addFilterMultiple: Add a list of values to a filter.
+ *   removeFilter: Remove a value from a filter.
+ *   clearFilters: Clear all filters.
+ *   toggleFilter: Toggle a value in a filter.
+ * }
+ */
 export function useSearchFilters() {
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 
+  /**
+   * Update a single filter.
+   * @param key The key of the filter to update.
+   * @param value The new value of the filter.
+   */
   const updateFilter = (key: keyof SearchFilters, value: any) => {
     setFilters((prev) => ({
       ...prev,
@@ -19,31 +37,64 @@ export function useSearchFilters() {
     }));
   };
 
-  const addFilter = (key: keyof SearchFilters, value: string) => {
+  /**
+   * Add a value to a filter.
+   * @param key The key of the filter to add to.
+   * @param value The value to add to the filter.
+   */
+  const addFilter = (key: keyof SearchFilters, value: number) => {
     setFilters((prev) => ({
       ...prev,
       [key]: Array.isArray(prev[key])
-        ? [...(prev[key] as string[]), value]
+        ? [...(prev[key] as number[]), value]
         : prev[key],
     }));
   };
 
-  const removeFilter = (key: keyof SearchFilters, value: string) => {
+  /**
+   * Add a list of values to a filter.
+   * @param key The key of the filter to add to.
+   * @param values The list of values to add to the filter.
+   */
+  const addFilterMultiple = (key: keyof SearchFilters, values: number[]) => {
     setFilters((prev) => ({
       ...prev,
       [key]: Array.isArray(prev[key])
-        ? (prev[key] as string[]).filter((item) => item !== value)
+        ? [...(prev[key] as number[]), ...values]
+        : [...values],
+    }));
+  };
+
+
+  /**
+   * Remove a value from a filter.
+   * @param key The key of the filter to remove from.
+   * @param value The value to remove from the filter.
+   */
+  const removeFilter = (key: keyof SearchFilters, value: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: Array.isArray(prev[key])
+        ? (prev[key] as number[]).filter((item) => item !== value)
         : prev[key],
     }));
   };
 
+  /**
+   * Clear all filters.
+   */
   const clearFilters = () => {
     setFilters(initialFilters);
   };
 
-  const toggleFilter = (key: keyof SearchFilters, value: string) => {
+  /**
+   * Toggle a value in a filter.
+   * @param key The key of the filter to toggle.
+   * @param value The value to toggle in the filter.
+   */
+  const toggleFilter = (key: keyof SearchFilters, value: number) => {
     setFilters((prev) => {
-      const current = prev[key] as string[];
+      const current = prev[key] as number[];
       return {
         ...prev,
         [key]: current.includes(value)
@@ -53,5 +104,13 @@ export function useSearchFilters() {
     });
   };
 
-  return { filters, updateFilter, addFilter, removeFilter, clearFilters, toggleFilter };
-}
+  return {
+    filters,
+    updateFilter,
+    addFilter,
+    addFilterMultiple,
+    removeFilter,
+    clearFilters,
+    toggleFilter,
+  }
+};

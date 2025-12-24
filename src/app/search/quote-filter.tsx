@@ -13,10 +13,10 @@ export function QuoteFilter({ value, onChange }: QuoteFilterProps) {
 
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold text-sm">Search Quotes</h3>
+      <h3 className="font-semibold text-sm">Recherche de citations</h3>
       <div className="relative">
         <Input
-          placeholder="Search quote text..."
+          placeholder="Rechercher des citations..."
           value={value[0] || ''}
           onChange={(e) => handleInputChange(e.target.value)}
           className="h-9 pr-8"

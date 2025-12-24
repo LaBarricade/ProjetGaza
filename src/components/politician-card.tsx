@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { MessageCircle, Tag } from 'lucide-react';
-import { Politician } from '../app/search/search';
 import Link from 'next/link';
+import { Personality } from '@/app/personnalites/page';
 
 interface PoliticianCardProps {
-  politician: Politician;
+  politician: Personality;
 }
 
 export function PoliticianCard({ politician }: PoliticianCardProps) {
@@ -15,27 +15,27 @@ export function PoliticianCard({ politician }: PoliticianCardProps) {
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h3 className="font-semibold text-lg truncate">{politician.name}</h3>
-              {politician.function && (
-                <p className="text-sm text-muted-foreground">{politician.function}</p>
+              <h3 className="font-semibold text-lg truncate">{politician.prénom} {politician.nom}</h3>
+              {politician.fonction && (
+                <p className="text-sm text-muted-foreground">{politician.fonction}</p>
               )}
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          {politician.party && (
+          {politician.partiPolitique && (
             <div>
-              <Badge variant="secondary">{politician.party}</Badge>
+              <Badge variant="secondary">{politician.partiPolitique}</Badge>
             </div>
           )}
           <div className="flex gap-4 text-sm">
             <div className="flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">{politician.quotesCount} quotes</span>
+              <span className="text-muted-foreground">{politician.citations.length ?? 0} quotes</span>
             </div>
             <div className="flex items-center gap-2">
               <Tag className="w-4 h-4 text-muted-foreground" />
-              <span className="text-muted-foreground">{politician.tagsCount} tags</span>
+              <span className="text-muted-foreground">{politician?.tag?.length} tags</span>
             </div>
           </div>
         </CardContent>

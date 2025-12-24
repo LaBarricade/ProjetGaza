@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { baserowDefaultQueryFilters } from './baserow';
 import { Personality } from '@/app/personnalites/page';
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const token = process.env.BASEROW_API_TOKEN;
   const url = process.env.BASEROW_URL;
@@ -36,12 +37,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
       if (!map.has(fullName)) {
         map.set(fullName, {
+          id: quote.id,
           nom: quote.nom,
           prénom: quote.prénom,
           fullName,
           partiPolitique: quote.parti_politique.value,
           fonction: quote.fonction,
           citations: [quote],
+          tag: quote.tag.map((tag: {id: number, value: string, color: string}) => tag) || [],
         });
       } else {
         map.get(fullName)!.citations.push(quote);

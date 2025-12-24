@@ -30,6 +30,7 @@ export function TopBar({ onResults, onLoading }: TopBarProps) {
     { href: "/citations", label: "Citations" },
     { href: "https://baserow.io/form/f0E5WXs2bZZyKRfJIteDPHdv43QOH2BFNhjnNO4gQ6E", label: "Contribuer" },
     { href: "/contact", label: "Contact" },
+    { href: "/search", label: "Recherche" },
   ];
 
   useEffect(() => {

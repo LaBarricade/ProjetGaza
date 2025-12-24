@@ -5,24 +5,30 @@ import { PoliticianFilter } from './politician-filter';
 import { FunctionFilter } from './function-filter';
 import { TagFilter } from './tag-filter';
 import { QuoteFilter } from './quote-filter';
+import { Personality, Tag as TagType } from '../personnalites/page';
+import { AnimatedTabs, AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
 
 interface FilterSidebarProps {
   filters: SearchFilters;
+  onBaseFilterTypeChange: (type: '' | 'politicians' | 'quotes' | 'tags') => void;  
+  baseFilterType: '' | 'politicians' | 'quotes' | 'tags';
   onFiltersChange: {
-    politicians: (selected: string[]) => void;
+    politicians: (selected: number[]) => void;
     functions: (selected: string[]) => void;
     tags: (selected: string[]) => void;
     tagResultType: (type: 'politicians' | 'quotes') => void;
     quotes: (selected: string[]) => void;
   };
   onClear: () => void;
-  availablePoliticians: { id: string; name: string }[];
+  availablePoliticians: Personality[];
   availableFunctions: string[];
-  availableTags: string[];
+  availableTags: TagType[];
 }
 
 export function FilterSidebar({
   filters,
+  onBaseFilterTypeChange,
+  baseFilterType,
   onFiltersChange,
   onClear,
   availablePoliticians,
@@ -36,42 +42,92 @@ export function FilterSidebar({
     filters.quotes.length > 0;
 
   return (
-    <div className="w-64 border-r h-full overflow-y-auto p-4">
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="font-semibold text-lg">Filters</h2>
+    <div className="w-80 border-r h-full overflow-y-auto bg-background">
+      <div className="sticky top-0 bg-background z-10 p-6 border-b">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-semibold text-lg">Filtres</h2>
           {hasActiveFilters && (
             <Button variant="ghost" size="sm" onClick={onClear}>
-              Clear
+              Effacer tout
             </Button>
           )}
         </div>
-        <Separator />
 
-        <PoliticianFilter
-          selected={filters.politicians}
-          onChange={onFiltersChange.politicians}
-          availablePoliticians={availablePoliticians}
-        />
-        <Separator />
+        <AnimatedTabs 
+          value={baseFilterType} 
+          onValueChange={(value) => onBaseFilterTypeChange(value as '' | 'politicians' | 'quotes' | 'tags')}
+        >
+          <AnimatedTabsList className="w-full grid grid-cols-4">
+            <AnimatedTabsTrigger value="" className="text-xs">Tout</AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="politicians" className="text-xs">Politiciens</AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="quotes" className="text-xs">Citations</AnimatedTabsTrigger>
+            <AnimatedTabsTrigger value="tags" className="text-xs">Tags</AnimatedTabsTrigger>
+          </AnimatedTabsList>
+        </AnimatedTabs>
+      </div>
 
-        <FunctionFilter
-          selected={filters.functions}
-          onChange={onFiltersChange.functions}
-          availableFunctions={availableFunctions}
-        />
-        <Separator />
+      <div className="p-6 space-y-6">
+        {baseFilterType === '' && (
+          <>
+            <PoliticianFilter
+              selected={filters.politicians}
+              onChange={onFiltersChange.politicians}
+              availablePoliticians={availablePoliticians}
+            />
+            <Separator />
+            <FunctionFilter
+              selected={filters.functions}
+              onChange={onFiltersChange.functions}
+              availableFunctions={availableFunctions}
+            />
+            <Separator />
+            <TagFilter
+              selected={filters.tags}
+              onChange={onFiltersChange.tags}
+              resultType={filters.tagResultType}
+              onResultTypeChange={onFiltersChange.tagResultType}
+              availableTags={availableTags}
+            />
+            <Separator />
+            <QuoteFilter 
+              value={filters.quotes} 
+              onChange={onFiltersChange.quotes} 
+            />
+          </>
+        )}
 
-        <TagFilter
-          selected={filters.tags}
-          onChange={onFiltersChange.tags}
-          resultType={filters.tagResultType}
-          onResultTypeChange={onFiltersChange.tagResultType}
-          availableTags={availableTags}
-        />
-        <Separator />
+        {baseFilterType === 'politicians' && (
+          <>
+            <PoliticianFilter
+              selected={filters.politicians}
+              onChange={onFiltersChange.politicians}
+              availablePoliticians={availablePoliticians}
+            />
+            <Separator />
+            <FunctionFilter
+              selected={filters.functions}
+              onChange={onFiltersChange.functions}
+              availableFunctions={availableFunctions}
+            />
+          </>
+        )}
 
-        <QuoteFilter value={filters.quotes} onChange={onFiltersChange.quotes} />
+        {baseFilterType === 'quotes' && (
+          <QuoteFilter 
+            value={filters.quotes} 
+            onChange={onFiltersChange.quotes} 
+          />
+        )}
+
+        {baseFilterType === 'tags' && (
+          <TagFilter
+            selected={filters.tags}
+            onChange={onFiltersChange.tags}
+            resultType={filters.tagResultType}
+            onResultTypeChange={onFiltersChange.tagResultType}
+            availableTags={availableTags}
+          />
+        )}
       </div>
     </div>
   );

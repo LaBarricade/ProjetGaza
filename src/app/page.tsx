@@ -25,6 +25,11 @@ export type BaserowPersonalityData = {
   results: Personality[]
 }
 
+export type BaserowQuoteData = {
+  count: number
+  results: Quote[]
+}
+
 export default function Home() {
   const [query, setQuery] = useState("");
   const [data, setData] = useState<BaserowData | null>(null);

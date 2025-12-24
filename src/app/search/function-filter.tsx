@@ -21,8 +21,8 @@ export function FunctionFilter({
 
   return (
     <div className="space-y-3">
-      <h3 className="font-semibold text-sm">Function</h3>
-      <div className="h-40 border rounded-md p-3">
+      <h3 className="font-semibold text-sm">Fonction</h3>
+      <div className="h-40 border overflow-y-scroll rounded-md p-3">
       <ScrollAreaComponent>
         <div className="space-y-2">
           {availableFunctions.map((func) => (

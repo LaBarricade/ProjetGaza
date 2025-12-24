@@ -1,28 +1,14 @@
+import { Quote } from "@/components/quote-card";
+import { Personality } from "../personnalites/page";
+
 export type FilterType = 'politician' | 'function' | 'tag' | 'quote';
 
+//The filters used in the search page
 export interface SearchFilters {
-  politicians: string[];
+  politicians: number[];
   functions: string[];
   tags: string[];
   tagResultType: 'politicians' | 'quotes';
   quotes: string[];
 }
 
-export interface Politician {
-  id: string;
-  name: string;
-  function: string;
-  party?: string;
-  imageUrl?: string;
-  quotesCount: number;
-  tagsCount: number;
-}
-
-export interface Quote {
-  id: string;
-  text: string;
-  politicianId: string;
-  politicianName: string;
-  date: string;
-  tags: string[];
-}
