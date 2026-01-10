@@ -43,7 +43,7 @@ export type Quote = {
   est_publié: boolean;
 };
 
-export function QuoteCard({ quote }: { quote: Quote }) {
+export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePersonality ?: boolean }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
@@ -66,32 +66,36 @@ export function QuoteCard({ quote }: { quote: Quote }) {
       <CardHeader>
         <div className="mb-4">
           <span className="bg-primary/30 text-white font-medium px-2 py-0.5 rounded-full text-xs">
-            {quote.date}
+            {new Intl.DateTimeFormat('fr').format(new Date(quote.date))}
           </span>
         </div>
-        <Link
-          href={`/personnalites/${quote.prénom} ${quote.nom}`}
-          className="relative inline-block group -mx-2"
-        >
-          {/* Background simple */}
-          <span
-            className="absolute inset-0 rounded-lg bg-neutral-800/5 dark:bg-neutral-200/10
-               opacity-0 transition-opacity duration-200
-               group-hover:opacity-100"
-          ></span>
+        {!hidePersonality &&
+          <>
+            <Link
+              href={`/personnalites/${quote.prénom} ${quote.nom}`}
+              className="relative inline-block group -mx-2"
+            >
+              {/* Background simple */}
+              <span
+                className="absolute inset-0 rounded-lg bg-neutral-800/5 dark:bg-neutral-200/10
+                   opacity-0 transition-opacity duration-200
+                   group-hover:opacity-100"
+              ></span>
 
-          <CardTitle
-            className="relative px-2 py-1 rounded-lg
-               text-lg font-semibold text-neutral-800 dark:text-neutral-200
-               transition-colors duration-200
-               group-hover:text-neutral-600 dark:group-hover:text-neutral-400"
-          >
-            {quote.prénom + " " + quote.nom}
-          </CardTitle>
-        </Link>
-        <p className="text-sm text-muted-foreground">
-          {quote.parti_politique.value} • {quote.fonction}
-        </p>
+              <CardTitle
+                className="relative px-2 py-1 rounded-lg
+                   text-lg font-semibold text-neutral-800 dark:text-neutral-200
+                   transition-colors duration-200
+                   group-hover:text-neutral-600 dark:group-hover:text-neutral-400"
+              >
+                {quote.prénom + " " + quote.nom}
+              </CardTitle>
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              {quote.parti_politique.value} • {quote.fonction}
+            </p>
+          </>
+        }
       </CardHeader>
 
       <CardContent className="space-y-3 flex-1 overflow-hidden flex flex-col">
@@ -109,7 +113,7 @@ export function QuoteCard({ quote }: { quote: Quote }) {
               {quote.tag.map((tag) => (
                 <span
                   key={tag.id}
-                  className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs"
+                  className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs inline-block"
                 >
                   {tag.value}
                 </span>
