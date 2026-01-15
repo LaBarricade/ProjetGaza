@@ -94,7 +94,14 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
               </CardTitle>
             </Link>
             <p className="text-sm text-muted-foreground">
-              {quote.personality.party?.name} • {quote.personality.role}
+              { quote.personality.party &&
+                <>
+                  <Link href={`/citations?party=${quote.personality.party.id}`}>
+                    {quote.personality.party?.name}
+                  </Link>
+                &nbsp;• </>
+              }
+                {quote.personality.role}
             </p>
           </>
         }
@@ -113,12 +120,14 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
             <p>
               <span className="font-medium"></span>{" "}
               {quote.tags.map((tag) => (
-                <span
-                  key={tag.id}
-                  className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs inline-block"
-                >
-                  {tag.name}
-                </span>
+                <Link href={`/citations?tag=${tag.id}`}>
+                  <span
+                    key={tag.id}
+                    className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs inline-block"
+                  >
+                    {tag.name}
+                  </span>
+                </Link>
               ))}
             </p>
           )}

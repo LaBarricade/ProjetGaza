@@ -5,15 +5,19 @@ import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
 import { Footer } from "../footer";
 import {Quote} from "@/types/Quote";
+import {Tag} from "@/types/Tag";
+import {Party} from "@/types/Party";
+import {ReadonlyURLSearchParams, useSearchParams} from "next/navigation";
+import {callApi} from "@/lib/api-client";
 
-/*export type BaserowData = {
-  count: number
-  next: null
-  previous: null
-  results: Quote[]
-}*/
+type SearchParams = {
+  tag?: Tag | null;
+  text?: string | null;
+  party?: Party | null;
+};
 
-export default function QuotesPage() {
+export default function QuotesPage({searchParams}: {searchParams: SearchParams} = {searchParams: {}}) {
+  const searchParamsFromQs: ReadonlyURLSearchParams | null = useSearchParams();
   const [items, setItems] = useState<Quote[] | null>(null);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
@@ -27,10 +31,42 @@ export default function QuotesPage() {
 
   const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
 
-  const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
+  const fetchData = useCallback(async (
+    pageToLoad: number = pageRef.current,
+    searchParamsFromQs: ReadonlyURLSearchParams | null
+  ) => {
     try {
-      const res = await fetch(`/api/v2/quotes?page=${pageToLoad}&size=20`);
-      if (!res.ok) throw new Error("Erreur fetch API");
+      if (searchParamsFromQs) {
+        //-- Fetch search params info
+        if (searchParamsFromQs.get('tag')) {
+          const id = searchParamsFromQs.get('tag');
+          const apiResp = await callApi(`/api/v2/tags?id=${id}`);
+          searchParams.tag = apiResp.item;
+        }
+        if (searchParamsFromQs.get('party')) {
+          const id = searchParamsFromQs.get('party');
+          const apiResp = await callApi(`/api/v2/parties?id=${id}`);
+          searchParams.party = apiResp.item;
+        }
+        if (searchParamsFromQs.get('text')) {
+          searchParams.text = searchParamsFromQs.get('text');
+        }
+      }
+
+      //-- Fetch quotes
+      const queryParams = new URLSearchParams();
+      queryParams.set('page', pageToLoad.toString());
+      queryParams.set('size', '20');
+      if (searchParams.tag)
+        queryParams.set(`tag`, searchParams.tag.id.toString());
+      if (searchParams.text)
+        queryParams.set('text', searchParams.text)
+      if (searchParams.party)
+        queryParams.set('party', searchParams.party.id.toString())
+
+      const res = await fetch(`/api/v2/quotes?${queryParams.toString()}`);
+      if (!res.ok)
+        throw new Error("Erreur fetch API");
       const newData = await res.json();
 
       setTotalCount(newData.count);
@@ -40,11 +76,6 @@ export default function QuotesPage() {
       } else {
         setItems(prev => {
           const arr = prev ? [...prev, ...newData.items] : newData.items;
-          /*const arr =  prev ? {
-            ...newData.data,
-            results: [...prev, ...newData.data],
-          } : newData.data
-          console.log('avant apres', prev, arr)*/
           return arr;
         });
       }
@@ -54,19 +85,31 @@ export default function QuotesPage() {
     } finally {
       setLoading(false);
     }
-  }, [setItems, setLoading]);
+  }, [setItems, setLoading, searchParams]);
 
   const loadMore = async () => {
     if (items && totalCount && totalCount <= items.length) return;
     if (loading) return;
     setLoading(true);
-    fetchData(pageRef.current + 1)
+    fetchData(pageRef.current + 1, searchParamsFromQs)
     pageRef.current += 1;
   };
 
   useEffect(() => {
-    fetchData();
+    fetchData(pageRef.current, searchParamsFromQs);
   }, [fetchData]);
+
+  let searchTitle = null;
+  if (Object.keys(searchParams).length > 0) {
+    searchTitle = 'Recherche pour ';
+    if (searchParams.tag)
+      searchTitle += ' le tag "' + searchParams.tag.name + '"'
+    else if (searchParams.text)
+      searchTitle += ' "' + searchParams.text + '"'
+    else if (searchParams.party)
+      searchTitle += ' le parti politique "' + searchParams.party.name + '"'
+  }
+
 
   //<TopBar onLoading={handleLoading} onResults={handleResults} />
   return (
@@ -79,6 +122,8 @@ export default function QuotesPage() {
             <p>Chargement des données...</p>
           </div>
         )}
+
+        {searchTitle && <h2 className="text-3xl font-bold">{searchTitle}</h2>}
 
         {filteredResults && filteredResults.length > 0 &&
             <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
