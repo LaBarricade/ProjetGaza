@@ -42,7 +42,8 @@ class Api {
     }
 
     async findQuotes(params: any) :  Promise<any> {
-        const query = supabase.from('declarations').select('*', { count: 'exact'});
+        const query = supabase.from('declarations')
+          .select('*', params.personality ? undefined : { count: 'exact'});
         let select = `id, text:citation, source:source_id(name:nom, id), date, link:lien, tags(name:nom, id)`;
         if (params.personality)
             query.eq('personnalite_id', params.personality);
@@ -51,7 +52,7 @@ class Api {
                 party:parti_politique_id(name:nom, id))`;
 
         this.addPaginationFilters(params, query);
-        query.select(select, params.personality ? {} : { count: 'exact'})
+        query.select(select)
           .order('date', {ascending: false, nullsFirst: false});
 
         const resp = await query;

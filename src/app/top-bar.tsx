@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
@@ -11,9 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+//import {Quote} from "@/types/Quote";
 
-export function TopBar() {
+/*type TopBarProps = {
+  onResults?: (results: Quote[] | null) => void; // facultatif
+  onLoading?: (loading: boolean) => void;
+};*/
+
+export function TopBar(/*{ onResults, onLoading }: TopBarProps*/) {
+  //const [query] = useState("");
+
   const pathname = usePathname();
+
   const navItems = [
     { href: "/actualites", label: "Actualités" },
     { href: "/personnalites", label: "Politiciens" },
@@ -21,6 +31,31 @@ export function TopBar() {
     { href: process.env.NEXT_PUBLIC_FORM_URL || "", label: "Contribuer" },
     { href: "/contact", label: "Contact" },
   ];
+
+  /*useEffect(() => {
+    if (!onResults || !onLoading) return; // si pas de callback, on ne fait rien
+
+    onLoading(true)
+
+    const timeout = setTimeout(() => {
+      if (query.length === 0) {
+        onResults(null);
+        onLoading(false)
+        return;
+      }
+
+      const fetchData = async () => {
+        const res = await fetch(`/api/baserow?search=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        onResults(data?.results || []);
+        onLoading(false)
+      };
+
+      fetchData();
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [query, onResults, onLoading]);*/
 
   return (
     <div className="sticky top-0 w-full flex items-center justify-between gap-4 bg-white shadow-md z-50">

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getWikipediaImage } from "@/lib/wiki-img";
 import {Quote} from "@/types/Quote";
+import {Source} from "@/types/Source";
 /*
 export type Quote = {
   id: number;
@@ -49,16 +50,16 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
   useEffect(() => {
-    if (quote.source?.name) {
+    if (quote.source) {
       setImageUrlLoading(true);
 
-      const fetchImage = async () => {
-        const url = await getWikipediaImage(quote.source.name as string);
+      const fetchImage = async (source: Source) => {
+        const url = await getWikipediaImage(source.name as string);
         setImageUrl(url);
         setImageUrlLoading(false);
       };
 
-      fetchImage();
+      fetchImage(quote.source);
     }
   }, [quote]);
 

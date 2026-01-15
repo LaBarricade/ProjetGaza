@@ -174,7 +174,6 @@ export default function PersonalityPage() {
       <p>Personnalité non trouvée</p>
     </div>
   )
-console.log('personality', personality)
 
   return (
     <>
