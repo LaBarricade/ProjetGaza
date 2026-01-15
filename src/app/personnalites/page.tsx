@@ -6,18 +6,19 @@ import { PersonalityList } from "@/components/list/personality-list";
 import { BaserowPersonalityData } from "../page";
 import { Quote } from "@/components/quote-card";
 import { Footer } from "../footer";
+import {Personality} from "@/types/Personality";
 
-export type Personality = {
+/*export type Personality = {
   prénom: string;
   nom: string;
   fullName: string;
   partiPolitique?: string;
   fonction?: string;
   citations: Quote[];
-};
+};*/
 
 export default function Personalities() {
-  const [data, setData] = useState<BaserowPersonalityData | null>(null);
+  const [data, setData] = useState<Personality[] | null>(null);
   const [filteredResults] = useState<Personality[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,12 +26,15 @@ export default function Personalities() {
 
   const fetchData = useCallback(async () => {
     try {
-      const personalitiesRes = await fetch(`/api/personalities`);
-      if (!personalitiesRes.ok) throw new Error("Erreur fetch API");
-      const personalities = await personalitiesRes.json();
+      const personalitiesRes = await fetch(`/api/v2/personalities`);
+      if (!personalitiesRes.ok)
+        throw new Error("Erreur fetch API");
+      const apiResponse = await personalitiesRes.json();
+      console.log('apiResponse', apiResponse)
+      const personalities = apiResponse.data;
       setData(personalities);
 
-      return personalities
+      //return personalities
     } catch (err) {
       console.error("Fetch failed:", err);
       setData(null);
@@ -57,9 +61,9 @@ export default function Personalities() {
           </div>
         )}
 
-        {!filteredResults && data && data.results.length > 0 && <PersonalityList personalities={data.results} />}
+        {!filteredResults && data && data.length > 0 && <PersonalityList personalities={data} />}
 
-        {data && data.results.length === 0 && (
+        {data && data.length === 0 && (
           <div className="flex flex-1 items-center h-full">
             <p>Aucun résultat trouvé.</p>
           </div>
