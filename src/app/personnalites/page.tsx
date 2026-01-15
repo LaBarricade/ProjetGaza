@@ -8,16 +8,7 @@ import { Quote } from "@/components/quote-card";
 import { Footer } from "../footer";
 import {Personality} from "@/types/Personality";
 
-/*export type Personality = {
-  prénom: string;
-  nom: string;
-  fullName: string;
-  partiPolitique?: string;
-  fonction?: string;
-  citations: Quote[];
-};*/
-
-export default function Personalities() {
+export default function PersonalitiesPage() {
   const [data, setData] = useState<Personality[] | null>(null);
   const [filteredResults] = useState<Personality[] | null>(null);
   const [loading, setLoading] = useState(true);

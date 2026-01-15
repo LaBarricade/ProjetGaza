@@ -4,32 +4,22 @@ import { useCallback, useEffect, useState } from "react";
 import { TopBar } from "@/app/top-bar";
 import { NewsList } from "@/components/list/news-list";
 import { Footer } from "../footer";
+import {News} from "@/types/News";
 
-export type News = {
-  text: string;
-  date: string;
-};
-
-type BaserowNewsData = {
-  count: number
-  next: null
-  previous: null
-  results: News[]
-}
-
-export default function News() {
-  const [data, setData] = useState<BaserowNewsData | null>(null);
+export default function NewsPage() {
+  const [data, setData] = useState<News[] | null>(null);
   const [filteredResults] = useState<News[] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);  
 
   const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
 
   const fetchData = useCallback(async () => {
     try {
-      const newsRes = await fetch(`/api/news`);
-      if (!newsRes.ok) throw new Error("Erreur fetch API");
+      const newsRes = await fetch(`/api/v2/news`);
+      if (!newsRes.ok)
+        throw new Error("Erreur fetch API");
       const news = await newsRes.json();
-      setData(news);
+      setData(news.data);
 
       return news
     } catch (err) {
@@ -58,8 +48,8 @@ export default function News() {
           </div>
         )}
 
-        {!filteredResults && data && data.results.length > 0 && <NewsList news={data.results} />}
-        {data && data.results.length === 0 && (
+        {!filteredResults && data && data.length > 0 && <NewsList news={data} />}
+        {data && data.length === 0 && (
           <div className="flex flex-1 items-center h-full">
             <p>Aucun résultat trouvé.</p>
           </div>
