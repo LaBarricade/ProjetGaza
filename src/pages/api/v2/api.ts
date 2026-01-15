@@ -37,7 +37,9 @@ class Api {
         const data = resp.data?.at(0);
 
         return {
-            item: data && Object.assign(data, {quotes: (await this.findQuotes({personnality: id})).items})
+            item: data && Object.assign(data, {
+                quotes: (await this.findQuotes({personality: id})).items
+            })
         };
     }
 
