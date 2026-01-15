@@ -52,9 +52,7 @@ export default function Home() {
   }, [fetchData]);
 
   return (
-    <div className="font-[family-name:var(--font-geist-sans)]">
-      <TopBar />
-
+    <>
       <div className="flex flex-col justify-center items-center min-h-screen h-full w-full bg-gradient-to-br from-[#cbd9f6] via-[#d6d4f5] to-[#decef5]">
         <div className="h-full flex flex-col gap-4 justify-center items-center md:max-w-2xl p-4">
           <div className="flex flex-col justify-center items-center">
@@ -180,8 +178,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </>
   );
 }

@@ -177,7 +177,6 @@ export default function PersonalityPage() {
 
   return (
     <>
-      <TopBar />
       <div className="mx-auto p-6">
         <div className="flex flex-row">
           {!imageUrlLoading ? (
@@ -218,7 +217,6 @@ export default function PersonalityPage() {
           {personality.quotes.length > 0 && <QuoteList quotes={personality.quotes} hidePersonality={true} />}
         </div>
       </div>
-      <Footer />
     </>
   );
 }

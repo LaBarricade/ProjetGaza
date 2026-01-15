@@ -113,12 +113,7 @@ export default function QuotesPage({searchParams}: {searchParams: SearchParams} 
       searchTitle += ' le parti politique "' + searchParams.party.name + '"'
   }
 
-
-  //<TopBar onLoading={handleLoading} onResults={handleResults} />
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <TopBar />
-
       <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
         {loading && (
           <div className="flex flex-1 items-center h-full">
@@ -158,8 +153,5 @@ export default function QuotesPage({searchParams}: {searchParams: SearchParams} 
           </div>
         )}
       </main>
-
-      <Footer />
-    </div>
   );
 }
