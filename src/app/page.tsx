@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Footer } from "./footer";
 import {Quote} from "@/types/Quote";
+import { redirect } from 'next/navigation'
+import {callApi} from "@/lib/api-client";
 
 
 export default function Home() {
@@ -23,17 +25,14 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [popularTags] = useState(['déni de génocide', 'apartheid', 'complicité de crimes de guerre']);
 
+  const runSearch = () => {
+    redirect(`/citations?text=${encodeURI(query)}`)
+  }
+
   const fetchData = useCallback(async () => {
     try {
-      const personalitiesRes = await fetch(`/api/v2/personalities?size=1`);
-      if (!personalitiesRes.ok)
-        throw new Error("Erreur fetch API");
-      const personalitiesData = await personalitiesRes.json();
-
-      const res = await fetch(`/api/v2/quotes?page=1&size=5`);
-      if (!res.ok)
-        throw new Error("Erreur fetch API");
-      const quotesData = await res.json();
+      const personalitiesData = await callApi(`/api/v2/personalities?size=1`);
+      const quotesData = await callApi(`/api/v2/quotes?page=1&size=5`);
 
       setStats({
         personalities_count: personalitiesData.count,
@@ -80,8 +79,10 @@ export default function Home() {
                 className="bg-white pr-10"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && runSearch()}
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+              <Search className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500"
+                      onClick={() => runSearch()}/>
             </div>
           </div>
 

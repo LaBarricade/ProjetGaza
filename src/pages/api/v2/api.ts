@@ -64,7 +64,7 @@ class Api {
     if (params.tag)
       query.eq('tags.id', params.tag);
     if (params.text)
-      query.textSearch('text', params.text);
+      query.textSearch('citation', params.text, {type: 'plain'});
     if (params.party)
       query.eq('personality.party.id', params.party);
     if (params.ids)
@@ -166,7 +166,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse,
 
     res.status(200).json(respData);
   } catch (error: any) {
-    //res.status(500).json({error: 'Something went wrong', details: error.message});
-    throw error;
+    res.status(500).json({error: 'Something went wrong', details: error.message});
+    //throw error;
   }
 }

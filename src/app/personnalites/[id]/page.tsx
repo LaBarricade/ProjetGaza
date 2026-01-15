@@ -9,13 +9,13 @@ import { getWikipediaImage } from "@/lib/wiki-img";
 import { Footer } from "@/app/footer";
 import {Personality} from "@/types/Personality";
 import {Quote} from "@/types/Quote";
+import {callApi} from "@/lib/api-client";
 
 const logoCache: { [key: string]: string } = {}
 
 async function getPersonality(id: number): Promise<Personality | null> {
-  const res = await fetch(`/api/v2/personalities?id=${encodeURIComponent(id)}`);
-  const data = await res.json();
-  return data.item
+  const apiResp = await callApi(`/api/v2/personalities?id=${encodeURIComponent(id)}`);
+  return apiResp.item
 }
 
 export default function PersonalityPage() {

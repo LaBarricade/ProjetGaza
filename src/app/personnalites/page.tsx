@@ -5,6 +5,7 @@ import { TopBar } from "@/app/top-bar";
 import { PersonalityList } from "@/components/list/personality-list";
 import { Footer } from "../footer";
 import {Personality} from "@/types/Personality";
+import {callApi} from "@/lib/api-client";
 
 export default function PersonalitiesPage() {
   const [data, setData] = useState<Personality[] | null>(null);
@@ -15,12 +16,8 @@ export default function PersonalitiesPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const personalitiesRes = await fetch(`/api/v2/personalities`);
-      if (!personalitiesRes.ok)
-        throw new Error("Erreur fetch API");
-      const apiResponse = await personalitiesRes.json();
-      console.log('apiResponse', apiResponse)
-      const personalities = apiResponse.items;
+      const apiResp = await callApi(`/api/v2/personalities`);
+      const personalities = apiResp.items;
       setData(personalities);
 
       //return personalities

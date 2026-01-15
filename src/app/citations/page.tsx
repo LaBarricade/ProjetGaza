@@ -7,8 +7,10 @@ import { Footer } from "../footer";
 import {Quote} from "@/types/Quote";
 import {Tag} from "@/types/Tag";
 import {Party} from "@/types/Party";
-import {ReadonlyURLSearchParams, useSearchParams} from "next/navigation";
+import {ReadonlyURLSearchParams, redirect, useSearchParams} from "next/navigation";
 import {callApi} from "@/lib/api-client";
+import {Input} from "@/components/ui/input";
+import {Search} from "lucide-react";
 
 type SearchParams = {
   tag?: Tag | null;
@@ -17,12 +19,17 @@ type SearchParams = {
 };
 
 export default function QuotesPage({searchParams}: {searchParams: SearchParams} = {searchParams: {}}) {
+  const [query, setQuery] = useState("");
   const searchParamsFromQs: ReadonlyURLSearchParams | null = useSearchParams();
   const [items, setItems] = useState<Quote[] | null>(null);
   const [totalCount, setTotalCount] = useState<number | null>(null);
   const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
   const [loading, setLoading] = useState(true);
   const pageRef = useRef(1);
+
+  const runSearch = () => {
+    redirect(`/citations?text=${encodeURI(query)}`)
+  }
 
   const handleResults = useCallback((results: Quote[] | null) => {
     pageRef.current = 1;
@@ -64,18 +71,14 @@ export default function QuotesPage({searchParams}: {searchParams: SearchParams} 
       if (searchParams.party)
         queryParams.set('party', searchParams.party.id.toString())
 
-      const res = await fetch(`/api/v2/quotes?${queryParams.toString()}`);
-      if (!res.ok)
-        throw new Error("Erreur fetch API");
-      const newData = await res.json();
-
-      setTotalCount(newData.count);
+      const apiResp = await callApi(`/api/v2/quotes?${queryParams.toString()}`);
+      setTotalCount(apiResp.count);
 
       if (pageToLoad === 1) {
-        setItems(newData.items);
+        setItems(apiResp.items);
       } else {
         setItems(prev => {
-          const arr = prev ? [...prev, ...newData.items] : newData.items;
+          const arr = prev ? [...prev, ...apiResp.items] : apiResp.items;
           return arr;
         });
       }
@@ -123,7 +126,24 @@ export default function QuotesPage({searchParams}: {searchParams: SearchParams} 
           </div>
         )}
 
+        {items && items.length &&
+          <div className="flex w-full mt-4 justify-center">
+            <div className="relative w-full md:max-w-md">
+              <Input
+                type="text"
+                placeholder="Rechercher un politicien, un tag, ou un mot-clé..."
+                className="bg-white pr-10"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && runSearch()}
+              />
+              <Search className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500"
+                      onClick={() => runSearch()}/>
+            </div>
+          </div>
+        }
         {searchTitle && <h2 className="text-3xl font-bold">{searchTitle}</h2>}
+
 
         {filteredResults && filteredResults.length > 0 &&
             <QuoteList quotes={filteredResults} onEndReached={loadMore} />}

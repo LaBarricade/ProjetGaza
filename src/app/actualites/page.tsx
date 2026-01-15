@@ -5,6 +5,7 @@ import { TopBar } from "@/app/top-bar";
 import { NewsList } from "@/components/list/news-list";
 import { Footer } from "../footer";
 import {News} from "@/types/News";
+import {callApi} from "@/lib/api-client";
 
 export default function NewsPage() {
   const [items, setItems] = useState<News[] | null>(null);
@@ -15,13 +16,8 @@ export default function NewsPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const newsRes = await fetch(`/api/v2/news`);
-      if (!newsRes.ok)
-        throw new Error("Erreur fetch API");
-      const news = await newsRes.json();
-      setItems(news.items);
-
-      return news
+      const apiResp = await callApi(`/api/v2/news`);
+      setItems(apiResp.items);
     } catch (err) {
       console.error("Fetch failed:", err);
       setItems(null);
