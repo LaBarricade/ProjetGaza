@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { TopBar } from "@/app/top-bar";
-import { Quote } from "@/components/quote-card";
 import { QuoteList } from "@/components/list/quote-list";
 import { ChartLine, Users, Calendar1, ArrowRight } from "lucide-react"
 import { Search } from "lucide-react";
@@ -10,47 +9,44 @@ import { Input } from "@/components/ui/input";
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Personality } from "./personnalites/page";
 import { Footer } from "./footer";
+import {Quote} from "@/types/Quote";
 
-export type BaserowData = {
-  count: number
-  next: null
-  previous: null
-  results: Quote[]
-}
-
-export type BaserowPersonalityData = {
-  count: number
-  results: Personality[]
-}
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [data, setData] = useState<BaserowData | null>(null);
-  const [personalities, setPersonalities] = useState<BaserowPersonalityData | null>(null);
+  const [quotes, setQuotes] = useState<Quote[] | null>(null);
+  const [stats, setStats] = useState<{ personalities_count: number, quotes_count: number }>({
+    personalities_count: 0,
+    quotes_count: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [popularTags] = useState(['déni de génocide', 'apartheid', 'complicité de crimes de guerre']);
 
   const fetchData = useCallback(async () => {
     try {
-      const personalitiesRes = await fetch(`/api/personalities`);
-      if (!personalitiesRes.ok) throw new Error("Erreur fetch API");
-      const personalities = await personalitiesRes.json();
-      setPersonalities(personalities);
+      const personalitiesRes = await fetch(`/api/v2/personalities?size=1`);
+      if (!personalitiesRes.ok)
+        throw new Error("Erreur fetch API");
+      const personalitiesData = await personalitiesRes.json();
 
-      const res = await fetch(`/api/baserow?page=1&size=5`);
-      if (!res.ok) throw new Error("Erreur fetch API");
-      const json = await res.json();
+      const res = await fetch(`/api/v2/quotes?page=1&size=5`);
+      if (!res.ok)
+        throw new Error("Erreur fetch API");
+      const quotesData = await res.json();
 
-      setData(json);
+      setStats({
+        personalities_count: personalitiesData.count,
+        quotes_count: quotesData.count,
+      });
+      setQuotes(quotesData.items);
     } catch (err) {
       console.error("Fetch failed:", err);
-      setData(null);
+      setQuotes(null);
     } finally {
       setLoading(false);
     }
-  }, [setData, setLoading]);
+  }, [setQuotes, setLoading]);
 
   useEffect(() => {
     fetchData();
@@ -95,7 +91,7 @@ export default function Home() {
                 <Users />
               </div>
               <div className="font-bold text-gray-800 text-xl">
-                <CountUp end={personalities?.count ?? 0} duration={1.2} />
+                <CountUp end={stats.personalities_count ?? 0} duration={1.2} />
               </div>
               <div className="text-center text-gray-500">
                 Politiciens suivis
@@ -106,7 +102,7 @@ export default function Home() {
                 <ChartLine />
               </div>
               <div className="font-bold text-gray-800 text-xl">
-                <CountUp end={data?.count ?? 0} duration={1.2} />
+                <CountUp end={stats.quotes_count ?? 0} duration={1.2} />
               </div>
               <div className="text-center text-gray-500">
                 Déclarations archivées
@@ -140,7 +136,7 @@ export default function Home() {
           </Link>
         </div>
         {loading && <p>Chargement des données...</p>}
-        {data && data.results.length > 0 && <QuoteList quotes={data.results} />}
+        {quotes && quotes.length > 0 && <QuoteList quotes={quotes} />}
       </div>
 
       <div className="p-4 bg-gray-100">

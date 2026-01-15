@@ -6,11 +6,6 @@ class Api {
     token: string | undefined;
     url: string | undefined;
 
-    init(): void {
-        this.token = process.env.SUPABASE_API_TOKEN;
-        this.url = process.env.SUPABASE_URL;
-    }
-
     checkErrors(supabaseResp: any) {
         if (supabaseResp.error)
             throw new Error(supabaseResp.error.message);
@@ -47,7 +42,7 @@ class Api {
     }
 
     async findQuotes(params: any) :  Promise<any> {
-        const query = supabase.from('declarations').select();
+        const query = supabase.from('declarations').select('*', { count: 'exact'});
         let select = `id, text:citation, source:source_id(name:nom, id), date, link:lien, tags(name:nom, id)`;
         if (params.personality)
             query.eq('personnalite_id', params.personality);
@@ -56,7 +51,7 @@ class Api {
                 party:parti_politique_id(name:nom, id))`;
 
         this.addPaginationFilters(params, query);
-        query.select(select, params.personality ? { count: 'exact'} : {})
+        query.select(select, params.personality ? {} : { count: 'exact'})
           .order('date', {ascending: false, nullsFirst: false});
 
         const resp = await query;
@@ -95,7 +90,6 @@ class Api {
 export default async function handler(req: NextApiRequest, res: NextApiResponse, path: string | undefined = undefined) {
     try {
         const api = new Api();
-        api.init();
         let respData;
 
         path = path || req.query.path as string;
