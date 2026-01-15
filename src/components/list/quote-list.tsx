@@ -1,6 +1,7 @@
 import { useEndReached } from "@/lib/use-reached-end";
 import CountUp from "react-countup";
-import { Quote, QuoteCard } from "../quote-card";
+import { QuoteCard } from "../quote-card";
+import {Quote} from "@/types/Quote";
 
 function CitationCount({ totalCount }: { totalCount: number }) {
   return (
@@ -18,7 +19,7 @@ export function QuoteList({
 }: {
   quotes: Quote[];
   onEndReached?: () => void;
-  totalCount?: number;
+  totalCount?: number | null;
   hidePersonality?: boolean;
 }) {
   const loaderRef = useEndReached(onEndReached);

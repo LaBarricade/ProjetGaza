@@ -1,5 +1,6 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import { supabase } from '@/lib/supabase'
+import {PostgrestQueryBuilder} from "@supabase-js/source/packages/core/postgrest-js/src";
 
 class Api {
     token: string | undefined;
@@ -19,13 +20,16 @@ class Api {
         const resp = await supabase
             .from('personnalites')
             .select(`id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region, quotes_count:declarations(count),
-                party:parti_politique_id(name:nom, id)`)
+                party:parti_politique_id(name:nom, id)`, { count: 'exact'})
             .order('nom');
         this.checkErrors(resp);
         const adaptedData = resp.data?.map((personnality: any) => Object.assign(personnality, {
             quotes_count: personnality.quotes_count[0].count
         }));
-        return adaptedData;
+        return {
+            items: adaptedData,
+            count: resp.count
+        };
     }
 
     async findPersonality(id: any) :  Promise<any> {
@@ -37,24 +41,31 @@ class Api {
         this.checkErrors(resp);
         const data = resp.data?.at(0);
 
-        return data && Object.assign(data, {citations: await this.findQuotes({personnality: id})});
+        return {
+            item: data && Object.assign(data, {quotes: (await this.findQuotes({personnality: id})).items})
+        };
     }
 
     async findQuotes(params: any) :  Promise<any> {
         const query = supabase.from('declarations').select();
         let select = `id, text:citation, source:source_id(name:nom, id), date, link:lien, tags(name:nom, id)`;
-        if (params.personnality)
-            query.eq('personnalite_id', params.personnality);
+        if (params.personality)
+            query.eq('personnalite_id', params.personality);
         else
             select += `, personality:personnalite_id(id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
                 party:parti_politique_id(name:nom, id))`;
 
-        query.select(select)
+        this.addPaginationFilters(params, query);
+        query.select(select, params.personality ? { count: 'exact'} : {})
+          .order('date', {ascending: false, nullsFirst: false});
 
         const resp = await query;
 
         this.checkErrors(resp);
-        return resp.data;
+        return {
+            items: resp.data,
+            count: resp.count
+        };
     }
 
     async findNews(params: any) :  Promise<any> {
@@ -66,7 +77,18 @@ class Api {
         const resp = await query;
 
         this.checkErrors(resp);
-        return resp.data;
+        return {
+            items: resp.data
+        };
+    }
+
+    addPaginationFilters(param: any, restQuery: any) {
+        if (!param.size)
+            return;
+        const page = param.page || 1;
+        const lowerBound = param.size * (page - 1);
+        const upperBound = param.size * page - 1;
+        restQuery.range(lowerBound, upperBound);
     }
 }
 
@@ -93,10 +115,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse,
         else
             throw new Error('Invalid path');
 
-        res.status(200).json({
-            data: respData,
-            error: respData.error
-        });
+        res.status(200).json(respData);
     } catch (error: any) {
         res.status(500).json({error: 'Something went wrong', details: error.message});
     }

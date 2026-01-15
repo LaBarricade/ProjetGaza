@@ -4,62 +4,65 @@ import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
-import { Quote } from "@/components/quote-card";
 import { LogoParti } from "@/components/logo/parti";
 import { getWikipediaImage } from "@/lib/wiki-img";
-import { Personality } from "../page";
 import { Footer } from "@/app/footer";
+import {Personality} from "@/types/Personality";
+import {Quote} from "@/types/Quote";
 
 const logoCache: { [key: string]: string } = {}
 
-async function getPersonality(nom: string): Promise<Personality | null> {
-  const res = await fetch(`/api/personalities?search=${encodeURIComponent(nom)}`);
+async function getPersonality(id: number): Promise<Personality | null> {
+  const res = await fetch(`/api/v2/personalities?id=${encodeURIComponent(id)}`);
   const data = await res.json();
-
-  const personalities = data.results
-  if (!Array.isArray(personalities) || personalities.length === 0) return null;
-
-  return personalities[0]
+  return data.item
 }
 
 export default function PersonalityPage() {
-  const params = useParams<{ nom: string }>()
+  const params = useParams<{ id: string }>()
+
+  if (!params)
+    return null;
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const [timelineData, setTimelineData] = useState<Record<string, unknown> | null>(null);
-  const { nom } = params?.nom ? params : {}
-
   const [personality, setPersonality] = useState<Personality | null>(null);
   const [loading, setLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
+  const id = parseInt(params.id);
+  const fullName = personality && `${personality.firstname} ${personality.lastname}`;
+
+
+  //-- Quotes - vue object
   useEffect(() => {
-    if (!personality?.citations?.length) return;
+    if (!personality?.quotes?.length) return;
 
     (async () => {
       const events = await Promise.all(
-        personality.citations.map(async (q: Quote, i: number) => {
+        personality.quotes.map(async (q: Quote, i: number) => {
           const [year, month, day] = q.date.split("-").map(Number);
-          const logo = q.source?.value
-            ? await getWikipediaImage(q.source.value)
-            : null;
+          let logo = null;
 
-          if (logo) {
-            logoCache[q.source?.value] = logo
+          //-- Logo source
+          if (q.source) {
+            logo = await getWikipediaImage(q.source.name);
+            if (logo)
+              logoCache[q.source.name] = logo
           }
 
           return {
             start_date: { year, month, day },
             text: {
-              headline: q.source?.value ?? `Citation #${i + 1}`,
-              text: q.citation,
+              headline: q.source?.name ?? `Citation #${i + 1}`,
+              text: q.text,
             },
             ...(logo && {
               media: {
                 url: logo,
                 thumbnail: logo,
-                caption: q.source?.value,
+                caption: q.source?.name,
               },
             }),
           };
@@ -73,6 +76,7 @@ export default function PersonalityPage() {
     })();
   }, [personality]);
 
+  //-- Timeline citations
   useEffect(() => {
     if (!timelineData) return;
 
@@ -134,7 +138,7 @@ export default function PersonalityPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const p = await getPersonality(nom as string);
+        const p = await getPersonality(id);
         setPersonality(p);
       } catch (err) {
         console.error("Fetch failed:", err);
@@ -144,21 +148,21 @@ export default function PersonalityPage() {
       }
     };
     fetchData();
-  }, [nom]);
+  }, [id]);
   
   useEffect(() => {
-    if (personality) {
+    if (personality && fullName) {
       setImageUrlLoading(true);
 
       const fetchImage = async () => {
-        const url = await getWikipediaImage(personality.fullName as string);
+        const url = await getWikipediaImage(fullName);
         setImageUrl(url);
         setImageUrlLoading(false);
       };
 
       fetchImage();
     }
-  }, [personality]);
+  }, [personality, fullName]);
 
   if (loading) return (
     <div className="h-screen flex justify-center items-center">
@@ -170,6 +174,7 @@ export default function PersonalityPage() {
       <p>Personnalité non trouvée</p>
     </div>
   )
+console.log('personality', personality)
 
   return (
     <>
@@ -180,7 +185,7 @@ export default function PersonalityPage() {
             imageUrl && (
               <img
                 src={imageUrl}
-                alt={`${personality.fullName} portrait`}
+                alt={`${fullName} portrait`}
                 width={96}
                 height={96}
                 className="mb-4 object-cover rounded-full w-24 h-auto"
@@ -191,27 +196,27 @@ export default function PersonalityPage() {
             <p>Chargement de l&apos;image...</p>
           }
           <div className="ml-8">
-            <h1 className="text-3xl font-bold mb-4">{personality.fullName}</h1>
+            <h1 className="text-3xl font-bold mb-4">{fullName}</h1>
             <div className="space-y-2 text-gray-700">
-              {personality.partiPolitique && (<div className="flex items-center">
+              {personality.party && (<div className="flex items-center">
                 <span className="font-semibold">Parti politique :</span>
                 <span className="ml-4">
-                  <LogoParti parti={personality.partiPolitique} />
+                  <LogoParti party={personality.party} />
                 </span>
               </div>)
               }
-              <p><span className="font-semibold">Fonction :</span> {personality.fonction}</p>
+              <p><span className="font-semibold">Fonction :</span> {personality.role}</p>
             </div>
           </div>
         </div>
         {/* Timeline */}
-        {personality.citations.length > 0 && (
+        {personality.quotes.length > 0 && (
           <div ref={timelineRef} style={{ width: "100%", height: "500px" }} />
         )}
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Citations</h2>
-          {personality.citations.length > 0 && <QuoteList quotes={personality.citations} hidePersonality={true} />}
+          {personality.quotes.length > 0 && <QuoteList quotes={personality.quotes} hidePersonality={true} />}
         </div>
       </div>
       <Footer />

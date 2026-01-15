@@ -2,19 +2,20 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TopBar } from "@/app/top-bar";
-import { Quote } from "@/components/quote-card";
 import { QuoteList } from "@/components/list/quote-list";
 import { Footer } from "../footer";
+import {Quote} from "@/types/Quote";
 
-export type BaserowData = {
+/*export type BaserowData = {
   count: number
   next: null
   previous: null
   results: Quote[]
-}
+}*/
 
-export default function Home() {
-  const [data, setData] = useState<BaserowData | null>(null);
+export default function QuotesPage() {
+  const [items, setItems] = useState<Quote[] | null>(null);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
   const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
   const [loading, setLoading] = useState(true);
   const pageRef = useRef(1);
@@ -28,28 +29,35 @@ export default function Home() {
 
   const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
     try {
-      const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
+      const res = await fetch(`/api/v2/quotes?page=${pageToLoad}&size=20`);
       if (!res.ok) throw new Error("Erreur fetch API");
-      const json = await res.json();
+      const newData = await res.json();
+
+      setTotalCount(newData.count);
 
       if (pageToLoad === 1) {
-        setData(json);
+        setItems(newData.items);
       } else {
-        setData(prev => prev ? {
-          ...json,
-          results: [...prev.results, ...json.results],
-        } : json);
+        setItems(prev => {
+          const arr = prev ? [...prev, ...newData.items] : newData.items;
+          /*const arr =  prev ? {
+            ...newData.data,
+            results: [...prev, ...newData.data],
+          } : newData.data
+          console.log('avant apres', prev, arr)*/
+          return arr;
+        });
       }
     } catch (err) {
       console.error("Fetch failed:", err);
-      setData(null);
+      setItems(null);
     } finally {
       setLoading(false);
     }
-  }, [setData, setLoading]);
+  }, [setItems, setLoading]);
 
   const loadMore = async () => {
-    if (data && data?.count <= data?.results.length) return;
+    if (items && totalCount && totalCount <= items.length) return;
     if (loading) return;
     setLoading(true);
     fetchData(pageRef.current + 1)
@@ -71,12 +79,14 @@ export default function Home() {
           </div>
         )}
 
-        {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
-        {!filteredResults && data && data.results.length > 0 && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
+        {filteredResults && filteredResults.length > 0 &&
+            <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
+        {!filteredResults && items && items.length > 0 &&
+            <QuoteList quotes={items} totalCount={totalCount} onEndReached={loadMore} />}
 
         {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
         
-        {data && data.results.length === 0 && (
+        {items && items.length === 0 && (
           <div className="flex flex-1 items-center h-full">
             <p>Aucun résultat trouvé.</p>
           </div>

@@ -3,8 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { TopBar } from "@/app/top-bar";
 import { PersonalityList } from "@/components/list/personality-list";
-import { BaserowPersonalityData } from "../page";
-import { Quote } from "@/components/quote-card";
 import { Footer } from "../footer";
 import {Personality} from "@/types/Personality";
 
@@ -22,7 +20,7 @@ export default function PersonalitiesPage() {
         throw new Error("Erreur fetch API");
       const apiResponse = await personalitiesRes.json();
       console.log('apiResponse', apiResponse)
-      const personalities = apiResponse.data;
+      const personalities = apiResponse.items;
       setData(personalities);
 
       //return personalities

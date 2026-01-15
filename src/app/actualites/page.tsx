@@ -7,9 +7,9 @@ import { Footer } from "../footer";
 import {News} from "@/types/News";
 
 export default function NewsPage() {
-  const [data, setData] = useState<News[] | null>(null);
+  const [data, setdata] = useState<News[] | null>(null);
   const [filteredResults] = useState<News[] | null>(null);
-  const [loading, setLoading] = useState(true);  
+  const [loading, setLoading] = useState(true);
 
   const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
 
@@ -19,16 +19,16 @@ export default function NewsPage() {
       if (!newsRes.ok)
         throw new Error("Erreur fetch API");
       const news = await newsRes.json();
-      setData(news.data);
+      setdata(news.items);
 
       return news
     } catch (err) {
       console.error("Fetch failed:", err);
-      setData(null);
+      setdata(null);
     } finally {
       setLoading(false);
     }
-  }, [setData, setLoading]);
+  }, [setdata, setLoading]);
 
   useEffect(() => {
     const fetchDataAsync = async () => {
