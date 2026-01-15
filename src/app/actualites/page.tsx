@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { TopBar } from "@/app/top-bar";
 import { NewsList } from "@/components/list/news-list";
-import { Footer } from "../footer";
 import {News} from "@/types/News";
 import {callApi} from "@/lib/api-client";
 

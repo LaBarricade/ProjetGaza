@@ -1,8 +1,5 @@
 "use client";
 
-import { Footer } from "../footer";
-import { TopBar } from "../top-bar";
-
 export default function Contact() {
   const email = "contact@example.com"; // remplace par ton email
 

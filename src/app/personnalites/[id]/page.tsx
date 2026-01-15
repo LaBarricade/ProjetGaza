@@ -1,12 +1,10 @@
 "use client";
 
-import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
 import { useParams } from "next/navigation";
 import React, { useRef, useEffect, useState } from "react";
 import { LogoParti } from "@/components/logo/parti";
 import { getWikipediaImage } from "@/lib/wiki-img";
-import { Footer } from "@/app/footer";
 import {Personality} from "@/types/Personality";
 import {Quote} from "@/types/Quote";
 import {callApi} from "@/lib/api-client";

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
 import { ChartLine, Users, Calendar1, ArrowRight } from "lucide-react"
 import { Search } from "lucide-react";
@@ -9,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Footer } from "./footer";
 import {Quote} from "@/types/Quote";
 import { redirect } from 'next/navigation'
 import {callApi} from "@/lib/api-client";

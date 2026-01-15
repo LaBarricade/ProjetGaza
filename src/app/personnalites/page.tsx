@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { TopBar } from "@/app/top-bar";
 import { PersonalityList } from "@/components/list/personality-list";
-import { Footer } from "../footer";
 import {Personality} from "@/types/Personality";
 import {callApi} from "@/lib/api-client";
 
@@ -12,15 +10,11 @@ export default function PersonalitiesPage() {
   const [filteredResults] = useState<Personality[] | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
-
   const fetchData = useCallback(async () => {
     try {
       const apiResp = await callApi(`/api/v2/personalities`);
       const personalities = apiResp.items;
       setData(personalities);
-
-      //return personalities
     } catch (err) {
       console.error("Fetch failed:", err);
       setData(null);

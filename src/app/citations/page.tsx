@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { TopBar } from "@/app/top-bar";
 import { QuoteList } from "@/components/list/quote-list";
-import { Footer } from "../footer";
 import {Quote} from "@/types/Quote";
 import {Tag} from "@/types/Tag";
 import {Party} from "@/types/Party";
