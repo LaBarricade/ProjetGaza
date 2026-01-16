@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import apiHandler from './api';
+import localApiHandler from "./local-api";
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    apiHandler(req, res, 'news');
+    localApiHandler(req, res, 'news');
 }

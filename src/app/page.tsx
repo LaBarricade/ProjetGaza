@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {Quote} from "@/types/Quote";
 import { redirect } from 'next/navigation'
-import {callApi} from "@/lib/api-client";
+import {callLocalApi} from "@/lib/api/api-client";
 
 
 export default function Home() {
@@ -29,8 +29,8 @@ export default function Home() {
 
   const fetchData = useCallback(async () => {
     try {
-      const personalitiesData = await callApi(`/api/v2/personalities?size=1`);
-      const quotesData = await callApi(`/api/v2/quotes?page=1&size=5`);
+      const personalitiesData = await callLocalApi(`/api/v2/personalities?size=1`);
+      const quotesData = await callLocalApi(`/api/v2/quotes?page=1&size=5`);
 
       setStats({
         personalities_count: personalitiesData.count,
@@ -133,7 +133,7 @@ export default function Home() {
           </Link>
         </div>
         {loading && <p>Chargement des données...</p>}
-        {quotes && quotes.length > 0 && <QuoteList quotes={quotes} />}
+        {quotes && quotes.length > 0 && <QuoteList initialItems={quotes}  />}
       </div>
 
       <div className="p-4 bg-gray-100">

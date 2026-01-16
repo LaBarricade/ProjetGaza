@@ -7,12 +7,12 @@ import { LogoParti } from "@/components/logo/parti";
 import { getWikipediaImage } from "@/lib/wiki-img";
 import {Personality} from "@/types/Personality";
 import {Quote} from "@/types/Quote";
-import {callApi} from "@/lib/api-client";
+import {callLocalApi} from "@/lib/api/api-client";
 
 const logoCache: { [key: string]: string } = {}
 
 async function getPersonality(id: number): Promise<Personality | null> {
-  const apiResp = await callApi(`/api/v2/personalities?id=${encodeURIComponent(id)}`);
+  const apiResp = await callLocalApi(`/api/v2/personalities?id=${encodeURIComponent(id)}`);
   return apiResp.item
 }
 
@@ -205,6 +205,7 @@ export default function PersonalityPage() {
             </div>
           </div>
         </div>
+
         {/* Timeline */}
         {personality.quotes.length > 0 && (
           <div ref={timelineRef} style={{ width: "100%", height: "500px" }} />
@@ -212,7 +213,7 @@ export default function PersonalityPage() {
 
         <div className="mt-6">
           <h2 className="text-xl font-semibold mb-2">Citations</h2>
-          {personality.quotes.length > 0 && <QuoteList quotes={personality.quotes} hidePersonality={true} />}
+          {personality.quotes.length > 0 && <QuoteList initialItems={personality.quotes} hidePersonality={true} />}
         </div>
       </div>
     </>

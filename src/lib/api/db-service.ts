@@ -1,8 +1,6 @@
-import type {NextApiRequest, NextApiResponse} from 'next';
-import {supabase} from '@/lib/supabase'
-import {PostgrestQueryBuilder} from "@supabase-js/source/packages/core/postgrest-js/src";
+import {supabase} from "@/lib/supabase";
 
-class Api {
+export class DbService {
   token: string | undefined;
   url: string | undefined;
 
@@ -90,7 +88,7 @@ class Api {
     };
   }
 
-  async findNews(params: any): Promise<any> {
+  async findNews(params: any = {}): Promise<any> {
     const query = supabase
       .from('actualites')
       .select(`id, text:texte, date`)
@@ -142,31 +140,8 @@ class Api {
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse, path: string | undefined = undefined) {
-  try {
-    const api = new Api();
-    let respData;
+const dbService = new DbService();
 
-    path = path || req.query.path as string;
-
-    if (path === 'personalities' && req.query.id) {
-      respData = await api.findPersonality(req.query.id);
-    } else if (path === 'personalities') {
-      respData = await api.findPersonalities(req.query)
-    } else if (path === 'quotes') {
-      respData = await api.findQuotes(req.query);
-    } else if (path === 'news') {
-      respData = await api.findNews(req.query);
-    } else if (path === 'tags' && req.query.id) {
-      respData = await api.findTag(req.query.id);
-    } else if (path === 'parties' && req.query.id) {
-      respData = await api.findParty(req.query.id);
-    } else
-      throw new Error('Invalid path');
-
-    res.status(200).json(respData);
-  } catch (error: any) {
-    res.status(500).json({error: 'Something went wrong', details: error.message});
-    //throw error;
-  }
+export function getDbService() {
+  return dbService;
 }

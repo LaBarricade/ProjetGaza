@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { PersonalityList } from "@/components/list/personality-list";
 import {Personality} from "@/types/Personality";
-import {callApi} from "@/lib/api-client";
+import {callLocalApi} from "@/lib/api/api-client";
 
 export default function PersonalitiesPage() {
   const [data, setData] = useState<Personality[] | null>(null);
@@ -12,7 +12,7 @@ export default function PersonalitiesPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const apiResp = await callApi(`/api/v2/personalities`);
+      const apiResp = await callLocalApi(`/api/v2/personalities`);
       const personalities = apiResp.items;
       setData(personalities);
     } catch (err) {
