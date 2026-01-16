@@ -31,7 +31,6 @@ async function computeFilters (urlParams : any){
 
   if (urlParams) {
     //-- Fetch search params info
-    //if (urlParams.get('tag')) {
     if (urlParams.tag) {
       const id = urlParams.tag;
       apiResp = await getDbService().findTag({id: id});
@@ -69,18 +68,7 @@ const fetchQuotes = async (filters: Filters, page: string) => {
 
 export default async function QuotesPage({params, searchParams}: {params: any, searchParams: any}) {
   const urlParams = await searchParams;
-  /*const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<Filters>({});
-  const urlParams = useSearchParams();
-  const [items, setItems] = useState<Quote[] | null>(null);
-  const [totalCount, setTotalCount] = useState<number | null>(null);
-  const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const pageRef = useRef(1);*/
-
-
   const filters: Filters = await computeFilters(urlParams);
-
   const {items, count: totalCount, apiFilters} = await fetchQuotes(filters, urlParams?.page || '1');
 
   let searchTitle = null;
@@ -96,12 +84,6 @@ export default async function QuotesPage({params, searchParams}: {params: any, s
 
   return (
       <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
-        {/*loading && (
-          <div className="flex flex-1 items-center h-full">
-            <p>Chargement des données...</p>
-          </div>
-        )*/}
-
         {items && items.length &&
             <SearchInput runSearch={runSearch} />
         }

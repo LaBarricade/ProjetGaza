@@ -12,39 +12,7 @@ import { useEffect, useState } from "react";
 import { getWikipediaImage } from "@/lib/wiki-img";
 import {Quote} from "@/types/Quote";
 import {Source} from "@/types/Source";
-/*
-export type Quote = {
-  id: number;
-  order: string;
-  prénom: string;
-  nom: string;
-  commune: string;
-  département: string;
-  région: string;
-  parti_politique: {
-    color: string;
-    id: number;
-    value: string;
-  };
-  fonction: string;
-  citation: string;
-  date: string;
-  source: {
-    color: string;
-    id: number;
-    value: string;
-  };
-  lien: string;
-  tag: {
-    color: string;
-    id: number;
-    value: string;
-  }[];
-  collecteur: string;
-  commentaire: string;
-  est_publié: boolean;
-};
-*/
+
 export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePersonality ?: boolean }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);

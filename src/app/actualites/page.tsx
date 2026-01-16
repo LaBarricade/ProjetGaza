@@ -5,30 +5,6 @@ import {News} from "@/types/News";
 import {getDbService} from "@/lib/api/db-service";
 
 export default async function NewsPage() {
-  /*const [items, setItems] = useState<News[] | null>(null);
-  const [filteredResults] = useState<News[] | null>(null);
-  const [loading, setLoading] = useState(true);*/
-  /*const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
-
-  const fetchData = useCallback(async () => {
-    try {
-      const apiResp = await callApi(`/api/v2/news`);
-      setItems(apiResp.items);
-    } catch (err) {
-      console.error("Fetch failed:", err);
-      setItems(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [setItems, setLoading]);
-
-  useEffect(() => {
-    const fetchDataAsync = async () => {
-      await fetchData();
-    };
-    fetchDataAsync();
-  }, []);*/
-
   const data = await getDbService().findNews()
   const items = data.items;
 
