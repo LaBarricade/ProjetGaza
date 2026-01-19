@@ -116,6 +116,22 @@ export class DbService {
     };
   }
 
+  async findPopularTags(): Promise<any> {
+    const query = supabase
+      .from('tags')
+      .select(`id, name:nom`)
+
+      //.order('count', {ascending: false})
+      .range(0, 3);
+
+    const resp = await query;
+    this.checkErrors(resp);
+
+    return {
+      items: resp.data
+    }
+  }
+
   async findParty(id: any): Promise<any> {
     const query = supabase
       .from('partis_politiques')

@@ -19,6 +19,8 @@ export default async function localApiHandler(req: NextApiRequest, res: NextApiR
       respData = await api.findNews(req.query);
     } else if (path === 'tags' && req.query.id) {
       respData = await api.findTag(req.query.id);
+    } else if (path === 'tags' && req.query.popular) {
+      respData = await api.findPopularTags();
     } else if (path === 'parties' && req.query.id) {
       respData = await api.findParty(req.query.id);
     } else

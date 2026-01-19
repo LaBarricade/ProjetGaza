@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { getWikipediaImage } from "@/lib/wiki-img";
 import {Quote} from "@/types/Quote";
 import {Source} from "@/types/Source";
+import TagLabel from "@/components/tag";
 
 export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePersonality ?: boolean }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -88,14 +89,7 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
             <p>
               <span className="font-medium"></span>{" "}
               {quote.tags.map((tag) => (
-                <Link href={`/citations?tag=${tag.id}`}>
-                  <span
-                    key={tag.id}
-                    className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs inline-block"
-                  >
-                    {tag.name}
-                  </span>
-                </Link>
+                <TagLabel tag={tag} />
               ))}
             </p>
           )}

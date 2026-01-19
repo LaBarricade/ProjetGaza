@@ -9,19 +9,21 @@ import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import {Quote} from "@/types/Quote";
+import {Tag} from "@/types/Tag";
 import { redirect } from 'next/navigation'
 import {callLocalApi} from "@/lib/api/api-client";
+import TagLabel from "@/components/tag";
 
 
 export default function Home() {
   const [query, setQuery] = useState("");
-  const [quotes, setQuotes] = useState<Quote[] | null>(null);
+  const [quotes, setQuotes] = useState<Quote[] | null>([]);
   const [stats, setStats] = useState<{ personalities_count: number, quotes_count: number }>({
     personalities_count: 0,
     quotes_count: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [popularTags] = useState(['déni de génocide', 'apartheid', 'complicité de crimes de guerre']);
+  const [popularTags, setPopularTags] = useState<Tag[] | null>([]);
 
   const runSearch = () => {
     redirect(`/citations?text=${encodeURI(query)}`)
@@ -31,6 +33,8 @@ export default function Home() {
     try {
       const personalitiesData = await callLocalApi(`/api/v2/personalities?size=1`);
       const quotesData = await callLocalApi(`/api/v2/quotes?page=1&size=5`);
+      const popularTags = await callLocalApi(`/api/v2/tags?popular=1`);
+      setPopularTags(popularTags.items);
 
       setStats({
         personalities_count: personalitiesData.count,
@@ -43,11 +47,11 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, [setQuotes, setLoading]);
+  }, [setQuotes, setLoading, setPopularTags]);
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, setPopularTags]);
 
   return (
     <>
@@ -140,13 +144,8 @@ export default function Home() {
         <div className="flex flex-col justify-center items-center my-8">
           <h2 className="text-3xl font-bold">Tags</h2>
           <div className="w-full justify-center flex flex-wrap mt-4 gap-2">
-            {popularTags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs"
-              >
-                {tag}
-              </span>
+            {popularTags && popularTags.map((t: Tag) => (
+              <TagLabel tag={t} />
             ))}
           </div>
         </div>
