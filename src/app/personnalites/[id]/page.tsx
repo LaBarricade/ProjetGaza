@@ -7,7 +7,7 @@ import { LogoParti } from "@/components/logo/parti";
 import { getWikipediaImage } from "@/lib/wiki-img";
 import {Personality} from "@/types/Personality";
 import {Quote} from "@/types/Quote";
-import {callLocalApi} from "@/lib/api/api-client";
+import {callLocalApi} from "@/lib/backend/api-client";
 
 const logoCache: { [key: string]: string } = {}
 

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { PersonalityList } from "@/components/list/personality-list";
 import {Personality} from "@/types/Personality";
-import {callLocalApi} from "@/lib/api/api-client";
+import {callLocalApi} from "@/lib/backend/api-client";
 
 export default function PersonalitiesPage() {
   const [data, setData] = useState<Personality[] | null>(null);

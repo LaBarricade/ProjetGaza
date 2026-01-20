@@ -11,7 +11,7 @@ import Link from "next/link";
 import {Quote} from "@/types/Quote";
 import {Tag} from "@/types/Tag";
 import { redirect } from 'next/navigation'
-import {callLocalApi} from "@/lib/api/api-client";
+import {callLocalApi} from "@/lib/backend/api-client";
 import TagLabel from "@/components/tag";
 
 

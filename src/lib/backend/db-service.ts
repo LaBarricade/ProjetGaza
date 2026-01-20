@@ -16,11 +16,11 @@ export class DbService {
                 party:parti_politique_id(name:nom, id)`, {count: 'exact'})
       .order('nom');
     this.checkErrors(resp);
-    const adaptedData = resp.data?.map((personnality: any) => Object.assign(personnality, {
+    const formatedData = resp.data?.map((personnality: any) => Object.assign(personnality, {
       quotes_count: personnality.quotes_count[0].count
     }));
     return {
-      items: adaptedData,
+      items: formatedData,
       count: resp.count
     };
   }
@@ -110,6 +110,8 @@ export class DbService {
       .single();
 
     const resp = await query;
+
+
     this.checkErrors(resp);
     return {
       item: resp.data
@@ -118,13 +120,12 @@ export class DbService {
 
   async findPopularTags(): Promise<any> {
     const query = supabase
-      .from('tags')
-      .select(`id, name:nom`)
-
-      //.order('count', {ascending: false})
+      .from('popular_tags_view')
+      .select(`id, name, quotes_count`)
       .range(0, 3);
 
     const resp = await query;
+
     this.checkErrors(resp);
 
     return {

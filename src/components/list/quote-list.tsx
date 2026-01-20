@@ -5,7 +5,7 @@ import CountUp from "react-countup";
 import { QuoteCard } from "../quote-card";
 import {Quote} from "@/types/Quote";
 import {useCallback, useEffect, useRef, useState} from "react";
-import {callLocalApi} from "@/lib/api/api-client";
+import {callLocalApi} from "@/lib/backend/api-client";
 
 function CitationCount({ totalCount }: { totalCount: number }) {
   return (

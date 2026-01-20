@@ -9,7 +9,7 @@ import {ReadonlyURLSearchParams, redirect} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Search} from "lucide-react";
 import SearchInput from "@/components/search-input";
-import {getDbService} from "@/lib/api/db-service";
+import {getDbService} from "@/lib/backend/db-service";
 
 type Filters = {
   tag?: Tag | null;

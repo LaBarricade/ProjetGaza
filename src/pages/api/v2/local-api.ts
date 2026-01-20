@@ -1,5 +1,5 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
-import {DbService} from "@/lib/api/db-service";
+import {DbService} from "@/lib/backend/db-service";
 
 
 export default async function localApiHandler(req: NextApiRequest, res: NextApiResponse, path: string | undefined = undefined) {

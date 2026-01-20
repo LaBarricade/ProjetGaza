@@ -2,7 +2,7 @@
 import { NewsList } from "@/components/list/news-list";
 import {News} from "@/types/News";
 
-import {getDbService} from "@/lib/api/db-service";
+import {getDbService} from "@/lib/backend/db-service";
 
 export default async function NewsPage() {
   const data = await getDbService().findNews()
