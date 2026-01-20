@@ -1,89 +1,104 @@
-"use client";
+'use server';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { TopBar } from "@/app/top-bar";
-import { Quote } from "@/components/quote-card";
+//import {Suspense, useCallback, useEffect, useRef, useState} from "react";
 import { QuoteList } from "@/components/list/quote-list";
-import { Footer } from "../footer";
+import {Quote} from "@/types/Quote";
+import {Tag} from "@/types/Tag";
+import {Party} from "@/types/Party";
+import {ReadonlyURLSearchParams, redirect} from "next/navigation";
+import {Input} from "@/components/ui/input";
+import {Search} from "lucide-react";
+import SearchInput from "@/components/search-input";
+import {getDbService} from "@/lib/backend/db-service";
 
-export type BaserowData = {
-  count: number
-  next: null
-  previous: null
-  results: Quote[]
+type Filters = {
+  tag?: Tag | null;
+  text?: string | null;
+  party?: Party | null;
+};
+
+
+async function runSearch (q: string)  {
+  'use server';
+
+  redirect(`/citations?text=${encodeURI(q)}`)
 }
 
-export default function Home() {
-  const [data, setData] = useState<BaserowData | null>(null);
-  const [filteredResults, setFilteredResults] = useState<Quote[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const pageRef = useRef(1);
+async function computeFilters (urlParams : any){
+  //-- Fetch quotes
+  const filters : Filters = {}
+  let apiResp;
 
-  const handleResults = useCallback((results: Quote[] | null) => {
-    pageRef.current = 1;
-    setFilteredResults(results);
-  }, []);
-
-  const handleLoading = useCallback((isLoading: boolean) => setLoading(isLoading), []);
-
-  const fetchData = useCallback(async (pageToLoad: number = pageRef.current) => {
-    try {
-      const res = await fetch(`/api/baserow?page=${pageToLoad}&size=20`);
-      if (!res.ok) throw new Error("Erreur fetch API");
-      const json = await res.json();
-
-      if (pageToLoad === 1) {
-        setData(json);
-      } else {
-        setData(prev => prev ? {
-          ...json,
-          results: [...prev.results, ...json.results],
-        } : json);
-      }
-    } catch (err) {
-      console.error("Fetch failed:", err);
-      setData(null);
-    } finally {
-      setLoading(false);
+  if (urlParams) {
+    //-- Fetch search params info
+    if (urlParams.tag) {
+      const id = urlParams.tag;
+      apiResp = await getDbService().findTag(id);
+      filters.tag = apiResp.item;
     }
-  }, [setData, setLoading]);
+    if (urlParams.party) {
+      const id = urlParams.party;
+      apiResp = await getDbService().findParty(id);
+      filters.party = apiResp.item;
+    }
+    if (urlParams.text) {
+      filters.text = urlParams.text;
+    }
+  }
 
-  const loadMore = async () => {
-    if (data && data?.count <= data?.results.length) return;
-    if (loading) return;
-    setLoading(true);
-    fetchData(pageRef.current + 1)
-    pageRef.current += 1;
-  };
+  return filters;
+}
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+const fetchQuotes = async (filters: Filters, page: string) => {
+  let apiFilters: any = {}
+  apiFilters.page = page;
+  apiFilters.size = 20;
+
+  if (filters.tag)
+    apiFilters.tag = filters.tag.id.toString();
+  if (filters.text)
+    apiFilters.text = filters.text;
+  if (filters.party)
+    apiFilters.party = filters.party.id.toString();
+
+  const apiResp = await getDbService().findQuotes(apiFilters);
+
+  return {items: apiResp.items, count: apiResp.count, apiFilters};
+}
+
+export default async function QuotesPage({params, searchParams}: {params: any, searchParams: any}) {
+  const urlParams = await searchParams;
+  const filters: Filters = await computeFilters(urlParams);
+  const {items, count: totalCount, apiFilters} = await fetchQuotes(filters, urlParams?.page || '1');
+
+  let searchTitle = null;
+  if (Object.keys(filters).length > 0) {
+    searchTitle = 'Recherche pour ';
+    if (filters.tag)
+      searchTitle += ' le tag "' + filters.tag.name + '"'
+    else if (filters.text)
+      searchTitle += ' "' + filters.text + '"'
+    else if (filters.party)
+      searchTitle += ' le parti politique "' + filters.party.name + '"'
+  }
 
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <TopBar onLoading={handleLoading} onResults={handleResults} />
-
       <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
-        {loading && (
-          <div className="flex flex-1 items-center h-full">
-            <p>Chargement des données...</p>
-          </div>
-        )}
+        {items && items.length &&
+            <SearchInput runSearch={runSearch} />
+        }
 
-        {filteredResults && filteredResults.length > 0 && <QuoteList quotes={filteredResults} onEndReached={loadMore} />}
-        {!filteredResults && data && data.results.length > 0 && <QuoteList quotes={data.results} totalCount={data.count} onEndReached={loadMore} />}
+        {searchTitle && <h2 className="text-3xl font-bold">{searchTitle}</h2>}
 
-        {filteredResults && filteredResults.length === 0 && <p>Aucun résultat trouvé.</p>}
-        
-        {data && data.results.length === 0 && (
+        {items && items.length > 0 &&
+            <QuoteList initialItems={items} totalCount={totalCount} apiFilters={apiFilters} />
+        }
+
+        {items && items.length === 0 &&
           <div className="flex flex-1 items-center h-full">
             <p>Aucun résultat trouvé.</p>
           </div>
-        )}
+        }
       </main>
-
-      <Footer />
-    </div>
   );
 }
