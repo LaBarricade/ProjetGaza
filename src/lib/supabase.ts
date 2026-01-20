@@ -7,3 +7,4 @@ if (!supabaseUrl || !supabaseKey)
     throw new Error('No supabase url or key. Create .env.local file with supabase url and key')
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
+
