@@ -33,12 +33,12 @@ async function computeFilters (urlParams : any){
     //-- Fetch search params info
     if (urlParams.tag) {
       const id = urlParams.tag;
-      apiResp = await getDbService().findTag({id: id});
+      apiResp = await getDbService().findTag(id);
       filters.tag = apiResp.item;
     }
     if (urlParams.party) {
       const id = urlParams.party;
-      apiResp = await getDbService().findParty({id: id});
+      apiResp = await getDbService().findParty(id);
       filters.party = apiResp.item;
     }
     if (urlParams.text) {
