@@ -1,4 +1,4 @@
-import { Personality } from "@/app/personnalites/page";
+
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation";
+import {Personality} from "@/types/Personality";
 
 export function PersonalityList({
   personalities,
@@ -15,6 +16,7 @@ export function PersonalityList({
   personalities: Personality[];
 }) {
   const router = useRouter();
+
 
   return (
     <div className="w-full max-w-screen p-4 mx-auto mt-6 overflow-x-auto">
@@ -28,17 +30,18 @@ export function PersonalityList({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {personalities.map((p, index) => {
+          {
+            personalities.map((p, index) => {
             return (
               <TableRow
-                key={p.fullName}
+                key={p.firstname + ' ' + p.lastname}
                 className="hover:bg-muted/50 cursor-pointer transition-colors"
-                onClick={() => router.push(`/personnalites/${p.fullName}`)}
+                onClick={() => router.push(`/personnalites/${p.id}`)}
               >
                 <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{p.fullName}</TableCell>
-                <TableCell>{p.partiPolitique ?? "-"}</TableCell>
-                <TableCell>{p.fonction ?? "-"}</TableCell>
+                <TableCell>{p.firstname + ' ' + p.lastname}</TableCell>
+                <TableCell>{p.party?.name || "-"}</TableCell>
+                <TableCell>{p.role || "-"}</TableCell>
               </TableRow>
             );
           })}

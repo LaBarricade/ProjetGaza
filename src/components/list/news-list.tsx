@@ -1,5 +1,6 @@
-import { News } from "@/app/actualites/page";
+
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import {News} from "@/types/News";
 
 export function NewsList({ news }: { news: News[] }) {
   return (

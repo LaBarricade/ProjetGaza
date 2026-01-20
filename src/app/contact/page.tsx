@@ -1,15 +1,10 @@
 "use client";
 
-import { Footer } from "../footer";
-import { TopBar } from "../top-bar";
-
 export default function Contact() {
   const email = "contact@example.com"; // remplace par ton email
 
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
-      <TopBar />
-    
+
       <main className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
         <div className="max-w-3xl mx-auto px-6 py-12 text-center">
           <h1 className="text-4xl font-bold mb-10">
@@ -27,7 +22,5 @@ export default function Contact() {
         </div>
       </main>
 
-      <Footer />
-    </div>
   );
 }
