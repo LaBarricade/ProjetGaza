@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { baserowDefaultQueryFilters } from './baserow';
+import { baserowDefaultQueryFilters } from './baserow.ts_old';
 import { Personality } from '@/app/personnalites/page';
 
 
