@@ -67,6 +67,15 @@ export class DbService {
       query.eq('personality.party.id', params.party);
     if (params.ids)
       query.in('id', params.ids)
+    if(params.personality) {
+      if(Array.isArray(params.personality)) 
+        query.in('personality.id', params.personality);
+      else 
+        query.eq('personality.id', params.personality);
+    }
+    if(params.function) 
+      query.eq('personality.role', params.function);
+    
 
     this.addPaginationFilters(params, query);
     query.select(select)

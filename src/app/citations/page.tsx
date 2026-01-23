@@ -63,6 +63,8 @@ const fetchQuotes = async (filters: Filters, page: string) => {
 
   const apiResp = await getDbService().findQuotes(apiFilters);
 
+  console.log("QUOTES API Resp:", apiResp);
+
   return {items: apiResp.items, count: apiResp.count, apiFilters};
 }
 
@@ -84,7 +86,7 @@ export default async function QuotesPage({params, searchParams}: {params: any, s
 
   return (
       <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
-        {items && items.length &&
+        {items && items.length > 0 &&
             <SearchInput runSearch={runSearch} />
         }
 
