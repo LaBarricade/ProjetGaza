@@ -81,7 +81,7 @@ export function useSearchFilters() {
    * @param key The key of the filter to remove from.
    * @param value The value to remove from the filter.
    */
-  const removeFilter = useCallback((key: keyof SearchFilters, value: number) => {
+  const removeFilter = useCallback((key: keyof SearchFilters, value: number | string | Tag) => {
     setFilters((prev) => ({
       ...prev,
       [key]: Array.isArray(prev[key])

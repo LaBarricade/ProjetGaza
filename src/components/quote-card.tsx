@@ -88,8 +88,8 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
           {!!quote.tags.length && (
             <p>
               <span className="font-medium"></span>{" "}
-              {quote.tags.map((tag) => (
-                <TagLabel tag={tag} />
+              {quote.tags.map((tag, i) => (
+                <TagLabel tag={tag} key={`quote-tag-${i}`}/>
               ))}
             </p>
           )}

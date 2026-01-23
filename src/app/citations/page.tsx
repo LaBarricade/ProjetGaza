@@ -10,6 +10,7 @@ import {Input} from "@/components/ui/input";
 import {Search} from "lucide-react";
 import SearchInput from "@/components/search-input";
 import {getDbService} from "@/lib/backend/db-service";
+import { FunctionFilter } from "@/components/search/function-filter";
 
 type Filters = {
   tag?: Tag | null;
@@ -24,6 +25,10 @@ async function runSearch (q: string)  {
   redirect(`/citations?text=${encodeURI(q)}`)
 }
 
+async function runFunctionFilter (functions: string[])  {
+'use server';
+  redirect
+}
 async function computeFilters (urlParams : any){
   //-- Fetch quotes
   const filters : Filters = {}
@@ -63,8 +68,6 @@ const fetchQuotes = async (filters: Filters, page: string) => {
 
   const apiResp = await getDbService().findQuotes(apiFilters);
 
-  console.log("QUOTES API Resp:", apiResp);
-
   return {items: apiResp.items, count: apiResp.count, apiFilters};
 }
 
@@ -72,7 +75,6 @@ export default async function QuotesPage({params, searchParams}: {params: any, s
   const urlParams = await searchParams;
   const filters: Filters = await computeFilters(urlParams);
   const {items, count: totalCount, apiFilters} = await fetchQuotes(filters, urlParams?.page || '1');
-
   let searchTitle = null;
   if (Object.keys(filters).length > 0) {
     searchTitle = 'Recherche pour ';
@@ -84,11 +86,32 @@ export default async function QuotesPage({params, searchParams}: {params: any, s
       searchTitle += ' le parti politique "' + filters.party.name + '"'
   }
 
+
+
+  let functionsList = items.map((quote: Quote) => quote?.personality?.role );
+
   return (
       <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
-        {items && items.length > 0 &&
-            <SearchInput runSearch={runSearch} />
-        }
+       <div className="w-full flex items-center justify-center">
+         {items && items.length && 
+         <>
+        <div>
+          
+          <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-md flex items-center justify-start gap-2">
+          <Search size={18} />Recherche
+        </h3>
+ 
+      </div>
+          <SearchInput runSearch={runSearch} />
+        </div>
+      
+        <FunctionFilter functionsList={functionsList} urlParams={urlParams}/>
+         </>
+
+          } 
+       </div>
+
 
         {searchTitle && <h2 className="text-3xl font-bold">{searchTitle}</h2>}
 
