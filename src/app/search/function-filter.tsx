@@ -6,13 +6,13 @@ import { BriefcaseBusiness, X } from 'lucide-react';
 interface FunctionFilterProps {
   selected: string[];
   onChange: (selected: string[]) => void;
-  availableFunctions: string[];
+  functionsList: string[];
 }
 
 export function FunctionFilter({
   selected,
   onChange,
-  availableFunctions,
+  functionsList,
 }: FunctionFilterProps) {
   const toggleFunction = (func: string) => {
     onChange(
@@ -26,7 +26,7 @@ export function FunctionFilter({
       <div className="h-40 border overflow-y-scroll rounded-md p-3">
       <ScrollAreaComponent>
         <div className="space-y-2">
-          {availableFunctions.map((func) => (
+          {functionsList.map((func) => (
             <Button
               key={func}
               variant={selected.includes(func) ? 'default' : 'outline'}

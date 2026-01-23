@@ -184,8 +184,8 @@ export default function Home() {
         <div className="flex flex-col justify-center items-center my-8">
           <h2 className="text-3xl font-bold">Tags</h2>
           <div className="w-full justify-center flex flex-wrap mt-4 gap-2">
-            {popularTags && popularTags.map((t: Tag) => (
-              <TagLabel tag={t} />
+            {popularTags && popularTags.map((t: Tag, i) => (
+              <TagLabel tag={t} key={`tag-${i}`} />
             ))}
             {/*
                   {popularTags.map((tag) => (

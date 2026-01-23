@@ -1,28 +1,29 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { UserRound, X } from 'lucide-react';
-import { Personality } from '../personnalites/page';
-import { Tag } from '@/components/ui/tag';
+import {Tag as TagType} from '@/types/Tag';
+import { Personality } from '@/types/Personality';
+import{ Tag }from '@/components/ui/tag';
 
 interface PoliticianFilterProps {
   selected: number[];
   onChange: (selected: number[]) => void;
-  availablePoliticians: Personality[];
+  personalitiesList: Personality[];
 }
 
 export function PoliticianFilter({
   selected,
   onChange,
-  availablePoliticians,
+  personalitiesList,
 }: PoliticianFilterProps) {
   const [search, setSearch] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const filtered = availablePoliticians.filter((p) =>
-    p.nom.toLowerCase().includes(search.toLowerCase()) ||
-    p.prénom.toLowerCase().includes(search.toLowerCase())
+  const filtered = personalitiesList.filter((p) =>
+    p.lastname.toLowerCase().includes(search.toLowerCase()) ||
+    p.firstname.toLowerCase().includes(search.toLowerCase())
   );
 
   const togglePolitician = (id: number | null) => {
@@ -79,7 +80,7 @@ export function PoliticianFilter({
                   disabled={isSelected || false}
                 >
                   <span className={isSelected ? 'text-muted-foreground' : ''}>
-                    {politician.prénom} {politician.nom}
+                    {politician.firstname} {politician.lastname}
                   </span>
                   {isSelected && (
                     <span className="text-xs text-muted-foreground">Sélectionné</span>
@@ -93,7 +94,7 @@ export function PoliticianFilter({
       {selected.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {selected.map((id) => {
-            const politician = availablePoliticians.find((p) => Number(p.id) === id);
+            const politician = personalitiesList.find((p) => Number(p.id) === id);
             return (
               // <div
               //   key={id}
@@ -108,7 +109,7 @@ export function PoliticianFilter({
               //   </button>
               // </div>
               <Tag key={id} size='sm' variant='solid' className='flex items-center gap-2'>
-                {politician?.prénom} {politician?.nom}
+                {politician?.firstname} {politician?.lastname}
                  <button
                    onClick={() => togglePolitician(id)}
                    className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
