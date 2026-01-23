@@ -8,15 +8,22 @@ import { Input } from "@/components/ui/input";
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+import { Personality } from "./personnalites/page";
+import { Footer } from "./footer";
+import { useRouter } from "next/navigation";
+
 import {Quote} from "@/types/Quote";
 import {Tag} from "@/types/Tag";
 import { redirect } from 'next/navigation'
 import {callLocalApi} from "@/lib/backend/api-client";
 import TagLabel from "@/components/tag";
 
-import { Personality } from "./personnalites/page";
-import { Footer } from "./footer";
-import { useRouter } from "next/navigation";
+
+export type BaserowQuoteData = {
+  count: number
+  results: Quote[]
+}
 
 export type BaserowData = {
   count: number
@@ -28,11 +35,6 @@ export type BaserowData = {
 export type BaserowPersonalityData = {
   count: number
   results: Personality[]
-}
-
-export type BaserowQuoteData = {
-  count: number
-  results: Quote[]
 }
 
 export default function Home() {
