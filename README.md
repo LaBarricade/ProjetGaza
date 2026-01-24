@@ -2,33 +2,28 @@
 
 ## Installation
 
-Installer les paquets NPM :
+- Installer les paquets NPM :
 
 ```bash
 npm install
 ```
 
-Créer le fichier `.env` en duplicant `template.env` :
+- Créer le fichier `.env` en duplicant `template.env` :
 
 ```bash
 cp template.env .env
 ```
 
-Renseigner les variables secrètes avec les valeurs fournies par l'équipe :
+- Renseigner les variables dans `.env` avec les valeurs fournies par l'équipe
 
-```ini
-SUPABASE_PUBLISHABLE_DEFAULT_KEY=XXXXXXXXXXXXX
-```
 
-Lancer le serveur de dev :
-
+- Lancer le serveur de dev :
 
 ```bash
 npm run dev
 ```
 
 Ouvrir [http://localhost:3000](http://localhost:3000)
-
 
 ## shadcn UI
 
@@ -43,4 +38,3 @@ example :
 ```bash
 npx shadcn@latest add button
 ```
-
