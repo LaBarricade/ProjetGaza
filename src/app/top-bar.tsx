@@ -22,6 +22,7 @@ export function TopBar() {
     { href: "/citations", label: "Citations" },
     { href: process.env.NEXT_PUBLIC_FORM_URL || "", label: "Contribuer" },
     { href: "/contact", label: "Contact" },
+    { href: "/search", label: "Recherche" },
   ];
 
   return (

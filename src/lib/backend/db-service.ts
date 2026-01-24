@@ -1,4 +1,5 @@
 import {supabase} from "@/lib/supabase";
+import { Tag } from "@/types/Tag";
 
 export class DbService {
   token: string | undefined;
@@ -58,9 +59,11 @@ export class DbService {
             city:ville, department:departement, region,
             party:parti_politique_id${params.party ? '!inner' : ''}(name:nom, id)
           )`;
-
-    if (params.tag)
+    if (params.tag && Array.isArray(params.tag)) {
+      query.in('tags.id', params.tag);
+    } else if (params.tag) {
       query.eq('tags.id', params.tag);
+    }
     if (params.text)
       query.textSearch('citation', params.text, {type: 'plain'});
     if (params.party)
@@ -73,9 +76,9 @@ export class DbService {
       else 
         query.eq('personality.id', params.personality);
     }
-    if(params.function) 
-      query.eq('personality.role', params.function);
     
+    if(params.function)
+      query.like('personality.role', params.function);
 
     this.addPaginationFilters(params, query);
     query.select(select)
@@ -127,6 +130,28 @@ export class DbService {
     };
   }
 
+async findTags(params: any = {}): Promise<{items: (Tag & {quotes_count: number})[], count: number | null}> {
+  let query = supabase
+    .from('tags')
+    .select(`id, name:nom, color, quotes_count:declarations(count)`, {count: 'exact'})
+    .order('nom');
+
+  if (params.id && params.id.length > 0) {
+    query = query.in('id', params.id);
+  }
+
+  const resp = await query;
+
+  this.checkErrors(resp);
+
+  return {
+    count: resp.count,
+    items: (resp.data || []).map(item => ({
+      ...item,
+      quotes_count: item.quotes_count[0]?.count || 0
+    }))
+  };
+}
   async findPopularTags(): Promise<any> {
     const query = supabase
       .from('popular_tags_view')

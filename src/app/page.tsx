@@ -8,6 +8,11 @@ import { Input } from "@/components/ui/input";
 import CountUp from "react-countup";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+
+import { Personality } from "./personnalites/page";
+import { Footer } from "./footer";
+import { useRouter } from "next/navigation";
+
 import {Quote} from "@/types/Quote";
 import {Tag} from "@/types/Tag";
 import { redirect } from 'next/navigation'
@@ -15,7 +20,25 @@ import {callLocalApi} from "@/lib/backend/api-client";
 import TagLabel from "@/components/tag";
 
 
+export type BaserowQuoteData = {
+  count: number
+  results: Quote[]
+}
+
+export type BaserowData = {
+  count: number
+  next: null
+  previous: null
+  results: Quote[]
+}
+
+export type BaserowPersonalityData = {
+  count: number
+  results: Personality[]
+}
+
 export default function Home() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [quotes, setQuotes] = useState<Quote[] | null>([]);
   const [stats, setStats] = useState<{ personalities_count: number, quotes_count: number }>({
@@ -53,6 +76,18 @@ export default function Home() {
     fetchData();
   }, [fetchData, setPopularTags]);
 
+    //Search functionality
+    const handleSearch = useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  }, [query, router]);
+
+  const handleTagClick = useCallback((tag: string) => {
+    router.push(`/search?tag=${encodeURIComponent(tag)}`);
+  }, [router]);
+
   return (
     <>
       <div className="flex flex-col justify-center items-center min-h-screen h-full w-full bg-gradient-to-br from-[#cbd9f6] via-[#d6d4f5] to-[#decef5]">
@@ -71,7 +106,7 @@ export default function Home() {
             <h4 className="text-gray-600">Découvrez l&apos;évolution des positions de vos élus dans le temps en fonction de leurs déclarations et de leurs votes.</h4>
           </div>
 
-          <div className="flex w-full mt-4 justify-center">
+          <form onSubmit={handleSearch} className="flex w-full mt-4 justify-center">
             <div className="relative w-full md:max-w-md">
               <Input
                 type="text"
@@ -83,8 +118,15 @@ export default function Home() {
               />
               <Search className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500"
                       onClick={() => runSearch()}/>
+                        <button 
+                type="submit"
+                className="absolute right-3 top-1/2 -translate-y-1/2 hover:text-primary transition-colors"
+              >
+                <Search className="h-5 w-5 text-gray-500 hover:text-primary" />
+              </button>
+              {/* <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" /> */}
             </div>
-          </div>
+          </form>
 
           <div className="flex flex-col md:flex-row gap-4 mt-4">
             <div className="min-w-1/3 flex-1 flex flex-col justify-center items-center bg-white rounded-sm p-4">
@@ -144,9 +186,20 @@ export default function Home() {
         <div className="flex flex-col justify-center items-center my-8">
           <h2 className="text-3xl font-bold">Tags</h2>
           <div className="w-full justify-center flex flex-wrap mt-4 gap-2">
-            {popularTags && popularTags.map((t: Tag) => (
-              <TagLabel tag={t} />
+            {popularTags && popularTags.map((t: Tag, i) => (
+              <TagLabel tag={t} key={`tag-${i}`} />
             ))}
+            {/*
+                  {popularTags.map((tag) => (
+              <span
+                key={tag}
+                onClick={() => handleTagClick(tag)}
+                className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs"
+              >
+                {tag}
+              </span>
+            ))}
+            */}
           </div>
         </div>
       </div>

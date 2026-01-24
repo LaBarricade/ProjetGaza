@@ -12,6 +12,8 @@ interface PoliticianCardProps {
 
 export function PoliticianCard({ politician, quotes }: PoliticianCardProps) {
 
+
+
   return (
     <Link href={`/politician/${politician.id}`}>
       <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">

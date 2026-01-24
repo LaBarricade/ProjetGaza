@@ -4,6 +4,28 @@ import { useCallback, useEffect, useState } from "react";
 import { PersonalityList } from "@/components/list/personality-list";
 import {Personality} from "@/types/Personality";
 import {callLocalApi} from "@/lib/backend/api-client";
+import { BaserowPersonalityData } from "../page";
+import { Quote } from "@/components/quote-card";
+import { Footer } from "../footer";
+
+export type Personality = {
+  id?: number;
+  prénom: string;
+  nom: string;
+  fullName: string;
+  partiPolitique?: string;
+  fonction?: string;
+  citations: Quote[];
+  tag?: Tag[];
+};
+
+export type Tag = {
+  id?: number;
+  value: string;
+  color: string;
+}
+
+
 
 export default function PersonalitiesPage() {
   const [data, setData] = useState<Personality[] | null>(null);
