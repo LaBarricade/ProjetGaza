@@ -25,16 +25,3 @@ npm run dev
 
 Ouvrir [http://localhost:3000](http://localhost:3000)
 
-## shadcn UI
-
-https://ui.shadcn.com/docs/installation/next
-
-### Add Components
-
-You can now start adding components to your project.
-
-example :
-
-```bash
-npx shadcn@latest add button
-```
