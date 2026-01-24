@@ -8,7 +8,7 @@
 npm install
 ```
 
-- Créer le fichier `.env` en duplicant `template.env` :
+- Créer le fichier `.env` en dupliquant `template.env` :
 
 ```bash
 cp template.env .env
