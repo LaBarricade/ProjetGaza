@@ -161,7 +161,8 @@ export default async function PersonalitiesPage({
 
       {items.length > 0 ? (
         <PersonalityList personalities={items} />
-      ) : (
+      ) : 
+      (
         <div className="flex flex-1 items-center h-full">
           <p>Aucun résultat trouvé.</p>
         </div>
