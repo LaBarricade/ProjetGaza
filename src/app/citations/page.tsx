@@ -265,7 +265,12 @@ export default async function QuotesPage({
       )}
 
       {items && items.length > 0 && (
-        <QuoteList initialItems={items} totalCount={totalCount} apiFilters={apiFilters} />
+        <QuoteList
+          initialItems={items}
+          totalCount={totalCount}
+          hidePersonality={false}
+          apiFilters={apiFilters}
+        />
       )}
 
       {items && items.length === 0 && (
