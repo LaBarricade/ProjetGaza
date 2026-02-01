@@ -92,7 +92,7 @@ export function FiltersBar({
   config = {
     showPersonalities: true,
     showMandates: true,
-    showText: false,
+    showText: true,
     showTags: true,
     showParties: true,
     showDepartments: true,
@@ -203,7 +203,7 @@ export function FiltersBar({
       >
         <div className="min-h-0 min-w-0">
           {/* Filters Section - Horizontal Layout */}
-          <div className="flex min-w-0 w-full items-start gap-4 overflow-visible p-6">
+          <div className="flex min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">
             {config.showPersonalities && (
               <PersonalityFilter
                 selected={filters.personalities}
@@ -214,7 +214,9 @@ export function FiltersBar({
 
             {config.showParties && partiesList.length > 0 && (
               <>
-                {config.showPersonalities && <Separator orientation="vertical" className="h-16" />}
+                {config.showPersonalities && (
+                  <Separator orientation="vertical" className="h-16 opacity-50" />
+                )}
 
                 <PartyFilter
                   selected={filters.parties}
@@ -226,7 +228,7 @@ export function FiltersBar({
 
             {config.showMandates && (
               <>
-                <Separator orientation="vertical" className="h-16" />
+                <Separator orientation="vertical" className="h-16 opacity-50" />
 
                 <MandateFilter
                   selected={filters.roles}
@@ -238,7 +240,7 @@ export function FiltersBar({
 
             {config.showDepartments && (
               <>
-                <Separator orientation="vertical" className="h-16" />
+                <Separator orientation="vertical" className="h-16 opacity-50" />
 
                 <DepartmentFilter
                   selected={filters.departments}
@@ -248,29 +250,31 @@ export function FiltersBar({
               </>
             )}
           </div>
+          {(config.showTags || config.showText) && <Separator className="opacity-50" />}
 
-          {/* Text + Tags row */}
+          {/* Text + Tags */}
           <div className="flex w-full items-start min-w-0 overflow-visible">
-            {config.showText && (
-              <div className="flex-1 overflow-y-visible min-w-0">
-                <Separator />
-                <div className="p-6">
-                  <TextFilter
-                    selected={filters.text}
-                    onChange={onFiltersChange.text}
-                    config={config.textFilterConfig}
+            {config.showTags && (
+              <div className="flex-1 min-w-0 overflow-y-visible">
+                <div className="py-4 px-6">
+                  <TagFilter
+                    selected={filters.tags}
+                    onChange={onFiltersChange.tags}
+                    tagsList={tagsList}
                   />
                 </div>
               </div>
             )}
             {config.showTags && (
-              <div className="flex-1 min-w-0 overflow-y-visible">
-                <Separator />
-                <div className="p-6">
-                  <TagFilter
-                    selected={filters.tags}
-                    onChange={onFiltersChange.tags}
-                    tagsList={tagsList}
+              <Separator orientation="vertical" className="h-32 my-4 opacity-50" />
+            )}
+            {config.showText && (
+              <div className="flex-1 overflow-y-visible min-w-0">
+                <div className="py-4 px-6">
+                  <TextFilter
+                    selected={filters.text}
+                    onChange={onFiltersChange.text}
+                    config={config.textFilterConfig}
                   />
                 </div>
               </div>

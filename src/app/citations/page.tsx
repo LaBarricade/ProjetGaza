@@ -248,7 +248,7 @@ export default async function QuotesPage({
             config={{
               showPersonalities: true,
               showMandates: true,
-              showText: false,
+              showText: true,
               showTags: true,
               showParties: true,
               layout: 'horizontal',
