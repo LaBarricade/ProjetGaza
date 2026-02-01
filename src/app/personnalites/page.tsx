@@ -4,7 +4,7 @@ import { getDbService } from '@/lib/backend/db-service';
 import { MandateType } from '@/types/MandateType';
 import { Personality } from '@/types/Personality';
 import { Filters } from '@/types/Filters';
-import { FiltersBar } from '@/components/search/filters-bar';
+import { FiltersBar } from '@/components/filters/filters-bar';
 import { PersonalityList } from '@/components/list/personality-list';
 
 //URL Parsing
@@ -161,8 +161,7 @@ export default async function PersonalitiesPage({
 
       {items.length > 0 ? (
         <PersonalityList personalities={items} />
-      ) : 
-      (
+      ) : (
         <div className="flex flex-1 items-center h-full">
           <p>Aucun résultat trouvé.</p>
         </div>

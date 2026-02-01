@@ -5,7 +5,7 @@ import { Tag } from '@/types/Tag';
 import { Party } from '@/types/Party';
 import { getDbService } from '@/lib/backend/db-service';
 import { MandateType } from '@/types/MandateType';
-import { FiltersBar } from '@/components/search/filters-bar';
+import { FiltersBar } from '@/components/filters/filters-bar';
 import { Personality } from '@/types/Personality';
 
 export type Filters = {
