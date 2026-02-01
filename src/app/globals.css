@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -116,7 +116,22 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.scroll-thin {
+  scrollbar-width: thin;
+
+  /* Firefox */
+}
+
+.scroll-thin::-webkit-scrollbar {
+  height: 3px;
+}
+
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
 }

@@ -1,5 +1,4 @@
-'use client'
-
+'use client';
 import {
   Table,
   TableBody,
@@ -7,17 +6,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useRouter } from "next/navigation";
-import {Personality} from "@/types/Personality";
+} from '@/components/ui/table';
+import { useRouter } from 'next/navigation';
+import { Personality } from '@/types/Personality';
 
-export function PersonalityList({
-  personalities,
-}: {
-  personalities: Personality[];
-}) {
+export function PersonalityList({ personalities }: { personalities: Personality[] }) {
   const router = useRouter();
-
 
   return (
     <div className="w-full max-w-screen p-4 mx-auto mt-6 overflow-x-auto">
@@ -31,8 +25,7 @@ export function PersonalityList({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {
-            personalities.map((p, index) => {
+          {personalities.map((p, index) => {
             return (
               <TableRow
                 key={p.firstname + ' ' + p.lastname}
@@ -41,8 +34,8 @@ export function PersonalityList({
               >
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{p.firstname + ' ' + p.lastname}</TableCell>
-                <TableCell>{p.party?.name || "-"}</TableCell>
-                <TableCell>{p.role || "-"}</TableCell>
+                <TableCell>{p.party?.name || '-'}</TableCell>
+                <TableCell>{p.role || '-'}</TableCell>
               </TableRow>
             );
           })}
