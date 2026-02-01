@@ -1,20 +1,14 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getWikipediaImage } from "@/lib/wiki-img";
-import {Quote} from "@/types/Quote";
-import {Source} from "@/types/Source";
-import TagLabel from "@/components/tag";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { getWikipediaImage } from '@/lib/wiki-img';
+import { Quote } from '@/types/Quote';
+import { Source } from '@/types/Source';
+import TagLabel from '@/components/tag';
 
-export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePersonality ?: boolean }) {
+export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePersonality?: boolean }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageUrlLoading, setImageUrlLoading] = useState(false);
 
@@ -40,7 +34,7 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
             {new Intl.DateTimeFormat('fr').format(new Date(quote.date))}
           </span>
         </div>
-        {!hidePersonality && quote.personality &&
+        {!hidePersonality && quote.personality && (
           <>
             <Link
               href={`/personnalites/${quote.personality.id}`}
@@ -59,21 +53,22 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
                    transition-colors duration-200
                    group-hover:text-neutral-600 dark:group-hover:text-neutral-400"
               >
-                {quote.personality.firstname + " " + quote.personality.lastname}
+                {quote.personality.firstname + ' ' + quote.personality.lastname}
               </CardTitle>
             </Link>
             <p className="text-sm text-muted-foreground">
-              { quote.personality.party &&
+              {quote.personality.party && (
                 <>
                   <Link href={`/citations?party=${quote.personality.party.id}`}>
                     {quote.personality.party?.name}
                   </Link>
-                &nbsp;• </>
-              }
-                {quote.personality.role}
+                  &nbsp;•{' '}
+                </>
+              )}
+              {quote.personality.role}
             </p>
           </>
-        }
+        )}
       </CardHeader>
 
       <CardContent className="space-y-3 flex-1 overflow-hidden flex flex-col">
@@ -87,9 +82,9 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
           <p><span className="font-medium">région :</span> {quote.région}</p> */}
           {!!quote.tags.length && (
             <p>
-              <span className="font-medium"></span>{" "}
+              <span className="font-medium"></span>{' '}
               {quote.tags.map((tag, i) => (
-                <TagLabel tag={tag} key={`quote-tag-${i}`}/>
+                <TagLabel tag={tag} key={`quote-tag-${i}`} />
               ))}
             </p>
           )}
@@ -106,15 +101,13 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote, hidePerson
                 width={96}
                 height={96}
                 className="mb-4 object-cover w-24 h-auto"
-                style={{ width: "100px", height: "auto" }}
+                style={{ width: '100px', height: 'auto' }}
               />
             )
           ) : (
             <p>Chargement de l&apos;image...</p>
           )}
-          <span className="text-xs text-muted-foreground">
-            Source: {quote.source?.name}
-          </span>
+          <span className="text-xs text-muted-foreground">Source: {quote.source?.name}</span>
         </div>
         {quote.link && (
           <Button asChild size="sm" variant="outline">

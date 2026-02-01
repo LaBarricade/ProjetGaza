@@ -1,6 +1,6 @@
 export type FilterType = 'politician' | 'function' | 'tag' | 'quote';
 
-//The filters used in the search page
+//The filters used in the filters page
 export interface SearchFilters {
   politicians: number[];
   functions: string[];
@@ -8,4 +8,3 @@ export interface SearchFilters {
   tagResultType: 'politicians' | 'quotes';
   quotes: string[];
 }
-

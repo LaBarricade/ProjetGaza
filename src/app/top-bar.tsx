@@ -1,28 +1,26 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Image from "next/image";
+} from '@/components/ui/dropdown-menu';
+import Image from 'next/image';
 
 export function TopBar() {
-
   const pathname = usePathname();
 
   const navItems = [
-    { href: "/actualites", label: "Actualités" },
-    { href: "/personnalites", label: "Politiciens" },
-    { href: "/citations", label: "Citations" },
-    { href: process.env.NEXT_PUBLIC_FORM_URL || "", label: "Contribuer" },
-    { href: "/contact", label: "Contact" },
-    { href: "/search", label: "Recherche" },
+    { href: '/actualites', label: 'Actualités' },
+    { href: '/personnalites', label: 'Politiciens' },
+    { href: '/citations', label: 'Citations' },
+    { href: process.env.NEXT_PUBLIC_FORM_URL || '', label: 'Contribuer' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (
@@ -51,7 +49,7 @@ export function TopBar() {
               asChild
               variant="ghost"
               className={`shrink-0 text-gray-700 border border-transparent hover:border-gray-300 hover:bg-transparent transition-colors duration-200 ${
-                isActive ? "font-semibold text-primary" : ""
+                isActive ? 'font-semibold text-primary' : ''
               }`}
             >
               <Link href={item.href}>{item.label}</Link>
@@ -88,9 +86,7 @@ export function TopBar() {
                 <DropdownMenuItem key={item.href} asChild>
                   <Link
                     href={item.href}
-                    className={`w-full ${
-                      isActive ? "font-semibold text-primary" : ""
-                    }`}
+                    className={`w-full ${isActive ? 'font-semibold text-primary' : ''}`}
                   >
                     {item.label}
                   </Link>

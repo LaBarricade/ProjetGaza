@@ -1,162 +1,131 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
+
 import { Input } from '@/components/ui/input';
-import  ScrollAreaComponent  from '@/components/ui/scroll-area';
 import { X } from 'lucide-react';
 import { Tag as TagIcon } from 'lucide-react';
-import {Tag as TagType } from '@/types/Tag';
+import { Tag as TagType } from '@/types/Tag';
+import { Tag } from '@/components/ui/tag';
+import { useHorizontalScroll } from './useHorizontalScroll';
 
 interface TagFilterProps {
-  selected: TagType[]; //testerror string[]
-  onChange: (selected: TagType[]) => void;
+  selected: string[];
+  onChange: (selected: string[]) => void;
   tagsList: TagType[];
 }
 
-/**
- * Returns the color of a tag if it exists in the available tags list, or 'default' otherwise.
- * @param {string} tagValue - The value of the tag to get the color for.
- * @param {TagType[]} tagsList - The list of available tags and their colors.
- * @returns {string} The color of the tag, or 'default' if the tag doesn't exist in the available tags list.
- */
+export function TagFilter({ selected, onChange, tagsList }: TagFilterProps) {
+  const [searchText, setSearchText] = useState('');
 
-const getTagColorCn = (tag: TagType) => {
-const colorCode = `bg-${tag.color}-500 text-${tag.color}-foreground`;
-return colorCode;
-}
+  const scroll = useHorizontalScroll<HTMLDivElement>();
 
-export function TagFilter({
-  selected, //selected Tags filters.tags
-  onChange, //onFilterschange.tags
-  tagsList,
-}: TagFilterProps) {
-
-    const [searchText, setSearchText] = useState('');
-
-
-    // Filter tags based on search
+  // Filter tags based on search
   const filteredTags = useMemo(() => {
     if (!searchText) return tagsList;
-    return tagsList.filter(tag => 
-      tag.name?.toLowerCase().includes(searchText.toLowerCase())
-    );
+    return tagsList.filter((tag) => tag.name?.toLowerCase().includes(searchText.toLowerCase()));
   }, [tagsList, searchText]);
 
   // Handle tag selection toggle
-  const handleToggle = (tag: TagType) => {
-    const isSelected = selected.some(t => t.id === tag.id);
-    
+  const handleToggle = (tagId: string) => {
+    const isSelected = selected.some((t) => t === tagId.toString());
     if (isSelected) {
       // Remove tag
-      onChange(selected.filter(t => t.id !== tag.id));
+      onChange(selected.filter((t) => t !== tagId.toString()));
     } else {
       // Add tag
-      onChange([...selected, tag]);
+      onChange([...selected, tagId]);
     }
   };
 
   // Remove a specific tag from selection
-  const handleRemove = (tagId: number) => {
-    onChange(selected.filter(t => t.id !== tagId));
-  };
-
-  // Clear all selected tags
-  const handleClearAll = () => {
-    onChange([]);
+  const handleRemove = (e: React.MouseEvent, tagId: string) => {
+    e.stopPropagation(); // Prevent toggle when clicking X
+    onChange(selected.filter((t: string) => t !== tagId));
   };
 
   return (
-    <div className="space-y-3">
-      <h3 className="font-semibold flex items-center gap-2 justify-start text-md"><TagIcon size={18} />Tags</h3>
+    <div className="space-y-3 flex-1 w-full">
+      <h3 className="font-semibold flex items-center gap-2 justify-start text-md">
+        <TagIcon size={18} />
+        Tags
+      </h3>
+
       <Input
-        placeholder="Rechercher par tags..."
+        placeholder="Rechercher un tag..."
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        className="h-9"
+        className="h-8 max-w-72"
       />
-      <div className="h-40 overflow-y-scroll border rounded-md p-3">
-      <ScrollAreaComponent>
-       <div className="space-y-3">
-          {filteredTags.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              Aucun tag trouvé
-            </p>
-          ) : (
-            filteredTags.map((tag) => {
-              const isSelected = selected.some(t => t.id === tag.id);
-              
-              return (
-                <div
-                  key={tag.id}
-                  className="flex items-center space-x-2 cursor-pointer hover:bg-muted/50 p-2 rounded"
-                  onClick={() => handleToggle(tag)}
-                >
-                  <div className="flex items-center">
-                    <label
-                      htmlFor={`tag-${tag.id}`}
-                      className="text-sm flex-1 cursor-pointer"
+
+      {/* Horizontally scrollable tag list */}
+      <div className="relative w-full">
+        <div
+          ref={scroll.ref}
+          {...scroll.handlers}
+          className="
+    overflow-x-scroll scroll-thin pb-2
+    scrollbar-track-transparent scrollbar-thumb-muted
+    cursor-grab active:cursor-grabbing
+    select-none
+  "
+        >
+          <div className="flex gap-2 min-w-max pr-4">
+            {filteredTags.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-4 w-full text-center">
+                Aucun tag trouvé
+              </p>
+            ) : (
+              filteredTags.map((tag) => {
+                const isSelected = selected.some((t) => t === tag.id.toString());
+
+                return (
+                  <button
+                    key={tag.id}
+                    onClick={() => handleToggle(tag.id.toString())}
+                    className={`
+                      relative cursor-pointer transition-all
+                      ${isSelected ? 'opacity-100' : 'opacity-70 hover:opacity-90'}
+                    `}
+                  >
+                    <Tag
+                      key={tag.id}
+                      size="sm"
+                      variant={isSelected ? 'solid' : 'soft'}
+                      className="flex items-center gap-0.5 transition-all animate-in fade-in duration-200"
                     >
                       {tag.name}
-                    </label>
-                  </div>
-                </div>
-              );
-            })
-          )}
+
+                      <span
+                        onClick={(e) => (isSelected ? handleRemove(e, tag.id.toString()) : null)}
+                        className={`${isSelected ? 'opacity-100' : 'opacity-0'}
+                             inline-flex items-center justify-center
+                            rounded-full
+                            h-3 w-3
+                            hover:bg-white/20
+                            transition-colors`}
+                      >
+                        <X className="h-2.5 w-2.5" />
+                      </span>
+                    </Tag>
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
-      </ScrollAreaComponent>
+
+        {/* Fade gradient on the right to indicate scrollability */}
+        {filteredTags.length > 0 && (
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+        )}
       </div>
-      {selected.length > 0 && (
-        <div className="space-y-3">
-<div className="flex flex-wrap gap-2">
-  {selected.map((tag) => (
-    <div
-      key={tag.id}
-      className="
-        flex items-center gap-1.5
-        rounded-full border
-        bg-muted/50
-        px-3 py-1
-        text-xs font-medium
-        text-foreground
-        transition
-        hover:bg-muted
-      "
-    >
-      <span>{tag.name}</span>
 
-      <button
-        type="button"
-        onClick={() => handleRemove(tag.id)}
-        className="
-          ml-1 rounded-full p-0.5
-          text-muted-foreground
-          hover:bg-destructive/10
-          hover:text-destructive
-          transition
-        "
-      >
-        <X className="h-3 w-3" />
-      </button>
-    </div>
-  ))}
-</div>
-
-          {/* <Tabs
-            value={resultType}
-            onValueChange={(value: string) =>
-              onResultTypeChange(value as 'politicians' | 'quotes')
-            }
-          >
-            <TabsList className="w-full">
-              <TabsTrigger value="politicians" className="flex-1">
-                Politicians
-              </TabsTrigger>
-              <TabsTrigger value="quotes" className="flex-1">
-                Quotes
-              </TabsTrigger>
-            </TabsList>
-          </Tabs> */}
-        </div>
-      )}
+      {/* Selected count indicator */}
+      {/* {selected.length > 0 && (
+        <p className="text-xs text-muted-foreground">
+          {selected.length} tag{selected.length > 1 ? 's' : ''} sélectionné
+          {selected.length > 1 ? 's' : ''}
+        </p>
+      )} */}
     </div>
   );
 }

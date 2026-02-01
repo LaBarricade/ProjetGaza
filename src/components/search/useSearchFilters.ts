@@ -1,45 +1,52 @@
+import { Filters } from '@/types/Filters';
+import { Personality } from '@/types/Personality';
 import { Tag } from '@/types/Tag';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export type SearchFilters = {
-  politicians: number[];
-  functions: string[];
-  tags: Tag[];
-  tagResultType: 'politicians' | 'quotes';
-  quotes: string[];
+  personalities: string[];
+  roles: string[];
+  parties: string[];
+  tags: string[];
+  departments: string[];
+  text: string;
 };
 
 const initialFilters: SearchFilters = {
-  politicians: [],
-  functions: [],
+  personalities: [],
+  roles: [],
+  parties: [],
   tags: [],
-  tagResultType: 'politicians',
-  quotes: [],
+  departments: [],
+  text: '',
+};
+
+type UseSearchFiltersProps = {
+  initializedState: {
+    initialized: boolean;
+    setInitialized: (value: boolean) => void;
+  };
+  computedFilters: Filters;
+  tagsList: Tag[];
+  personalitiesList: Personality[];
 };
 
 /**
- * Hook for managing search filters.
- *
- * @returns {
- *   filters: Current search filters.
- *   updateFilter: Update a single filter.
- *   addFilter: Add a value to a filter.
- *   addFilterMultiple: Add a list of values to a filter.
- *   removeFilter: Remove a value from a filter.
- *   clearFilters: Clear all filters.
- *   toggleFilter: Toggle a value in a filter.
- *   baseFilterType: Current view type.
- *   updateBaseFilterType: Update the view type.
- * }
+ * Hook for managing search filters with proper SSR state synchronization.
+ * Reads the already-resolved `computedFilters` (objects fetched server-side)
+ * and flattens them to string-ID arrays on first mount so the URL-driven
+ * filter chips render immediately without a flash.
  */
-export function useSearchFilters() {
+export function useSearchFilters(
+  initializedState: { initialized: boolean; setInitialized: (value: boolean) => void },
+  computedFilters: Filters,
+  tagsList: Tag[],
+  personalitiesList: Personality[]
+) {
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
-  const [baseFilterType, setBaseFilterType] = useState<'' | 'politicians' | 'quotes'>('');
 
   /**
    * Update a single filter.
-   * @param key The key of the filter to update.
-   * @param value The new value of the filter.
    */
   const updateFilter = useCallback((key: keyof SearchFilters, value: any) => {
     setFilters((prev) => ({
@@ -49,63 +56,18 @@ export function useSearchFilters() {
   }, []);
 
   /**
-   * Add a value to a filter.
-   * @param key The key of the filter to add to.
-   * @param value The value to add to the filter.
-   */
-  const addFilter = useCallback((key: keyof SearchFilters, value: number) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: Array.isArray(prev[key])
-        ? [...(prev[key] as number[]), value]
-        : prev[key],
-    }));
-  }, []);
-
-  /**
-   * Add a list of values to a filter.
-   * @param key The key of the filter to add to.
-   * @param values The list of values to add to the filter.
-   */
-  const addFilterMultiple = useCallback((key: keyof SearchFilters, values: number[]) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: Array.isArray(prev[key])
-        ? [...(prev[key] as number[]), ...values]
-        : [...values],
-    }));
-  }, []);
-
-  /**
-   * Remove a value from a filter.
-   * @param key The key of the filter to remove from.
-   * @param value The value to remove from the filter.
-   */
-  const removeFilter = useCallback((key: keyof SearchFilters, value: number | string | Tag) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: Array.isArray(prev[key])
-        ? (prev[key] as number[]).filter((item) => item !== value)
-        : prev[key],
-    }));
-  }, []);
-
-  /**
    * Clear all filters.
    */
   const clearFilters = useCallback(() => {
     setFilters(initialFilters);
-    setBaseFilterType('');
   }, []);
 
   /**
-   * Toggle a value in a filter.
-   * @param key The key of the filter to toggle.
-   * @param value The value to toggle in the filter.
+   * Toggle a value in a filter array.
    */
-  const toggleFilter = useCallback((key: keyof SearchFilters, value: number) => {
+  const toggleFilter = useCallback((key: keyof SearchFilters, value: string) => {
     setFilters((prev) => {
-      const current = prev[key] as number[];
+      const current = prev[key] as string[];
       return {
         ...prev,
         [key]: current.includes(value)
@@ -116,21 +78,25 @@ export function useSearchFilters() {
   }, []);
 
   /**
-   * Update the base filter type (view mode).
+   * One-shot initialization: maps the server-resolved filter objects down to
+   * the string-ID arrays that the individual filter components expect.
    */
-  const updateBaseFilterType = useCallback((type: '' | 'politicians' | 'quotes') => {
-    setBaseFilterType(type);
-  }, []);
+  useEffect(() => {
+    const { initialized, setInitialized } = initializedState;
+    if (initialized) return;
 
-  return {
-    filters,
-    baseFilterType,
-    updateFilter,
-    addFilter,
-    addFilterMultiple,
-    removeFilter,
-    clearFilters,
-    toggleFilter,
-    updateBaseFilterType
-  };
+    const newFilters: SearchFilters = {
+      personalities: computedFilters.personalities?.map((p) => p.id.toString()) ?? [],
+      roles: computedFilters.roles?.map((r) => r.id.toString()) ?? [],
+      parties: computedFilters.parties?.map((p) => p.id.toString()) ?? [],
+      tags: computedFilters.tags?.map((t) => t.id.toString()) ?? [],
+      departments: computedFilters.departments ?? [],
+      text: computedFilters.text ?? '',
+    };
+
+    setFilters(newFilters);
+    setInitialized(true);
+  }, [computedFilters, initializedState]);
+
+  return { filters, updateFilter, clearFilters, toggleFilter };
 }

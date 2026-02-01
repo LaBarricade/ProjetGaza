@@ -1,68 +1,167 @@
-"use client";
+'use server';
 
-import { useCallback, useEffect, useState } from "react";
-import { PersonalityList } from "@/components/list/personality-list";
-import {Personality} from "@/types/Personality";
-import {callLocalApi} from "@/lib/backend/api-client";
-import { BaserowPersonalityData } from "../page";
-import { Quote } from "@/components/quote-card";
-import { Footer } from "../footer";
+import { getDbService } from '@/lib/backend/db-service';
+import { MandateType } from '@/types/MandateType';
+import { Personality } from '@/types/Personality';
+import { Filters } from '@/types/Filters';
+import { FiltersBar } from '@/components/search/filters-bar';
+import { PersonalityList } from '@/components/list/personality-list';
 
-export type Personality = {
-  id?: number;
-  prénom: string;
-  nom: string;
-  fullName: string;
-  partiPolitique?: string;
-  fonction?: string;
-  citations: Quote[];
-  tag?: Tag[];
-};
+//URL Parsing
+function parseIds(param: string | undefined): string[] {
+  if (!param) return [];
+  return param
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
+}
+async function computeFilters(urlParams: any): Promise<Filters> {
+  const filters: Filters = {};
 
-export type Tag = {
-  id?: number;
-  value: string;
-  color: string;
+  try {
+    if (urlParams.party) {
+      const partyIds = parseIds(urlParams.party);
+      const parties = [];
+      for (const id of partyIds) {
+        const { item } = await getDbService().findParty(id);
+        if (item) parties.push(item);
+      }
+      if (parties.length) filters.parties = parties;
+    }
+
+    if (urlParams.role) {
+      const roleIds = parseIds(urlParams.role);
+      const roles: MandateType[] = [];
+      for (const id of roleIds) {
+        const roleId = parseInt(id, 10);
+        if (!isNaN(roleId)) {
+          const { item } = await getDbService().findMandateType(roleId);
+          if (item) roles.push(item);
+        }
+      }
+      if (roles.length) filters.roles = roles;
+    }
+
+    // Departments are plain strings — no DB resolution needed, just parse from URL
+    if (urlParams.department) {
+      const departments = urlParams.department
+        .split(',')
+        .map((d: string) => d.trim())
+        .filter(Boolean);
+      if (departments.length) filters.departments = departments;
+    }
+
+    if (urlParams.text) {
+      filters.text = urlParams.text;
+    }
+  } catch (error) {
+    console.error('Error computing personality filters:', error);
+  }
+
+  return filters;
 }
 
+async function fetchMandateTypes(): Promise<MandateType[]> {
+  try {
+    const { items } = await getDbService().findMandateTypes();
+    return items || [];
+  } catch {
+    return [];
+  }
+}
 
+async function fetchPersonalities(filters: Filters): Promise<{
+  items: Personality[];
+  count: number;
+}> {
+  try {
+    const db = getDbService();
 
-export default function PersonalitiesPage() {
-  const [data, setData] = useState<Personality[] | null>(null);
-  const [filteredResults] = useState<Personality[] | null>(null);
-  const [loading, setLoading] = useState(true);
+    // Collect candidate ID sets from each indirect filter.
+    const idSets: (string[] | null)[] = [];
 
-  const fetchData = useCallback(async () => {
-    try {
-      const apiResp = await callLocalApi(`/api/v2/personalities`);
-      const personalities = apiResp.items;
-      setData(personalities);
-    } catch (err) {
-      console.error("Fetch failed:", err);
-      setData(null);
-    } finally {
-      setLoading(false);
+    // Role → personality IDs via mandats
+    if (filters.roles && filters.roles.length > 0) {
+      const roleIds = filters.roles.map((r) => r.id.toString());
+      idSets.push(await getDbService().findPersonalityIdsByRoles(roleIds));
     }
-  }, [setData, setLoading]);
 
-  useEffect(() => {
-    const fetchDataAsync = async () => {
-      await fetchData();
-    };
-    fetchDataAsync();
-  }, []);
+    // Intersect all active ID sets (AND semantics across filters).
+    // If any set is empty the intersection is empty — return empty result.
+    let finalIds: string[] | null = null;
+    for (const set of idSets) {
+      if (!set) continue; // filter not active, skip
+      if (set.length === 0) return { items: [], count: 0 };
+
+      finalIds = finalIds ? finalIds.filter((id) => set.includes(id)) : set;
+
+      if (finalIds.length === 0) return { items: [], count: 0 };
+    }
+
+    const queryParams: { ids?: string[]; party?: string[]; department?: string[]; text?: string } =
+      {};
+
+    if (finalIds) {
+      queryParams.ids = finalIds;
+    }
+    if (filters.parties && filters.parties.length > 0) {
+      queryParams.party = filters.parties.map((p) => p.id.toString());
+    }
+    if (filters.departments && filters.departments.length > 0) {
+      queryParams.department = filters.departments;
+    }
+    if (filters.text) {
+      queryParams.text = filters.text;
+    }
+
+    const { items, count } = await getDbService().findPersonalities(queryParams);
+    return { items: items || [], count };
+  } catch (error) {
+    console.error('Error fetching personalities:', error);
+    return { items: [], count: 0 };
+  }
+}
+export default async function PersonalitiesPage({
+  params,
+  searchParams,
+}: {
+  params: any;
+  searchParams: any;
+}) {
+  const urlParams = await searchParams;
+  const filters = await computeFilters(urlParams);
+
+  const mandateTypesList = await fetchMandateTypes();
+  const { items } = await fetchPersonalities(filters);
+  const { items: allPersonalities } = await getDbService().findPersonalities({});
 
   return (
     <main className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
-      {loading && (
-        <div className="flex flex-1 items-center h-full">
-          <p>Chargement des données...</p>
-        </div>
-      )}
+      <div className="w-full">
+        <FiltersBar
+          computedFilters={filters}
+          personalitiesList={allPersonalities ?? []}
+          tagsList={[]}
+          mandateTypesList={mandateTypesList}
+          pageName="personnalites"
+          config={{
+            showPersonalities: false,
+            showParties: true,
+            showMandates: true,
+            showDepartments: true,
+            showTags: false,
+            showText: true,
+            textFilterConfig: {
+              headerTitle: false,
+              inputPlaceholder: 'Rechercher un nom, prénom, ville...',
+            },
+          }}
+        />
+      </div>
 
-      {!filteredResults && data && data.length > 0 && <PersonalityList personalities={data} />}
-
-      {data && data.length === 0 && (
+      {items.length > 0 ? (
+        <PersonalityList personalities={items} />
+      ) : (
         <div className="flex flex-1 items-center h-full">
           <p>Aucun résultat trouvé.</p>
         </div>

@@ -1,12 +1,12 @@
-import {Tag as TagType} from "@/types/Tag";
-import Link from "next/link";
-import { HTMLProps } from "react";
+import { Tag as TagType } from '@/types/Tag';
+import Link from 'next/link';
+import { HTMLProps } from 'react';
 
 type TagLabelProps = {
   tag: TagType;
   htmlProps?: HTMLProps<HTMLAnchorElement>;
-}
-export default function TagLabel({tag, htmlProps}: TagLabelProps) {
+};
+export default function TagLabel({ tag, htmlProps }: TagLabelProps) {
   return (
     <Link href={`/citations?tag=${tag.id}`} {...htmlProps}>
       <span
