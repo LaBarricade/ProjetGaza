@@ -1,4 +1,3 @@
-"use client";
 
 export default function Contact() {
   const email = "contact@example.com"; // remplace par ton email
