@@ -27,22 +27,12 @@ type UseSearchFiltersProps = {
     setInitialized: (value: boolean) => void;
   };
   computedFilters: Filters;
-  tagsList: Tag[];
-  personalitiesList: Personality[];
 };
 
 /**
  * Hook for managing search filters with proper SSR state synchronization.
- * Reads the already-resolved `computedFilters` (objects fetched server-side)
- * and flattens them to string-ID arrays on first mount so the URL-driven
- * filter chips render immediately without a flash.
  */
-export function useSearchFilters(
-  initializedState: { initialized: boolean; setInitialized: (value: boolean) => void },
-  computedFilters: Filters,
-  tagsList: Tag[],
-  personalitiesList: Personality[]
-) {
+export function useSearchFilters({ initializedState, computedFilters }: UseSearchFiltersProps) {
   const [filters, setFilters] = useState<SearchFilters>(initialFilters);
 
   /**
@@ -78,7 +68,7 @@ export function useSearchFilters(
   }, []);
 
   /**
-   * One-shot initialization: maps the server-resolved filter objects down to
+   * Initialization: maps the server-resolved filter objects down to
    * the string-ID arrays that the individual filter components expect.
    */
   useEffect(() => {

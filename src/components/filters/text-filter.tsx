@@ -62,11 +62,8 @@ export function TextFilter({ selected, onChange, config }: TextFilterProps) {
           placeholder={inputPlaceholder}
           value={searchText}
           onChange={handleSearchChange}
-          // When header is hidden, icon sits on the right so we need more right padding;
-          // when there's active text the clear button also appears, so pad for both.
           className={`h-8 ${hideHeader ? 'pr-8' : 'pr-8'}`}
         />
-        {/* Right-side icons: clear button first (when text exists), then the icon (only when header is hidden) */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
           {searchText.length > 0 && (
             <button onClick={handleClear} className="hover:bg-muted p-1 rounded">

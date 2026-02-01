@@ -109,12 +109,10 @@ export function FiltersBar({
   const [initialized, setInitialized] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const { filters, updateFilter, clearFilters } = useSearchFilters(
-    { initialized, setInitialized },
+  const { filters, updateFilter, clearFilters } = useSearchFilters({
+    initializedState: { initialized, setInitialized },
     computedFilters,
-    tagsList,
-    personalitiesList
-  );
+  });
 
   const hasActiveFilters =
     filters.personalities.length > 0 ||
