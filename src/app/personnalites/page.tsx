@@ -132,6 +132,7 @@ export default async function PersonalitiesPage({
   const filters = await computeFilters(urlParams);
 
   const mandateTypesList = await fetchMandateTypes();
+  const partiesList = await getDbService().findParties({});
   const { items } = await fetchPersonalities(filters);
   const { items: allPersonalities } = await getDbService().findPersonalities({});
 
@@ -143,6 +144,7 @@ export default async function PersonalitiesPage({
           personalitiesList={allPersonalities ?? []}
           tagsList={[]}
           mandateTypesList={mandateTypesList}
+          partiesList={partiesList}
           pageName="personnalites"
           config={{
             showPersonalities: false,

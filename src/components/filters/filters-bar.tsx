@@ -18,12 +18,14 @@ import { MandateType } from '@/types/MandateType';
 import { Filters } from '@/app/citations/page';
 import { TextFilter } from './text-filter';
 import { DepartmentFilter } from './department-filter';
+import {callLocalApi} from "@/lib/backend/api-client";
 
 interface FiltersBarProps {
   personalitiesList: Personality[];
   quotesList?: Quote[];
   tagsList: Tag[];
   mandateTypesList: MandateType[];
+  partiesList: Party[];
   pageName: string;
   computedFilters: Filters;
   config?: {
@@ -87,6 +89,7 @@ export function FiltersBar({
   quotesList = [],
   tagsList,
   mandateTypesList,
+  partiesList,
   pageName = 'citations',
   computedFilters,
   config = {
@@ -107,7 +110,7 @@ export function FiltersBar({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(true);
 
   const { filters, updateFilter, clearFilters } = useSearchFilters({
     initializedState: { initialized, setInitialized },
@@ -141,9 +144,10 @@ export function FiltersBar({
     router.push(`/${pageName}`);
   };
 
-  const partiesList: Party[] = Array.from(
+  /*const partiesList: Party[] = Array.from(
     new Map(personalitiesList.filter((p) => p.party).map((p) => [p.party!.id, p.party!])).values()
-  );
+  );*/
+  //const partiesList: Party[] = callLocalApi()
 
   const onFiltersChange = {
     personalities: (selected: string[]) => handleFilterChange('personalities', selected),
@@ -159,28 +163,7 @@ export function FiltersBar({
       {/* Header Section */}
       <div className="bg-background z-10 p-6 border-b">
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => setFiltersOpen((prev) => !prev)}
-            className="flex items-center gap-2 text-xl font-semibold"
-          >
-            <Funnel size={20} />
-            Filtres
-            {/* Badge: visible only when collapsed and filters are active */}
-            <div className="h-6 w-6 flex items-center justify-center">
-              {hasActiveFilters && (
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-white text-xs font-semibold">
-                  {activeFilterCount}
-                </span>
-              )}
-            </div>
-            {/* Chevron rotates based on open/closed state */}
-            <span className="hover:bg-accent ml-6 px-2 py-1 transition-all rounded-md hover:text-accent-foreground dark:hover:bg-accent/50">
-              <ChevronDown
-                size={18}
-                className={`text-muted-foreground transition-transform duration-200 ${filtersOpen ? 'rotate-180' : 'rotate-0'}`}
-              />
-            </span>
-          </button>
+          <span></span>
 
           {/* Right: clear button — always visible when filters are active, regardless of open state */}
           {hasActiveFilters && (

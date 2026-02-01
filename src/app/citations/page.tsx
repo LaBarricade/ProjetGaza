@@ -3,7 +3,7 @@
 import { QuoteList } from '@/components/list/quote-list';
 import { Tag } from '@/types/Tag';
 import { Party } from '@/types/Party';
-import { getDbService } from '@/lib/backend/db-service';
+import {DbService, getDbService} from '@/lib/backend/db-service';
 import { MandateType } from '@/types/MandateType';
 import { FiltersBar } from '@/components/filters/filters-bar';
 import { Personality } from '@/types/Personality';
@@ -208,6 +208,7 @@ export default async function QuotesPage({
   const filters: Filters = await computeFilters(urlParams);
   const { items: mandateTypesList } = await fetchMandateTypes();
   const { items: personalitiesList } = await fetchPersonalities();
+  const { items: partiesList } = await getDbService().findParties({});
   const { items: tagsList } = await fetchTags();
   const {
     items,
@@ -242,6 +243,7 @@ export default async function QuotesPage({
             computedFilters={filters}
             personalitiesList={personalitiesList}
             quotesList={items}
+            partiesList={partiesList}
             tagsList={tagsList}
             mandateTypesList={mandateTypesList}
             pageName="citations"

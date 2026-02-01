@@ -72,7 +72,7 @@ export function DepartmentFilter({ selected, onChange, personalitiesList }: Depa
             setSearch(e.target.value);
             setShowDropdown(e.target.value.length > 0);
           }}
-          onFocus={() => search.length > 0 && setShowDropdown(true)}
+          onFocus={() => setShowDropdown(true)}
           className="h-8"
         />
         {showDropdown && filtered.length > 0 && (

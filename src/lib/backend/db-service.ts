@@ -15,6 +15,17 @@ export class DbService {
     if (supabaseResp.error) throw new Error(supabaseResp.error.message);
   }
 
+  async findParties(params: any): Promise<any> {
+    const query = supabase.from('partis_politiques')
+        .select(`id, name:nom, color`, { count: 'exact' });
+    const resp = await query;
+    this.checkErrors(resp);
+    return  {
+      items: resp.data,
+      count: resp.count ?? 0,
+    };
+  }
+
   async findPersonalities(params: {
     ids?: string[];
     party?: string[];
