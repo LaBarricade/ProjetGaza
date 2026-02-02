@@ -9,7 +9,7 @@ import { callLocalApi } from '@/lib/backend/api-client';
 
 function CitationCount({ totalCount }: { totalCount: number }) {
   return (
-    <h2 className="w-full text-3xl font-bold text-gray-800 mt-8">
+    <h2 className="w-full text-3xl font-bold text-gray-800 mt-0">
       <CountUp end={totalCount} duration={1.2} /> citations
     </h2>
   );
@@ -78,7 +78,7 @@ export function QuoteList({
   const loaderRef = useEndReached(loadMore);
 
   return (
-    <div className="w-full max-w-screen-lg p-4 mx-auto mt-6 space-y-6">
+    <div className="w-full max-w-screen-lg p-4 mx-auto mt-0 space-y-6">
       {totalCount ? <CitationCount totalCount={totalCount} /> : null}
 
       <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">

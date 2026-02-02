@@ -223,12 +223,12 @@ export default async function QuotesPage({
     (filters.personalities && filters.personalities.length > 0) ||
     !!filters.text;
 
-  const searchTitle = hasFilters ? 'Résultats de la recherche' : null;
+  //const searchTitle = hasFilters ? 'Résultats de la recherche' : null;
 
   return (
     <main className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
       <div className="w-full flex items-center justify-center">
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-2 w-full">
           {/* <div>
             <div className="flex items-center justify-between">
               <h3 className="font-semibold text-md flex items-center justify-start gap-2">
@@ -259,12 +259,12 @@ export default async function QuotesPage({
         </div>
       </div>
 
-      {searchTitle && (
+      {/*searchTitle && (
         <h2 className="text-3xl font-bold">
           {searchTitle}
           <span className="text-slate-500 text-2xl"> ({totalCount})</span>
         </h2>
-      )}
+      )*/}
 
       {items && items.length > 0 && (
         <QuoteList

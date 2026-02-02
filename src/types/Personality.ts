@@ -5,7 +5,7 @@ export type Personality = {
     id: number;
     firstname: string;
     lastname: string;
-    //fullName: string;
+    name: string;
     city: string;
     department: string;
     region: string;

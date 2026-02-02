@@ -2,14 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { PersonalityFilter } from './personality-filter';
-import { MandateFilter } from './mandate-filter';
-import { TagFilter } from './tag-filter';
-import { PartyFilter } from './party-filter';
-import { ChevronDown, Funnel, LucideProps, Search, UserRound } from 'lucide-react';
+import {Briefcase, Building2, ChevronDown, Funnel, LucideProps, Search, Tag as TagIcon, UserRound} from 'lucide-react';
 import { Personality } from '@/types/Personality';
 import { Quote } from '@/types/Quote';
-import { Tag } from '@/types/Tag';
+import { Tag as TagType } from '@/types/Tag';
 import { Party } from '@/types/Party';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSearchFilters } from './useSearchFilters';
@@ -19,11 +15,13 @@ import { Filters } from '@/app/citations/page';
 import { TextFilter } from './text-filter';
 import { DepartmentFilter } from './department-filter';
 import {callLocalApi} from "@/lib/backend/api-client";
+import {InputFilter} from "@/components/filters/input-filter";
+import { Tag } from '@/components/ui/tag';
 
 interface FiltersBarProps {
   personalitiesList: Personality[];
   quotesList?: Quote[];
-  tagsList: Tag[];
+  tagsList: TagType[];
   mandateTypesList: MandateType[];
   partiesList: Party[];
   pageName: string;
@@ -186,10 +184,12 @@ export function FiltersBar({
           {/* Filters Section - Horizontal Layout */}
           <div className="flex min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">
             {config.showPersonalities && (
-              <PersonalityFilter
+              <InputFilter
                 selected={filters.personalities}
                 onChange={onFiltersChange.personalities}
-                personalitiesList={personalitiesList}
+                items={personalitiesList}
+                headingNode={<><UserRound size={18} />
+                        Politicien</>}
               />
             )}
 
@@ -199,10 +199,11 @@ export function FiltersBar({
                   <Separator orientation="vertical" className="h-16 opacity-50" />
                 )}
 
-                <PartyFilter
+                <InputFilter
                   selected={filters.parties}
                   onChange={onFiltersChange.parties}
-                  partiesList={partiesList}
+                  items={partiesList}
+                  headingNode={<><Building2 size={18} />Parti politique</>}
                 />
               </>
             )}
@@ -211,10 +212,12 @@ export function FiltersBar({
               <>
                 <Separator orientation="vertical" className="h-16 opacity-50" />
 
-                <MandateFilter
+                <InputFilter
                   selected={filters.roles}
                   onChange={onFiltersChange.roles}
-                  mandateTypesList={mandateTypesList}
+                  items={mandateTypesList}
+                  headingNode={<><Briefcase size={18} />
+                          Mandat</>}
                 />
               </>
             )}
@@ -238,16 +241,25 @@ export function FiltersBar({
             {config.showTags && (
               <div className="flex-1 min-w-0 overflow-y-visible">
                 <div className="py-4 px-6">
-                  <TagFilter
+                   <InputFilter
+                    selected={filters.tags}
+                    onChange={onFiltersChange.tags}
+                    items={tagsList}
+                    headingNode={<><TagIcon size={18} />
+                            Tags</>}
+                  />
+                  {/*<TagFilter
                     selected={filters.tags}
                     onChange={onFiltersChange.tags}
                     tagsList={tagsList}
-                  />
+                  />*/}
+
+
                 </div>
               </div>
             )}
             {config.showTags && (
-              <Separator orientation="vertical" className="h-32 my-4 opacity-50" />
+              <Separator orientation="vertical" className="h-16 my-4 opacity-50" />
             )}
             {config.showText && (
               <div className="flex-1 overflow-y-visible min-w-0">

@@ -69,6 +69,7 @@ export class DbService {
       (personnality: any) =>
         Object.assign(personnality, {
           quotes_count: personnality.quotes_count[0].count,
+          name: `${personnality.lastname} ${personnality.firstname}`,
         })
     ) as (Personality & { quotes_count: number })[];
 
@@ -97,6 +98,7 @@ export class DbService {
       quotes_count: data.quotes_count.length > 0 ? data.quotes_count[0].count : 0,
       party: data.party && data.party.length > 0 ? data.party[0] : undefined,
       quotes: await this.findQuotes({ personality: id }),
+      name: `${data.lastname} ${data.firstname}`,
     };
 
     return {
@@ -410,7 +412,7 @@ export class DbService {
   // Mandates
   async findMandateTypes(): Promise<{ items: MandateType[] | null; count: number | null }> {
     try {
-      const query = supabase.from('types_mandat').select(`id, code, label:libelle`);
+      const query = supabase.from('types_mandat').select(`id, code, label:libelle, name:libelle`);
 
       const resp = await query;
       this.checkErrors(resp);
@@ -457,7 +459,7 @@ export class DbService {
     try {
       const query = supabase
         .from('types_mandat')
-        .select(`id, code, label:libelle`)
+        .select(`id, code, label:libelle, name:libelle`)
         .eq('id', id)
         .single();
 
