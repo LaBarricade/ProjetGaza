@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import {
     Table,
     TableBody,
@@ -18,21 +18,28 @@ import {ExternalLink} from "lucide-react";
 import CountUp from "react-countup";
 import {useEndReached} from "@/lib/use-reached-end";
 import {PersonalityCard} from "@/components/personality-card";
+import {LazyList} from "@/components/list/lazy-list";
+import {Filters} from "@/types/Filters";
+import {callLocalApi} from "@/lib/backend/api-client";
+import {objectToQueryString} from "@/lib/utils";
 
-export function PersonalityListCards({items}: { items: Personality[] }) {
+export function PersonalityListCards({initialItems, totalCount, filters}:
+{
+    initialItems: Personality[],
+    totalCount: number,
+    filters: Filters
+}) {
 
+    async function loadNewItems(pageToLoad: number) {
+        const qs = objectToQueryString(Object.assign(filters, {
+            page: pageToLoad.toString(),
+            size: 20
+        }));
 
-    const loadMore = async () => {
-        /*if (!totalCount || totalCount <= items.length) return;
-        if (loading) return;
+        const apiResp = await callLocalApi(`/api/v2/personalities?${qs}`);
+        return apiResp.items;
+    }
 
-        setLoading(true);
-        const nextPage = pageRef.current + 1;
-        pageRef.current = nextPage;
-        fetchData(nextPage, apiFilters);*/
-    };
-    const totalCount = items.length;
-    const loaderRef = useEndReached(loadMore);
 
     return (
         <div className="w-full max-w-screen-lg p-4 mx-auto mt-0 space-y-6">
@@ -42,12 +49,16 @@ export function PersonalityListCards({items}: { items: Personality[] }) {
                 </h2>
             }
             <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                {items.map((item) => (
+                <LazyList initialItems={initialItems}
+                          createNode={(item) => <PersonalityCard key={item.id} p={item}/>}
+                          totalCount={totalCount}
+                          loadItems={loadNewItems}
+                />
+                {/*items.map((item) => (
                     <PersonalityCard key={item.id} p={item}/>
-                ))}
+                ))*/}
             </div>
 
-            <div ref={loaderRef} className="h-6" aria-hidden/>
         </div>
     );
 }

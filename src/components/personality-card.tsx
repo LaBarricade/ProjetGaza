@@ -22,9 +22,7 @@ export function PersonalityCard({p}: { p: Personality; }) {
     return (
             <Card className="rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col gap-1 justify-between">
                 <CardHeader className="px-4  ">
-
                     <div className="flex flex-row justify-between gap-1">
-
                         <div>
                             <Link
                                 href={`/personnalites/${p.id}`}
@@ -51,18 +49,15 @@ export function PersonalityCard({p}: { p: Personality; }) {
                             </p>
                         </div>
 
-                        {imageUrl && (
-                            <img
-                                src={imageUrl}
-                                alt={`${fullName} portrait`}
-                                width={96}
-                                height={96}
-                                className="mb-4 object-cover rounded-2xl w-24 h-auto float-right"
-                                style={{width: "50px", height: "auto"}}
-                            />
-                        )}
+                        <img
+                            src={imageUrl || 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs='}
+                            alt=""
+                            width={96}
+                            height={96}
+                            className="mb-4 object-cover rounded-2xl w-24 h-auto float-right"
+                            style={{width: "50px", height: "50px"}}
+                        />
                     </div>
-
                 </CardHeader>
 
                 <CardFooter className="flex justify-between items-end px-4">

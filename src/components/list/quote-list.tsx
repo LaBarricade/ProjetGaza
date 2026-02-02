@@ -6,6 +6,7 @@ import { QuoteCard } from '../quote-card';
 import { Quote } from '@/types/Quote';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { callLocalApi } from '@/lib/backend/api-client';
+import {objectToQueryString} from "@/lib/utils";
 
 type ApiFilters = Record<string, string | string[]>;
 
@@ -32,7 +33,7 @@ export function QuoteList({
   }, [initialItems, JSON.stringify(apiFilters)]);
 
   const fetchData = useCallback(async (pageToLoad: number, filters: ApiFilters) => {
-    const params = new URLSearchParams();
+    /*const params = new URLSearchParams();
 
     Object.entries(filters).forEach(([key, value]) => {
       if (Array.isArray(value)) {
@@ -45,8 +46,10 @@ export function QuoteList({
     });
 
     params.set('page', pageToLoad.toString());
+     */
+    const qs = objectToQueryString(Object.assign(filters, {page: pageToLoad.toString()}));
 
-    const apiResp = await callLocalApi(`/api/v2/quotes?${params.toString()}`);
+    const apiResp = await callLocalApi(`/api/v2/quotes?${qs}`);
 
     if (pageToLoad === 1) {
       setItems(apiResp.items);

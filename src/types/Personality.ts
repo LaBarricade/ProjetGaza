@@ -13,4 +13,5 @@ export type Personality = {
     role?: string;
     quotes_count: number;
     quotes: Quote[];
+    mandates: any[];
 };
