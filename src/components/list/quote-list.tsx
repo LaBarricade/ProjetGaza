@@ -7,14 +7,6 @@ import { Quote } from '@/types/Quote';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { callLocalApi } from '@/lib/backend/api-client';
 
-function CitationCount({ totalCount }: { totalCount: number }) {
-  return (
-    <h2 className="w-full text-3xl font-bold text-gray-800 mt-0">
-      <CountUp end={totalCount} duration={1.2} /> citations
-    </h2>
-  );
-}
-
 type ApiFilters = Record<string, string | string[]>;
 
 export function QuoteList({
@@ -79,13 +71,17 @@ export function QuoteList({
 
   return (
     <div className="w-full max-w-screen-lg p-4 mx-auto mt-0 space-y-6">
-      {totalCount ? <CitationCount totalCount={totalCount} /> : null}
+      {totalCount &&
+          <h2 className="w-full text-3xl font-bold text-gray-800 mt-0">
+            <CountUp end={totalCount} duration={1.2} /> citations
+          </h2>
+      }
 
       <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {items.map((q) => (
-          <div key={q.id} className="mb-6 break-inside-avoid">
+
             <QuoteCard quote={q} hidePersonality={hidePersonality} />
-          </div>
+
         ))}
       </div>
 

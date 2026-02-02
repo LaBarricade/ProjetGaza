@@ -6,6 +6,7 @@ import { Personality } from '@/types/Personality';
 import { Filters } from '@/types/Filters';
 import { FiltersBar } from '@/components/filters/filters-bar';
 import { PersonalityList } from '@/components/list/personality-list';
+import {PersonalityListCards} from "@/components/list/personality-list-cards";
 
 //URL Parsing
 function parseIds(param: string | undefined): string[] {
@@ -162,7 +163,7 @@ export default async function PersonalitiesPage({
       </div>
 
       {items.length > 0 ? (
-        <PersonalityList personalities={items} />
+        <PersonalityListCards items={items} />
       ) : (
         <div className="flex flex-1 items-center h-full">
           <p>Aucun résultat trouvé.</p>

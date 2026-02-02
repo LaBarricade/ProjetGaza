@@ -27,7 +27,7 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePerson
   }, [quote]);
 
   return (
-    <Card className="rounded-2xl shadow-md hover:shadow-lg transition h-[500px] overflow-hidden flex flex-col">
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition  overflow-hidden flex flex-col">
       <CardHeader>
         <div className="mb-0">
           <span className="bg-primary/30 text-white font-medium px-2 py-0.5 rounded-full text-xs">

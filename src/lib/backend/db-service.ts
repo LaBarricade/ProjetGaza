@@ -17,7 +17,7 @@ export class DbService {
 
   async findParties(params: any): Promise<any> {
     const query = supabase.from('partis_politiques')
-        .select(`id, name:nom, color`, { count: 'exact' });
+        .select(`id, name:nom, short_name:nom_court, color`, { count: 'exact' });
     const resp = await query;
     this.checkErrors(resp);
     return  {
@@ -37,7 +37,7 @@ export class DbService {
     const query = supabase.from('personnalites').select(
       `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
        quotes_count:declarations(count),
-       party:parti_politique_id(id, name:nom, color)`,
+       party:parti_politique_id(id, name:nom, short_name:nom_court, color)`,
       { count: 'exact' }
     );
 
@@ -87,7 +87,7 @@ export class DbService {
       .from('personnalites')
       .select(
         `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
-         party:parti_politique_id(name:nom, id, color), quotes_count:declarations(count)`
+         party:parti_politique_id(name:nom, id, short_name:nom_court, color), quotes_count:declarations(count)`
       )
       .eq('id', ids);
     this.checkErrors(resp);
@@ -127,7 +127,7 @@ export class DbService {
     try {
       const query = supabase
         .from('partis_politiques')
-        .select(`id, name:nom, color`)
+        .select(`id, name:nom, short_name:nom_court,  color`)
         .eq('id', id)
         .single();
 
