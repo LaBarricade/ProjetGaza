@@ -13,7 +13,7 @@ export type Personality = {
     role?: string;
     quotes_count: number;
     quotes: Quote[];
-    mandates: any[];
+    mandates?: any[];
     social1_url: string;
     social2_url: string;
     photo_url: string;

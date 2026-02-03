@@ -18,7 +18,7 @@ export type Filters = {
 
 export type ApiFilters = {
     page?: string;
-    size?: number;
+    size?: string;
     tag?: string | string[];
     text?: string;
     personality?: string | string[];
@@ -138,7 +138,7 @@ const fetchQuotes = async (
 ): Promise<{ items: any[]; count: number | null; apiFilters: ApiFilters }> => {
     const apiFilters: ApiFilters = {
         page,
-        size: 20,
+        size: '20',
     };
 
     // Handle tags (multiple)
@@ -200,6 +200,7 @@ export default async function QuotesPage({
     const urlParams = await searchParams;
     const filters: Filters = await computeFilters(urlParams);
     const {items: mandateTypesList} = await fetchMandateTypes();
+    const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
     const {items: personalitiesList} = await fetchPersonalities();
     const {items: partiesList} = await getDbService().findParties({});
     const {items: tagsList} = await fetchTags();
@@ -216,6 +217,7 @@ export default async function QuotesPage({
                 <div className="flex flex-col gap-2 w-full">
                     <FiltersBar
                         computedFilters={filters}
+                        departmentsList={departmentsList || []}
                         personalitiesList={personalitiesList}
                         quotesList={items}
                         partiesList={partiesList}
@@ -244,7 +246,7 @@ export default async function QuotesPage({
             )}
 
             {items && items.length === 0 && (
-                <div className="flex flex-1 items-center h-full">
+                <div className="flex flex-1 items-center h-full mt-4">
                     <p>Aucun résultat trouvé.</p>
                 </div>
             )}

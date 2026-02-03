@@ -5,14 +5,12 @@ import { Tag } from '@/components/ui/tag';
 import { useHorizontalScroll } from './useHorizontalScroll';
 import {FilterableType} from "@/types/FilterableType";
 
-interface InputFilterProps {
+export function OptionsFilter({ selected, onChange, items, headingNode }: {
   selected: string[];
   onChange: (selected: string[]) => void;
   items: FilterableType[];
   headingNode: ReactNode
-}
-
-export function InputFilter({ selected, onChange, items, headingNode }: InputFilterProps) {
+}) {
   const [search, setSearch] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -46,8 +44,6 @@ export function InputFilter({ selected, onChange, items, headingNode }: InputFil
     <div className="space-y-3 min-w-0 flex-1">
       <h3 className="font-semibold text-md flex items-center justify-start gap-2">
           {headingNode}
-          {/*<Building2 size={18} />
-        Parti politique*/}
       </h3>
       <div className="relative">
         <Input
@@ -91,12 +87,8 @@ export function InputFilter({ selected, onChange, items, headingNode }: InputFil
         <div
           ref={scroll.ref}
           {...scroll.handlers}
-          className="
-    overflow-x-scroll pb-2
-    scroll-thin scrollbar-thumb-muted scrollbar-track-transparent
-    cursor-grab active:cursor-grabbing
-    select-none
-  "
+          className="overflow-x-scroll pb-2 scroll-thin scrollbar-thumb-muted scrollbar-track-transparent
+                      cursor-grab active:cursor-grabbing select-none "
         >
           <div className="flex min-w-max flex-wrap gap-2">
             {selected.map((id) => {

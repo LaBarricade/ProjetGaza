@@ -101,18 +101,14 @@ async function fetchPersonalities(filters: Filters): Promise<{
 
         const queryParams: { ids?: string[]; party?: string[]; department?: string[]; text?: string; page?: string, size?: string } = {};
 
-        if (finalIds) {
+        if (finalIds)
             queryParams.ids = finalIds;
-        }
-        if (filters.parties && filters.parties.length > 0) {
+        if (filters.parties && filters.parties.length > 0)
             queryParams.party = filters.parties.map((p) => p.id.toString());
-        }
-        if (filters.departments && filters.departments.length > 0) {
+        if (filters.departments && filters.departments.length > 0)
             queryParams.department = filters.departments;
-        }
-        if (filters.text) {
-            queryParams.text = filters.text;
-        }
+        if (filters.text)
+            queryParams.text = filters.text
 
         queryParams.page = '1';
         queryParams.size = '20';
@@ -126,16 +122,15 @@ async function fetchPersonalities(filters: Filters): Promise<{
 }
 
 export default async function PersonalitiesPage({
-    params,
     searchParams,
 }: {
-    params: any;
     searchParams: any;
 }) {
     const urlParams = await searchParams;
     const filters = await computeFilters(urlParams);
 
     const mandateTypesList = await fetchMandateTypes();
+    const departmentsList = (await getDbService().findTerritories({type: 'departement'})).items;
     const partiesList = await getDbService().findParties({});
     const {items, count: totalCount} = await fetchPersonalities(filters);
     const {items: allPersonalities} = await getDbService().findPersonalities({});
@@ -146,6 +141,7 @@ export default async function PersonalitiesPage({
             <div className="w-full">
                 <FiltersBar
                     computedFilters={filters}
+                    departmentsList={departmentsList || []}
                     personalitiesList={allPersonalities ?? []}
                     tagsList={[]}
                     mandateTypesList={mandateTypesList}

@@ -50,8 +50,11 @@ export class DbService {
         if (params.party && params.party.length > 0)
             query.in('parti_politique_id', params.party);
 
-        if (params.department && params.department.length > 0)
-            query.in('departement', params.department);
+        if (params.department && params.department.length > 0) {
+            const {items: departmentsInfo} = await this.findTerritories({ids: params.department});
+            const departmentNames = departmentsInfo.map((d) => d.name);
+            query.in('departement', departmentNames);
+        }
 
         if (params.text) {
             const search = `%${params.text}%`;
@@ -80,9 +83,7 @@ export class DbService {
         };
     }
 
-    async findPersonality(
-        id: string
-    ): Promise<{ item: Personality | null }> {
+    async findPersonality(id: string): Promise<{ item: Personality | null }> {
         const resp = await supabase
             .from('personnalites')
             .select(
@@ -99,12 +100,13 @@ export class DbService {
         const formattedData = data && {
             ...data,
             quotes_count: data.quotes_count.length > 0 ? data.quotes_count[0].count : 0,
+            party: data.party.length > 0 ? data.party[0] : 0,
             quotes: quotes.items,
             name: `${data.lastname} ${data.firstname}`,
         };
 
         return {
-            item: formattedData,
+            item: formattedData as Personality,
         };
     }
 
@@ -147,14 +149,7 @@ export class DbService {
     }
 
     // Quotes
-    async findQuotes(params: {
-        role?: string,
-        personality?: string | string[],
-        party?: string | string[],
-        tag?: string | string[],
-        ids?: string[],
-        text?: string
-    }): Promise<any> {
+    async findQuotes(params: any): Promise<any> {
         // Build select query
         let select = `id, 
             text:citation, 
@@ -331,7 +326,7 @@ export class DbService {
     // Territory
     async findTerritories(
         params: { type?: string; ids?: string[] } = {}
-    ): Promise<{ items: Territory[] | null; count: number | null }> {
+    ): Promise<{ items: Territory[]; count: number | null }> {
         try {
             const query = supabase
                 .from('territoires')
@@ -348,13 +343,13 @@ export class DbService {
             const resp = await query;
             this.checkErrors(resp);
             return {
-                items: resp.data,
+                items: resp.data as Territory[],
                 count: resp.count,
             };
         } catch (error) {
             console.error('Error finding territories:', error);
             return {
-                items: null,
+                items: [],
                 count: null,
             };
         }
