@@ -20,7 +20,8 @@ export function PersonalityCard({p}: { p: Personality; }) {
     }, [p, fullName]);
 
     return (
-            <Card className="rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col gap-1 justify-between">
+            <Card className={`rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col gap-1
+                justify-between ${!p.quotes_count && 'opacity-50'}`}>
                 <CardHeader className="px-4  ">
                     <div className="flex flex-row justify-between gap-1">
                         <div>

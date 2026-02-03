@@ -81,24 +81,24 @@ export class DbService {
     }
 
     async findPersonality(
-        id: string | string[]
-    ): Promise<{ item: (Personality & { quotes: Quote[]; quotes_count: number }) | null }> {
-        const ids = Array.isArray(id) ? id[0] : id;
+        id: string
+    ): Promise<{ item: Personality | null }> {
         const resp = await supabase
             .from('personnalites')
             .select(
                 `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
          party:parti_politique_id(name:nom, id, short_name:nom_court, color), quotes_count:declarations(count)`
             )
-            .eq('id', ids);
+            .eq('id', id);
         this.checkErrors(resp);
         const data = resp.data?.at(0);
 
+        const quotes = await this.findQuotes({personality: id});
         const formattedData = data && {
             ...data,
             quotes_count: data.quotes_count.length > 0 ? data.quotes_count[0].count : 0,
             party: data.party && data.party.length > 0 ? data.party[0] : undefined,
-            quotes: await this.findQuotes({personality: id}),
+            quotes: quotes.items,
             name: `${data.lastname} ${data.firstname}`,
         };
 
@@ -178,7 +178,7 @@ export class DbService {
         }
 
         if (params.personality) {
-            const ids = Array.isArray(params.role) ? params.role : [params.role];
+            const ids = Array.isArray(params.personality) ? params.personality : [params.personality];
             query.in('personnalite_id', ids);
         }
 

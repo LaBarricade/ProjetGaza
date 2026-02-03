@@ -33,20 +33,6 @@ export function QuoteList({
   }, [initialItems, JSON.stringify(apiFilters)]);
 
   const fetchData = useCallback(async (pageToLoad: number, filters: ApiFilters) => {
-    /*const params = new URLSearchParams();
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        if (value.length > 0) {
-          params.set(key, value.join(','));
-        }
-      } else if (value != null && value !== '') {
-        params.set(key, value);
-      }
-    });
-
-    params.set('page', pageToLoad.toString());
-     */
     const qs = objectToQueryString(Object.assign(filters, {page: pageToLoad.toString()}));
 
     const apiResp = await callLocalApi(`/api/v2/quotes?${qs}`);
@@ -82,9 +68,7 @@ export function QuoteList({
 
       <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {items.map((q) => (
-
             <QuoteCard quote={q} hidePersonality={hidePersonality} />
-
         ))}
       </div>
 
