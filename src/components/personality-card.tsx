@@ -62,7 +62,7 @@ export function PersonalityCard({p}: { p: Personality; }) {
                 </CardHeader>
 
                 <CardFooter className="flex justify-between items-end px-4">
-                    <p className="mt-2">
+                    <div className="mt-2">
                         {p.party && (
                             <>
                                 <Link href={`/citations?party=${p.party.id}`}>
@@ -71,7 +71,7 @@ export function PersonalityCard({p}: { p: Personality; }) {
                             </>
                         )}
 
-                    </p>
+                    </div>
                     <Button asChild size="sm" variant="outline">
                         <a
                             href={`/personnalites/${p.id}`}

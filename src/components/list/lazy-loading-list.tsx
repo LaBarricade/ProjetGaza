@@ -1,14 +1,13 @@
 import {ReactNode, useCallback, useRef, useState} from "react";
-import {Quote} from "@/types/Quote";
-import {callLocalApi} from "@/lib/backend/api-client";
 import {useEndReached} from "@/lib/use-reached-end";
 
-export function LazyList({initialItems, loadItems, createNode, totalCount}:
-                     { initialItems: any[],
-                         loadItems: (pageToLoad: number, options?: {}) => Promise<any[]> ,
-                         createNode: (item: any) => ReactNode,
-                         totalCount: number
-                     }) {
+export function LazyLoadingList({initialItems, loadItems, createNode, totalCount}:
+{
+    initialItems: any[],
+    loadItems: (pageToLoad: number, options?: {}) => Promise<any[]>,
+    createNode: (item: any) => ReactNode,
+    totalCount: number
+}) {
     const [items, setItems] = useState<any[]>(initialItems);
     const [loading, setLoading] = useState(false);
     const pageRef = useRef(1);
@@ -17,9 +16,9 @@ export function LazyList({initialItems, loadItems, createNode, totalCount}:
         const newItems = await loadItems(pageToLoad, {})
 
         if (pageToLoad === 1) {
-          setItems(newItems);
+            setItems(newItems);
         } else {
-          setItems((prev) => [...prev, ...newItems]);
+            setItems((prev) => [...prev, ...newItems]);
         }
 
         setLoading(false);
@@ -40,7 +39,7 @@ export function LazyList({initialItems, loadItems, createNode, totalCount}:
     return (
         <>
             {items.map((item) => createNode(item))}
-            <div ref={loaderRef} className="h-6" aria-hidden />
+            <div ref={loaderRef} className="h-6" aria-hidden/>
         </>
     );
 }

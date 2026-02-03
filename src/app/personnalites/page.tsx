@@ -132,7 +132,9 @@ export default async function PersonalitiesPage({
     const departmentsList = (await getDbService().findTerritories({type: 'departement'})).items;
     const partiesList = await getDbService().findParties({});
     const {items, count: totalCount} = await fetchPersonalities(filters);
-    const {items: allPersonalities} = await getDbService().findPersonalities({});
+    //const {items: allPersonalities} = await getDbService().findPersonalities({});
+
+    console.log('PersonalitiesPage items', items);
 
     return (
         <main
@@ -141,7 +143,7 @@ export default async function PersonalitiesPage({
                 <FiltersBar
                     computedFilters={filters}
                     departmentsList={departmentsList || []}
-                    personalitiesList={allPersonalities ?? []}
+                    personalitiesList={[]}
                     tagsList={[]}
                     mandateTypesList={mandateTypesList}
                     partiesList={partiesList}
@@ -162,7 +164,7 @@ export default async function PersonalitiesPage({
             </div>
 
             {items.length > 0 ? (
-                <Suspense fallback={<p>Chargement...</p>}>
+                <Suspense fallback={<p className="mt-4">Chargement...</p>}>
                     <PersonalityListCards initialItems={items} totalCount={totalCount} filters={filters}/>
                 </Suspense>
             ) : (
