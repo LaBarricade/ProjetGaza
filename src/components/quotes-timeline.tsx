@@ -8,18 +8,19 @@ import Link from "next/link";
 
 const logoCache: { [key: string]: string } = {}
 
-export function QuotesTimeline({items}: { items: Quote[]}) {
+export function QuotesTimeline({quotes}: { quotes: Quote[]}) {
 
     const timelineRef = useRef<HTMLDivElement>(null);
     const [timelineData, setTimelineData] = useState<Record<string, unknown> | null>(null);
 
     //-- Quotes - vue object
     useEffect(() => {
-        if (items.length) return;
+        if (!quotes.length)
+            return;
 
         (async () => {
             const events = await Promise.all(
-                items.map(async (q: Quote, i: number) => {
+                quotes.map(async (q: Quote, i: number) => {
                     const [year, month, day] = q.date.split("-").map(Number);
                     let logo = null;
 
@@ -52,8 +53,7 @@ export function QuotesTimeline({items}: { items: Quote[]}) {
                 events,
             });
         })();
-    }, [items]);
-
+    }, [quotes]);
 
     useEffect(() => {
         const link = document.createElement("link");
@@ -87,7 +87,7 @@ export function QuotesTimeline({items}: { items: Quote[]}) {
 
                 setTimeout(() => {
                     const markers = document.querySelectorAll(".tl-timemarker-content");
-                    if (!items) return
+                    if (!quotes) return
                     [...markers].forEach((marker) => {
                         const source = (marker as HTMLElement).querySelector('.tl-headline')?.textContent as string
                         const logo = logoCache[source];
@@ -112,7 +112,7 @@ export function QuotesTimeline({items}: { items: Quote[]}) {
         return () => {
             document.body.removeChild(script);
         };
-    }, [timelineData, items]);
+    }, [timelineData, quotes]);
 
     return <div ref={timelineRef} style={{width: "100%", height: "500px", border: "1px solid #DDD"}}/>
 }

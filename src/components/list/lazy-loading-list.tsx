@@ -12,6 +12,7 @@ export function LazyLoadingList({initialItems, loadItems, createNode, totalCount
     const [loading, setLoading] = useState(false);
     const pageRef = useRef(1);
 
+
     const fetchNewData = useCallback(async (pageToLoad: number) => {
         const newItems = await loadItems(pageToLoad, {})
 

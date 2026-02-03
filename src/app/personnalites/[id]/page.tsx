@@ -12,7 +12,6 @@ export default async function PersonalityPage({params}: { params: Promise<{ id: 
     const {id} = await params;
     const {item: p}: {item: Personality | null} = await getDbService().findPersonality(id);
 
-    console.log('PersonalityPage', p);
     if (!p) return (
         <div className="h-screen flex justify-center items-center">
             <p>Personnalité non trouvée</p>
@@ -80,11 +79,14 @@ export default async function PersonalityPage({params}: { params: Promise<{ id: 
             </div>
 
             {p.quotes.length > 3 && (
-                <QuotesTimeline items={p.quotes}/>
+                <QuotesTimeline quotes={p.quotes}/>
             )}
 
             <div className="mt-6">
-                <h2 className="text-xl font-semibold mb-2">Citations</h2>
+                <h2 className="text-xl font-semibold mb-2">
+                    Citations
+                    <span className="font-normal"> ({p.quotes.length})</span>
+                </h2>
                 {p.quotes.length > 0 ?
                     <QuoteList initialItems={p.quotes} hidePersonality={true}/>
                     :

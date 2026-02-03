@@ -18,7 +18,7 @@ export function LogoParti ({ party, shortName = false, size = {} }:
         style={{...{ width: "100px", height: "auto" }, ...size}}
       />
         }
-      <span className="font-semibold text-xs">{shortName ? party.short_name : party.name}</span>
+      <p className="font-semibold text-xs text-center mt-2">{shortName ? party.short_name : party.name}</p>
     </div>
   );
 };

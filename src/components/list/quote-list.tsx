@@ -25,6 +25,8 @@ export function QuoteList({
   const [loading, setLoading] = useState(false);
   const pageRef = useRef(1);
 
+  console.log('QuoteList rerender', pageRef.current, items.map(item => item.id))
+
   //  When filters (or initialItems) change because URL changed / SSR re‑ran,
   //  reset local state so we start fresh for this new filter set.
   useEffect(() => {
@@ -34,6 +36,7 @@ export function QuoteList({
 
   const fetchData = useCallback(async (pageToLoad: number, filters: ApiFilters) => {
     const qs = objectToQueryString(Object.assign(filters, {page: pageToLoad.toString()}));
+    console.log('QuoteList qs', qs)
 
     const apiResp = await callLocalApi(`/api/v2/quotes?${qs}`);
 
@@ -53,6 +56,7 @@ export function QuoteList({
     setLoading(true);
     const nextPage = pageRef.current + 1;
     pageRef.current = nextPage;
+    console.log('QuoteList loadMore', pageRef.current , nextPage)
     fetchData(nextPage, apiFilters);
   };
 
@@ -68,7 +72,7 @@ export function QuoteList({
 
       <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         {items.map((q) => (
-            <QuoteCard quote={q} hidePersonality={hidePersonality} />
+            <QuoteCard quote={q} hidePersonality={hidePersonality} key={"quote" + q.id}/>
         ))}
       </div>
 
