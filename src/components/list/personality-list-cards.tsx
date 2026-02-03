@@ -13,10 +13,8 @@ export function PersonalityListCards({initialItems, totalCount, filters}:
     totalCount: number,
     filters: Filters
 }) {
-    console.log('PersonalityListCards rerender')
 
     async function loadNewItems(pageToLoad: number) {
-        console.log('PersonalityListCards loadNewItems')
         const qs = objectToQueryString(Object.assign(filters, {
             page: pageToLoad.toString(),
             size: 20

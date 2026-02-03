@@ -132,9 +132,6 @@ export default async function PersonalitiesPage({
     const departmentsList = (await getDbService().findTerritories({type: 'departement'})).items;
     const partiesList = await getDbService().findParties({});
     const {items, count: totalCount} = await fetchPersonalities(filters);
-    //const {items: allPersonalities} = await getDbService().findPersonalities({});
-
-    console.log('PersonalitiesPage items', items);
 
     return (
         <main

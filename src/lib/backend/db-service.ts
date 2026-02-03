@@ -423,8 +423,8 @@ export class DbService {
     }
 
     addPaginationFilters(param: any, restQuery: any) {
-        if ((!param.size && param.page) || (param.size && !param.page))
-            throw new Error('Pagination parameters "size" and "page" must be provided together');
+        if (!param.size && param.page)
+            throw new Error('Pagination parameter "page" must be provided with a "size"');
 
         if (!param.size)
             return;

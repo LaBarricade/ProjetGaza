@@ -25,7 +25,6 @@ export function QuoteList({
   const [loading, setLoading] = useState(false);
   const pageRef = useRef(1);
 
-  console.log('QuoteList rerender', pageRef.current, items.map(item => item.id))
 
   //  When filters (or initialItems) change because URL changed / SSR re‑ran,
   //  reset local state so we start fresh for this new filter set.
@@ -36,7 +35,6 @@ export function QuoteList({
 
   const fetchData = useCallback(async (pageToLoad: number, filters: ApiFilters) => {
     const qs = objectToQueryString(Object.assign(filters, {page: pageToLoad.toString()}));
-    console.log('QuoteList qs', qs)
 
     const apiResp = await callLocalApi(`/api/v2/quotes?${qs}`);
 
@@ -56,7 +54,6 @@ export function QuoteList({
     setLoading(true);
     const nextPage = pageRef.current + 1;
     pageRef.current = nextPage;
-    console.log('QuoteList loadMore', pageRef.current , nextPage)
     fetchData(nextPage, apiFilters);
   };
 
