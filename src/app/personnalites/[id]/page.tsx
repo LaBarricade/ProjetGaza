@@ -1,77 +1,26 @@
-"use client";
-
 import {QuoteList} from "@/components/list/quote-list";
-import {useParams} from "next/navigation";
-import React, {useRef, useEffect, useState} from "react";
 import {LogoParti} from "@/components/logo/parti";
 import {getWikipediaImage} from "@/lib/wiki-img";
-import {Personality} from "@/types/Personality";
-import {Quote} from "@/types/Quote";
-import {callLocalApi} from "@/lib/backend/api-client";
-import * as url from "node:url";
 import Link from "next/link";
 import {FacebookIcon, InstagramIcon, TwitterIcon} from "@/components/logo/socials";
-import {WebcamIcon} from "lucide-react/dist/lucide-react.suffixed";
 import {QuotesTimeline} from "@/components/quotes-timeline";
-import {ExternalLink, MailIcon} from "lucide-react";
+import {MailIcon} from "lucide-react";
+import {Personality} from "@/types/Personality";
+import {getDbService} from "@/lib/backend/db-service";
 
+export default async function PersonalityPage({params}: { params: Promise<{ id: string }> }) {
+    const {id} = await params;
+    const {item: p}: {item: Personality | null} = await getDbService().findPersonality(id);
 
-async function getPersonality(id: number): Promise<Personality | null> {
-    const apiResp = await callLocalApi(`/api/v2/personalities?id=${encodeURIComponent(id)}`);
-    return apiResp.item
-}
-
-export default function PersonalityPage() {
-    const params = useParams<{ id: string }>()
-
-    if (!params)
-        return null;
-
-    const [p, setPersonality] = useState<Personality | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-    const id = parseInt(params.id);
-    const fullName = p && `${p.firstname} ${p.lastname}`;
-
-    console.log('p', p)
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const p = await getPersonality(id);
-                setPersonality(p);
-            } catch (err) {
-                console.error("Fetch failed:", err);
-                setPersonality(null);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [id]);
-
-    useEffect(() => {
-        if (p && fullName) {
-            const fetchImage = async () => {
-                const url = await getWikipediaImage(fullName);
-                setImageUrl(url);
-            };
-
-            fetchImage();
-        }
-    }, [p, fullName]);
-
-    if (loading) return (
-        <div className="h-screen flex justify-center items-center">
-            <p>Chargement des données...</p>
-        </div>
-    )
+    console.log('PersonalityPage', p);
     if (!p) return (
         <div className="h-screen flex justify-center items-center">
             <p>Personnalité non trouvée</p>
         </div>
     )
+
+    const fullName = `${p.firstname} ${p.lastname}`;
+    const imageUrl = await getWikipediaImage(fullName);
 
     return (
         <div className="mx-auto p-6 w-4xl ">

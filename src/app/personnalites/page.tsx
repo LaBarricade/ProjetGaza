@@ -5,7 +5,6 @@ import {MandateType} from '@/types/MandateType';
 import {Personality} from '@/types/Personality';
 import {Filters} from '@/types/Filters';
 import {FiltersBar} from '@/components/filters/filters-bar';
-import {PersonalityList} from '@/components/list/personality-list';
 import {PersonalityListCards} from "@/components/list/personality-list-cards";
 import {Suspense} from "react";
 

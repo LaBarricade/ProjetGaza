@@ -1,3 +1,4 @@
+'use client'
 import {Quote} from "@/types/Quote";
 import React, {useEffect, useRef, useState} from "react";
 import {getWikipediaImage} from "@/lib/wiki-img";

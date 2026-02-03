@@ -3,7 +3,6 @@ import {Mandate} from '@/types/Mandate';
 import {MandateType} from '@/types/MandateType';
 import {Organization} from '@/types/Organization';
 import {Personality} from '@/types/Personality';
-import {Quote} from '@/types/Quote';
 import {Tag} from '@/types/Tag';
 import {Territory} from '@/types/Territory';
 
@@ -100,7 +99,7 @@ export class DbService {
         const formattedData = data && {
             ...data,
             quotes_count: data.quotes_count.length > 0 ? data.quotes_count[0].count : 0,
-            party: data.party.length > 0 ? data.party[0] : 0,
+            party: Array.isArray(data.party) ? data.party.at(0) : data.party,
             quotes: quotes.items,
             name: `${data.lastname} ${data.firstname}`,
         };
