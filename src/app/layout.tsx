@@ -19,9 +19,7 @@ export const metadata: Metadata = {
   description: "Regroupement de citations au sujet du génocide à Gaza",
 };
 
-export default function RootLayout({
-                                     children,
-                                   }: Readonly<{
+export default function RootLayout({children }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (

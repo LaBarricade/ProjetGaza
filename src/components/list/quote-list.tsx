@@ -59,7 +59,7 @@ export function QuoteList({
   const loaderRef = useEndReached(loadMore);
 
   return (
-    <div className="w-full max-w-screen-lg p-4 mx-auto mt-0 space-y-6">
+    <div className="w-full max-w-screen-lg py-4 mx-auto mt-0 space-y-6">
       {totalCount &&
           <h2 className="w-full text-3xl font-bold text-gray-800 mt-0">
             <CountUp end={totalCount} duration={1.2} /> citations

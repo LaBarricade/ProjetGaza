@@ -14,4 +14,8 @@ export type Personality = {
     quotes_count: number;
     quotes: Quote[];
     mandates: any[];
+    social1_url: string;
+    social2_url: string;
+    photo_url: string;
+    public_contact: string;
 };

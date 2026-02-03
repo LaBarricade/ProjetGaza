@@ -87,9 +87,11 @@ export class DbService {
             .from('personnalites')
             .select(
                 `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
-         party:parti_politique_id(name:nom, id, short_name:nom_court, color), quotes_count:declarations(count)`
+                social1_url, social2_url, photo_url, public_contact,
+                party:parti_politique_id(name:nom, id, short_name:nom_court, color), quotes_count:declarations(count)`
             )
             .eq('id', id);
+
         this.checkErrors(resp);
         const data = resp.data?.at(0);
 
@@ -97,13 +99,12 @@ export class DbService {
         const formattedData = data && {
             ...data,
             quotes_count: data.quotes_count.length > 0 ? data.quotes_count[0].count : 0,
-            party: data.party && data.party.length > 0 ? data.party[0] : undefined,
             quotes: quotes.items,
             name: `${data.lastname} ${data.firstname}`,
         };
 
         return {
-            item: formattedData ? formattedData : null,
+            item: formattedData,
         };
     }
 
