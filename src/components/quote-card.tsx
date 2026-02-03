@@ -27,9 +27,9 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePerson
   }, [quote]);
 
   return (
-    <Card className="rounded-2xl shadow-md hover:shadow-lg transition h-[500px] overflow-hidden flex flex-col">
+    <Card className="rounded-2xl shadow-md hover:shadow-lg transition  overflow-hidden flex flex-col">
       <CardHeader>
-        <div className="mb-4">
+        <div className="mb-0">
           <span className="bg-primary/30 text-white font-medium px-2 py-0.5 rounded-full text-xs">
             {new Intl.DateTimeFormat('fr').format(new Date(quote.date))}
           </span>
@@ -56,7 +56,7 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePerson
                 {quote.personality.firstname + ' ' + quote.personality.lastname}
               </CardTitle>
             </Link>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               {quote.personality.party && (
                 <>
                   <Link href={`/citations?party=${quote.personality.party.id}`}>
@@ -72,9 +72,9 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePerson
       </CardHeader>
 
       <CardContent className="space-y-3 flex-1 overflow-hidden flex flex-col">
-        <blockquote className="italic text-sm border-l-4 px-4 pl-3 border-primary overflow-y-auto">
-          {quote.text}
-        </blockquote>
+          <blockquote className="scroll-shadows italic text-sm border-l-4 px-4 pl-3 border-primary overflow-y-auto ">
+            {quote.text}
+          </blockquote>
 
         <div className="text-sm space-y-1">
           {/* <p><span className="font-medium">commune :</span> {quote.commune}</p>
@@ -92,16 +92,16 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePerson
       </CardContent>
 
       <CardFooter className="flex justify-between items-end">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-row items-center">
           {!imageUrlLoading ? (
             imageUrl && (
               <img
                 src={imageUrl}
                 alt={`${quote.source?.name} logo`}
-                width={96}
-                height={96}
-                className="mb-4 object-cover w-24 h-auto"
-                style={{ width: '100px', height: 'auto' }}
+                width={48}
+                height={48}
+                className="mb-0 mr-2 object-cover w-24 h-auto"
+                style={{ width: '50px', height: 'auto' }}
               />
             )
           ) : (

@@ -9,8 +9,8 @@ export default async function localApiHandler(req: NextApiRequest, res: NextApiR
 
     path = path || req.query.path as string;
 
-    if (path === 'personalities' && req.query.id) {
-      respData = await api.findPersonality(req.query.id);
+    if (path === 'personalities' && req.query.id ) {
+      respData = await api.findPersonality(req.query.id as string);
     } else if (path === 'personalities') {
       respData = await api.findPersonalities(req.query)
     } else if (path === 'quotes') {

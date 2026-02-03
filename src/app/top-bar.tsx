@@ -16,6 +16,7 @@ export function TopBar() {
   const pathname = usePathname();
 
   const navItems = [
+    { href: '/a-propos', label: 'À propos' },
     { href: '/actualites', label: 'Actualités' },
     { href: '/personnalites', label: 'Politiciens' },
     { href: '/citations', label: 'Citations' },

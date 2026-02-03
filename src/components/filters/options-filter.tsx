@@ -1,36 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import {useState, useRef, useEffect, ReactNode} from 'react';
 import { Input } from '@/components/ui/input';
-import { UserRound, X } from 'lucide-react';
-import { Tag as TagType } from '@/types/Tag';
-import { Personality } from '@/types/Personality';
+import { Building2, X } from 'lucide-react';
 import { Tag } from '@/components/ui/tag';
 import { useHorizontalScroll } from './useHorizontalScroll';
+import {FilterableType} from "@/types/FilterableType";
 
-interface PersonalityFilterProps {
+export function OptionsFilter({ selected, onChange, items, headingNode }: {
   selected: string[];
   onChange: (selected: string[]) => void;
-  personalitiesList: Personality[];
-}
-
-export function PersonalityFilter({
-  selected,
-  onChange,
-  personalitiesList,
-}: PersonalityFilterProps) {
+  items: FilterableType[];
+  headingNode: ReactNode
+}) {
   const [search, setSearch] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const scroll = useHorizontalScroll<HTMLDivElement>();
 
-  const filtered = personalitiesList.filter(
-    (p) =>
-      p.lastname.toLowerCase().includes(search.toLowerCase()) ||
-      p.firstname.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = items.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
-  const togglePersonality = (id: string | null) => {
-    if (!id) return;
+  const toggleItem = (id: string) => {
     onChange(selected.includes(id) ? selected.filter((p) => p !== id) : [...selected, id]);
     setSearch('');
     setShowDropdown(false);
@@ -54,19 +43,18 @@ export function PersonalityFilter({
   return (
     <div className="space-y-3 min-w-0 flex-1">
       <h3 className="font-semibold text-md flex items-center justify-start gap-2">
-        <UserRound size={18} />
-        Politicien
+          {headingNode}
       </h3>
       <div className="relative">
         <Input
           ref={inputRef}
-          placeholder="Rechercher un politicien..."
+          placeholder="Rechercher..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setShowDropdown(e.target.value.length > 0);
           }}
-          onFocus={() => search.length > 0 && setShowDropdown(true)}
+          onFocus={() =>  setShowDropdown(true)}
           className="h-8"
         />
         {showDropdown && filtered.length > 0 && (
@@ -74,17 +62,19 @@ export function PersonalityFilter({
             ref={dropdownRef}
             className="absolute z-50 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-y-auto"
           >
-            {filtered.map((politician) => {
-              const isSelected = politician.id && selected.includes(politician.id.toString());
+            {filtered.map((item) => {
+              const isSelected = selected.includes(item.id.toString());
               return (
                 <button
-                  key={politician.id}
-                  onClick={() => togglePersonality(politician.id ? politician.id.toString() : null)}
+                  key={item.id}
+                  onClick={() => toggleItem(item.id.toString())}
                   className="w-full px-3 py-2 text-left text-sm hover:bg-accent transition-colors flex items-center justify-between"
-                  disabled={isSelected || false}
+                  disabled={isSelected}
                 >
-                  <span className={isSelected ? 'text-muted-foreground' : ''}>
-                    {politician.firstname} {politician.lastname}
+                  <span
+                    className={`flex items-center gap-2 ${isSelected ? 'text-muted-foreground' : ''}`}
+                  >
+                    {item.name}
                   </span>
                   {isSelected && <span className="text-xs text-muted-foreground">Sélectionné</span>}
                 </button>
@@ -97,16 +87,17 @@ export function PersonalityFilter({
         <div
           ref={scroll.ref}
           {...scroll.handlers}
-          className="overflow-x-scroll pb-2 scroll-thin scrollbar-thumb-muted scrollbar-track-transparent cursor-grab active:cursor-grabbing select-none"
+          className="overflow-x-scroll pb-2 scroll-thin scrollbar-thumb-muted scrollbar-track-transparent
+                      cursor-grab active:cursor-grabbing select-none "
         >
-          <div className="flex flex-wrap min-w-max gap-2">
+          <div className="flex min-w-max flex-wrap gap-2">
             {selected.map((id) => {
-              const politician = personalitiesList.find((p) => p.id.toString() === id);
+              const item = items.find((p) => p.id.toString() === id);
               return (
                 <Tag key={id} size="sm" variant="solid" className="flex items-center gap-2">
-                  {politician?.firstname} {politician?.lastname}
+                  {item?.name}
                   <button
-                    onClick={() => togglePersonality(id)}
+                    onClick={() => toggleItem(id)}
                     className="hover:bg-white/20 rounded-full p-0.5 transition-colors"
                   >
                     <X className="w-3 h-3" />

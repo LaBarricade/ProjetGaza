@@ -2,14 +2,18 @@
 
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { PersonalityFilter } from './personality-filter';
-import { MandateFilter } from './mandate-filter';
-import { TagFilter } from './tag-filter';
-import { PartyFilter } from './party-filter';
-import { ChevronDown, Funnel, LucideProps, Search, UserRound } from 'lucide-react';
+import {
+  Briefcase,
+  Building2,
+  LucideProps,
+  MapPin,
+  Search,
+  Tag as TagIcon,
+  UserRound
+} from 'lucide-react';
 import { Personality } from '@/types/Personality';
 import { Quote } from '@/types/Quote';
-import { Tag } from '@/types/Tag';
+import { Tag as TagType } from '@/types/Tag';
 import { Party } from '@/types/Party';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSearchFilters } from './useSearchFilters';
@@ -17,38 +21,9 @@ import { ForwardRefExoticComponent, RefAttributes, useEffect, useState } from 'r
 import { MandateType } from '@/types/MandateType';
 import { Filters } from '@/app/citations/page';
 import { TextFilter } from './text-filter';
-import { DepartmentFilter } from './department-filter';
+import {OptionsFilter} from "@/components/filters/options-filter";
+import {Territory} from "@/types/Territory";
 
-interface FiltersBarProps {
-  personalitiesList: Personality[];
-  quotesList?: Quote[];
-  tagsList: Tag[];
-  mandateTypesList: MandateType[];
-  pageName: string;
-  computedFilters: Filters;
-  config?: {
-    showPersonalities?: boolean;
-    showMandates?: boolean;
-    showText?: boolean;
-    showTags?: boolean;
-    showParties?: boolean;
-    showDepartments?: boolean;
-    layout?: 'horizontal' | 'vertical';
-    textFilterConfig?: {
-      headerTitle?: string | false;
-      icon?: ForwardRefExoticComponent<LucideProps & RefAttributes<SVGSVGElement>>;
-      inputPlaceholder?: string;
-    };
-  };
-}
-
-export function parseIds(param: string | undefined): number[] {
-  if (!param) return [];
-  return param
-    .split(',')
-    .map((id: string) => parseInt(id.trim(), 10))
-    .filter((id: number) => !isNaN(id) && id > 0);
-}
 
 const FILTER_URL_KEYS: Record<string, string> = {
   text: 'text',
@@ -84,9 +59,10 @@ function buildFilterUrl(
 
 export function FiltersBar({
   personalitiesList,
-  quotesList = [],
   tagsList,
   mandateTypesList,
+  departmentsList,
+  partiesList,
   pageName = 'citations',
   computedFilters,
   config = {
@@ -103,33 +79,42 @@ export function FiltersBar({
       inputPlaceholder: 'Rechercher...',
     },
   },
-}: FiltersBarProps) {
+}: {
+  personalitiesList: Personality[];
+  quotesList?: Quote[];
+  tagsList: TagType[];
+  mandateTypesList: MandateType[];
+  partiesList: Party[];
+  departmentsList: Territory[];
+  pageName: string;
+  computedFilters: Filters;
+  config?: {
+    showPersonalities?: boolean;
+    showMandates?: boolean;
+    showText?: boolean;
+    showTags?: boolean;
+    showParties?: boolean;
+    showDepartments?: boolean;
+    layout?: 'horizontal' | 'vertical';
+    textFilterConfig?: {
+      headerTitle?: string | false;
+      icon?: ForwardRefExoticComponent<LucideProps & RefAttributes<SVGSVGElement>>;
+      inputPlaceholder?: string;
+    };
+  };
+}
+) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(true);
 
   const { filters, updateFilter, clearFilters } = useSearchFilters({
     initializedState: { initialized, setInitialized },
     computedFilters,
   });
 
-  const hasActiveFilters =
-    filters.personalities.length > 0 ||
-    filters.roles.length > 0 ||
-    filters.tags.length > 0 ||
-    filters.departments.length > 0 ||
-    filters.text.length > 0 ||
-    filters.parties.length > 0;
-
-  // Count how many distinct filter categories are active (for the badge)
-  const activeFilterCount =
-    (filters.personalities.length > 0 ? 1 : 0) +
-    (filters.roles.length > 0 ? 1 : 0) +
-    (filters.tags.length > 0 ? 1 : 0) +
-    (filters.departments.length > 0 ? 1 : 0) +
-    (filters.text.length > 0 ? 1 : 0) +
-    (filters.parties.length > 0 ? 1 : 0);
+  const hasActiveFilters = Object.values(filters).some(v => v.length > 0);
 
   const handleFilterChange = (filterType: string, values: string | string[]) => {
     updateFilter(filterType as keyof typeof filters, values);
@@ -141,46 +126,12 @@ export function FiltersBar({
     router.push(`/${pageName}`);
   };
 
-  const partiesList: Party[] = Array.from(
-    new Map(personalitiesList.filter((p) => p.party).map((p) => [p.party!.id, p.party!])).values()
-  );
-
-  const onFiltersChange = {
-    personalities: (selected: string[]) => handleFilterChange('personalities', selected),
-    roles: (selected: string[]) => handleFilterChange('roles', selected),
-    tags: (selected: string[]) => handleFilterChange('tags', selected),
-    parties: (selected: string[]) => handleFilterChange('parties', selected),
-    departments: (selected: string[]) => handleFilterChange('departments', selected),
-    text: (selected: string) => handleFilterChange('text', selected),
-  };
-
   return (
     <div className="max-w-screen-lg mx-auto border-b border-slate-200 bg-background">
       {/* Header Section */}
       <div className="bg-background z-10 p-6 border-b">
         <div className="flex justify-between items-center">
-          <button
-            onClick={() => setFiltersOpen((prev) => !prev)}
-            className="flex items-center gap-2 text-xl font-semibold"
-          >
-            <Funnel size={20} />
-            Filtres
-            {/* Badge: visible only when collapsed and filters are active */}
-            <div className="h-6 w-6 flex items-center justify-center">
-              {hasActiveFilters && (
-                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-white text-xs font-semibold">
-                  {activeFilterCount}
-                </span>
-              )}
-            </div>
-            {/* Chevron rotates based on open/closed state */}
-            <span className="hover:bg-accent ml-6 px-2 py-1 transition-all rounded-md hover:text-accent-foreground dark:hover:bg-accent/50">
-              <ChevronDown
-                size={18}
-                className={`text-muted-foreground transition-transform duration-200 ${filtersOpen ? 'rotate-180' : 'rotate-0'}`}
-              />
-            </span>
-          </button>
+          <span></span>
 
           {/* Right: clear button — always visible when filters are active, regardless of open state */}
           {hasActiveFilters && (
@@ -192,21 +143,18 @@ export function FiltersBar({
       </div>
 
       {/* Collapsible body — everything below the header */}
-      <div
-        className={`
-    grid transition-[grid-template-rows,opacity]
-    duration-300 ease-out
-    ${filtersOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}
-  `}
+      <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out
+          ${filtersOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
       >
         <div className="min-h-0 min-w-0">
           {/* Filters Section - Horizontal Layout */}
           <div className="flex min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">
             {config.showPersonalities && (
-              <PersonalityFilter
+              <OptionsFilter
                 selected={filters.personalities}
-                onChange={onFiltersChange.personalities}
-                personalitiesList={personalitiesList}
+                onChange={(selected: string[]) => handleFilterChange('personalities', selected)}
+                items={personalitiesList}
+                headingNode={<><UserRound size={18} /> Politicien</>}
               />
             )}
 
@@ -216,10 +164,11 @@ export function FiltersBar({
                   <Separator orientation="vertical" className="h-16 opacity-50" />
                 )}
 
-                <PartyFilter
+                <OptionsFilter
                   selected={filters.parties}
-                  onChange={onFiltersChange.parties}
-                  partiesList={partiesList}
+                  onChange={(selected: string[]) => handleFilterChange('parties', selected)}
+                  items={partiesList}
+                  headingNode={<><Building2 size={18} /> Parti politique</>}
                 />
               </>
             )}
@@ -228,10 +177,11 @@ export function FiltersBar({
               <>
                 <Separator orientation="vertical" className="h-16 opacity-50" />
 
-                <MandateFilter
+                <OptionsFilter
                   selected={filters.roles}
-                  onChange={onFiltersChange.roles}
-                  mandateTypesList={mandateTypesList}
+                  onChange={(selected: string[]) => handleFilterChange('roles', selected)}
+                  items={mandateTypesList}
+                  headingNode={<><Briefcase size={18} /> Mandat</>}
                 />
               </>
             )}
@@ -240,10 +190,11 @@ export function FiltersBar({
               <>
                 <Separator orientation="vertical" className="h-16 opacity-50" />
 
-                <DepartmentFilter
+                <OptionsFilter
                   selected={filters.departments}
-                  onChange={onFiltersChange.departments}
-                  personalitiesList={personalitiesList}
+                  onChange={(selected: string[]) => handleFilterChange('departments', selected)}
+                  items={departmentsList}
+                  headingNode={<><MapPin size={18} /> Département</>}
                 />
               </>
             )}
@@ -255,23 +206,25 @@ export function FiltersBar({
             {config.showTags && (
               <div className="flex-1 min-w-0 overflow-y-visible">
                 <div className="py-4 px-6">
-                  <TagFilter
+                   <OptionsFilter
                     selected={filters.tags}
-                    onChange={onFiltersChange.tags}
-                    tagsList={tagsList}
+                    onChange={(selected: string[]) => handleFilterChange('tags', selected)}
+                    items={tagsList}
+                    headingNode={<><TagIcon size={18} />
+                            Tags</>}
                   />
                 </div>
               </div>
             )}
             {config.showTags && (
-              <Separator orientation="vertical" className="h-32 my-4 opacity-50" />
+              <Separator orientation="vertical" className="h-16 my-4 opacity-50" />
             )}
             {config.showText && (
               <div className="flex-1 overflow-y-visible min-w-0">
                 <div className="py-4 px-6">
                   <TextFilter
                     selected={filters.text}
-                    onChange={onFiltersChange.text}
+                    onChange={(selected: string) => handleFilterChange('text', selected)}
                     config={config.textFilterConfig}
                   />
                 </div>

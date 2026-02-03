@@ -5,7 +5,7 @@ export type Personality = {
     id: number;
     firstname: string;
     lastname: string;
-    //fullName: string;
+    name: string;
     city: string;
     department: string;
     region: string;
@@ -13,4 +13,9 @@ export type Personality = {
     role?: string;
     quotes_count: number;
     quotes: Quote[];
+    mandates?: any[];
+    social1_url: string;
+    social2_url: string;
+    photo_url: string;
+    public_contact: string;
 };
