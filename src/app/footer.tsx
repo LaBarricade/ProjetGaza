@@ -1,9 +1,10 @@
-'use client';
 
 import {Mail} from "lucide-react"
 import {FacebookIcon, InstagramIcon, TwitterIcon} from "@/components/logo/socials";
+import {SafeMailto} from "@/components/safe-mailto";
 
 export function Footer() {
+   const siteEmail = "la-boussole-gaza@" + "proton.me";
   return (
     <footer className="w-full max-w-xl mx-auto flex flex-col items-center py-8 space-y-6">
       <div className="w-24 h-1 bg-black rounded-full opacity-70" />
@@ -19,7 +20,7 @@ export function Footer() {
 
         {/* Instagram */}
         <a
-          href="https://instagram.com/"
+          href="https://www.instagram.com/laboussolegaza/"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center hover:opacity-75"
@@ -30,7 +31,7 @@ export function Footer() {
 
         {/* Facebook */}
         <a
-          href="https://facebook.com/"
+          href="https://www.facebook.com/profile.php?id=61586053893164"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center hover:opacity-75"
@@ -42,7 +43,7 @@ export function Footer() {
 
         {/* X / Twitter */}
         <a
-          href="https://twitter.com/"
+          href="https://x.com/BoussoleGaza"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center hover:opacity-75"
@@ -53,13 +54,10 @@ export function Footer() {
         </a>
 
         {/* Email */}
-        <a
-          href="mailto:contact@example.com"
-          className="flex flex-col items-center hover:opacity-75"
-        >
+        <SafeMailto email={siteEmail} className="flex flex-col items-center hover:opacity-75">
           <Mail />
           <span className="text-xs mt-1">Email</span>
-        </a>
+        </SafeMailto>
 
       </div>
 
