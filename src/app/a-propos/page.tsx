@@ -48,8 +48,7 @@ export default function AboutPage() {
             cette thématique est un bon critère de redevabilité des élus.</p>
         <h2>Quels sont nos objectifs</h2>
         <p>La boussole entend <strong>informer le citoyen, la société civile et les médias</strong> sur le positionnement des élus en
-            France.
-            <strong>Archiver, quantifier, sourcer</strong> les paroles de ceux qui participent à l’affaiblissement de l’état de droit et
+            France. <strong>Archiver, quantifier, sourcer</strong> les paroles de ceux qui participent à l’affaiblissement de l’état de droit et
             à son caractère universel. <strong>Constituer des preuves</strong> dans la constitution d’éventuels dossiers juridiques au
             moment où la reconnaissance d’un génocide à Gaza sera officiellement établie.</p>
 </div>

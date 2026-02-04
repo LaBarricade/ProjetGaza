@@ -1,6 +1,7 @@
+import {SafeMailto} from "@/components/safe-mailto";
 
 export default function Contact() {
-  const email = "contact@example.com"; // remplace par ton email
+  const siteEmail = "la-boussole-gaza@" + "proton.me";
 
   return (
 
@@ -12,12 +13,12 @@ export default function Contact() {
           <p className="mb-4">
             Pour nous contacter, cliquez sur le lien ci-dessous :
           </p>
-          <a
-            href={`mailto:${email}`}
+          <SafeMailto
+            email={`mailto:${siteEmail}`}
             className="text-blue-600 underline hover:text-blue-800"
           >
             Envoyer un email
-          </a>
+          </SafeMailto>
         </div>
       </main>
 
