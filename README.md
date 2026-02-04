@@ -8,13 +8,13 @@
 npm install
 ```
 
-- Créer le fichier `.env` en dupliquant `template.env` :
+- Créer un fichier `.env.local`
 
 ```bash
-cp template.env .env
+cp template.env .env.local
 ```
 
-- Renseigner les variables dans `.env` avec les valeurs fournies par l'équipe
+- Renseigner les variables dans `.env.local` avec les valeurs fournies par l'équipe
 
 
 - Lancer le serveur de dev :

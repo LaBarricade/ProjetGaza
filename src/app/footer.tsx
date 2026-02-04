@@ -2,9 +2,10 @@
 import {Mail} from "lucide-react"
 import {FacebookIcon, InstagramIcon, TwitterIcon} from "@/components/logo/socials";
 import {SafeMailto} from "@/components/safe-mailto";
+import {obfuscateEmail} from "@/lib/safe-mailto-server";
 
 export function Footer() {
-   const siteEmail = "la-boussole-gaza@" + "proton.me";
+   const siteEmail = process.env.SITE_EMAIL
   return (
     <footer className="w-full max-w-xl mx-auto flex flex-col items-center py-8 space-y-6">
       <div className="w-24 h-1 bg-black rounded-full opacity-70" />
@@ -54,7 +55,7 @@ export function Footer() {
         </a>
 
         {/* Email */}
-        <SafeMailto email={siteEmail} className="flex flex-col items-center hover:opacity-75">
+        <SafeMailto obfuscatedEmail={obfuscateEmail(siteEmail || '')} className="flex flex-col items-center hover:opacity-75">
           <Mail />
           <span className="text-xs mt-1">Email</span>
         </SafeMailto>

@@ -1,10 +1,10 @@
 import {SafeMailto} from "@/components/safe-mailto";
+import {obfuscateEmail} from "@/lib/safe-mailto-server";
 
 export default function Contact() {
-  const siteEmail = "la-boussole-gaza@" + "proton.me";
+  const siteEmail = process.env.SITE_EMAIL
 
   return (
-
       <main className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
         <div className="max-w-3xl mx-auto px-6 py-12 text-center">
           <h1 className="text-4xl font-bold mb-10">
@@ -14,13 +14,12 @@ export default function Contact() {
             Pour nous contacter, cliquez sur le lien ci-dessous :
           </p>
           <SafeMailto
-            email={`mailto:${siteEmail}`}
+            obfuscatedEmail={obfuscateEmail(siteEmail || '')}
             className="text-blue-600 underline hover:text-blue-800"
           >
             Envoyer un email
           </SafeMailto>
         </div>
       </main>
-
   );
 }
