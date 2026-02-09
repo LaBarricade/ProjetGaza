@@ -5,12 +5,16 @@ import {Organization} from '@/types/Organization';
 import {Personality} from '@/types/Personality';
 import {Tag} from '@/types/Tag';
 import {Territory} from '@/types/Territory';
+import {Party} from "@/types/Party";
+import {PostgrestResponseSuccess, PostgrestSingleResponse} from "@supabase-js/source/packages/core/postgrest-js/src";
 
 class DbService {
     token: string | undefined;
     url: string | undefined;
 
-    checkErrors(supabaseResp: any) {
+    checkErrors(supabaseResp: PostgrestSingleResponse<any>)
+        : asserts supabaseResp is (PostgrestResponseSuccess<any> & {data: any})
+    {
         if (supabaseResp.error)
             throw new Error(supabaseResp.error.message);
         else if (!supabaseResp.data)
@@ -22,8 +26,15 @@ class DbService {
             .select(`id, name:nom, short_name:nom_court, color`, {count: 'exact'});
         const resp = await query;
         this.checkErrors(resp);
+
+        const formattedData: Party[] = resp.data.map((item: any): Party =>
+            Object.assign(item, {
+                //quotes_count: item.quotes_count[0].count,
+            })
+        );
+
         return {
-            items: resp.data,
+            items: formattedData,
             count: resp.count ?? 0,
         };
     }
@@ -71,8 +82,6 @@ class DbService {
 
         const resp = await query;
         this.checkErrors(resp);
-        if (!resp.data)
-            throw new Error('No data returned from supabase');
 
         const formattedData: Personality[] = resp.data.map(
             (personality: any): Personality =>
@@ -115,7 +124,6 @@ class DbService {
         };
     }
 
-    // Parties
     async findParty(id: any): Promise<any> {
         try {
             const query = supabase
@@ -137,9 +145,7 @@ class DbService {
         }
     }
 
-    // Quotes
     async findQuotes(params: any): Promise<any> {
-        // Build select query
         let select = `id, 
             text:citation, 
             source:source_id(name:nom, id), 
@@ -202,7 +208,6 @@ class DbService {
         };
     }
 
-    // News
     async findNews(params: any = {}): Promise<any> {
         const query = supabase
             .from('actualites')
@@ -217,7 +222,6 @@ class DbService {
         };
     }
 
-    // Tags
     async findTag(id: string | string[]): Promise<any> {
         const ids = Array.isArray(id) ? id[0] : id;
         try {
@@ -282,7 +286,6 @@ class DbService {
         };
     }
 
-    // Organization
     async findOrganizations(
         params: any = {}
     ): Promise<{ items: Organization[] | null; count: number | null }> {
@@ -312,7 +315,6 @@ class DbService {
         }
     }
 
-    // Territory
     async findTerritories(
         params: { type?: string; ids?: string[] } = {}
     ): Promise<{ items: Territory[]; count: number | null }> {

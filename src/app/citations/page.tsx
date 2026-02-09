@@ -7,7 +7,7 @@ import {getDbService} from '@/lib/backend/db-service';
 import {MandateType} from '@/types/MandateType';
 import {FiltersBar} from '@/components/filters/filters-bar';
 import {Personality} from '@/types/Personality';
-import TagLabel from "@/components/tag";
+import TagLabel from "@/components/tag-label";
 import TagsCloud from "@/components/tags-cloud";
 
 export type Filters = {

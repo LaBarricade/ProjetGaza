@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { getWikipediaImage } from '@/lib/wiki-img';
 import { Quote } from '@/types/Quote';
 import { Source } from '@/types/Source';
-import TagLabel from '@/components/tag';
+import TagLabel from '@/components/tag-label';
 
 export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePersonality?: boolean }) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
