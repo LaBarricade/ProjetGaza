@@ -107,7 +107,6 @@ export function FiltersBar({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [initialized, setInitialized] = useState(false);
-  const [filtersOpen, setFiltersOpen] = useState(true);
 
   const { filters, updateFilter, clearFilters } = useSearchFilters({
     initializedState: { initialized, setInitialized },
@@ -136,17 +135,15 @@ export function FiltersBar({
 
             {/* Right: clear button — always visible when filters are active, regardless of open state */}
 
-              <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-                Réinitialiser les filtres
-              </Button>
+            <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+              Réinitialiser les filtres
+            </Button>
 
           </div>
         </div>
       )}
       {/* Collapsible body — everything below the header */}
-      <div className={`py-6 grid transition-[grid-template-rows,opacity] duration-300 ease-out
-          ${filtersOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
-      >
+      <div className={`py-6 grid transition-[grid-template-rows,opacity] duration-300 ease-out grid-rows-[1fr] opacity-100`}>
         <div className="min-h-0 min-w-0">
           {/* Filters Section - Horizontal Layout */}
           <div className="flex min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">

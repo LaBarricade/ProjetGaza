@@ -106,22 +106,6 @@ async function computeFilters(urlParams: any): Promise<Filters> {
     return filters;
 }
 
-const fetchTags = async (params?: {
-    ids?: number[];
-}): Promise<{
-    items: Tag[];
-    count: number | null;
-}> => {
-    try {
-        const apiResp = await getDbService().findTags(params || {ids: []});
-        return {items: apiResp.items, count: apiResp.count};
-    } catch (error) {
-        console.error('Error fetching tags:', error);
-        return {items: [], count: null};
-    }
-};
-
-
 const fetchQuotes = async (
     filters: Filters,
     page: string
@@ -180,7 +164,8 @@ export default async function QuotesPage({
     const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
     const {items: personalitiesList} =  await getDbService().findPersonalities({});
     const {items: partiesList} = await getDbService().findParties({});
-    const {items: tagsList} = await fetchTags();
+    const {items: tagsList} = await getDbService().findTags({});
+
     const {
         items,
         count: totalCount,
