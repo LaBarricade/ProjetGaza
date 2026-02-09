@@ -5,12 +5,16 @@ import {Organization} from '@/types/Organization';
 import {Personality} from '@/types/Personality';
 import {Tag} from '@/types/Tag';
 import {Territory} from '@/types/Territory';
+import {Party} from "@/types/Party";
+import {PostgrestResponseSuccess, PostgrestSingleResponse} from "@supabase-js/source/packages/core/postgrest-js/src";
 
-export class DbService {
+class DbService {
     token: string | undefined;
     url: string | undefined;
 
-    checkErrors(supabaseResp: any) {
+    checkErrors(supabaseResp: PostgrestSingleResponse<any>)
+        : asserts supabaseResp is (PostgrestResponseSuccess<any> & {data: any})
+    {
         if (supabaseResp.error)
             throw new Error(supabaseResp.error.message);
         else if (!supabaseResp.data)
@@ -22,8 +26,15 @@ export class DbService {
             .select(`id, name:nom, short_name:nom_court, color`, {count: 'exact'});
         const resp = await query;
         this.checkErrors(resp);
+
+        const formattedData: Party[] = resp.data.map((item: any): Party =>
+            Object.assign(item, {
+                //quotes_count: item.quotes_count[0].count,
+            })
+        );
+
         return {
-            items: resp.data,
+            items: formattedData,
             count: resp.count ?? 0,
         };
     }
@@ -32,6 +43,7 @@ export class DbService {
         ids?: string[];
         party?: string[];
         department?: string[];
+        role?: string[];
         text?: string;
         page?: string;
         size?: string;
@@ -39,7 +51,9 @@ export class DbService {
         const query = supabase.from('personnalites').select(
             `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
                      quotes_count:declarations(count),
-                     party:parti_politique_id(id, name:nom, short_name:nom_court, color)`,
+                     party:parti_politique_id(id, name:nom, short_name:nom_court, color),
+                     mandates:mandats${params.role ? '!inner' : ''}(type_mandat_id, id)
+                     `,
             {count: 'exact'}
         );
 
@@ -49,6 +63,9 @@ export class DbService {
         if (params.party && params.party.length > 0)
             query.in('parti_politique_id', params.party);
 
+        if (params.role && params.role.length > 0)
+            query.in('mandates.type_mandat_id', params.role);
+
         if (params.department && params.department.length > 0) {
             const {items: departmentsInfo} = await this.findTerritories({ids: params.department});
             const departmentNames = departmentsInfo.map((d) => d.name);
@@ -57,7 +74,7 @@ export class DbService {
 
         if (params.text) {
             const search = `%${params.text}%`;
-            query.or(`nom.ilike.${search},prenom.ilike.${search}, ville.ilike.${search}`);
+            query.or(`nom.ilike.${search}, prenom.ilike.${search}, ville.ilike.${search}`);
         }
 
         query.order('nom', {ascending: true, nullsFirst: false});
@@ -65,8 +82,6 @@ export class DbService {
 
         const resp = await query;
         this.checkErrors(resp);
-        if (!resp.data)
-            throw new Error('No data returned from supabase');
 
         const formattedData: Personality[] = resp.data.map(
             (personality: any): Personality =>
@@ -109,23 +124,6 @@ export class DbService {
         };
     }
 
-    /**
-     * Resolves a list of MandateType IDs → the unique personality IDs that hold at least 1 of those mandate types.
-     */
-    async findPersonalityIdsByRoles(roleIds: string[]): Promise<string[]> {
-        const resp = await supabase
-            .from('mandats')
-            .select('personnalite_id')
-            .in('type_mandat_id', roleIds);
-
-        this.checkErrors(resp);
-
-        if (!resp.data || resp.data.length === 0) return [];
-
-        return [...new Set(resp.data.map((m: any) => m.personnalite_id.toString()))];
-    }
-
-    // Parties
     async findParty(id: any): Promise<any> {
         try {
             const query = supabase
@@ -147,9 +145,7 @@ export class DbService {
         }
     }
 
-    // Quotes
     async findQuotes(params: any): Promise<any> {
-        // Build select query
         let select = `id, 
             text:citation, 
             source:source_id(name:nom, id), 
@@ -212,7 +208,6 @@ export class DbService {
         };
     }
 
-    // News
     async findNews(params: any = {}): Promise<any> {
         const query = supabase
             .from('actualites')
@@ -227,7 +222,6 @@ export class DbService {
         };
     }
 
-    // Tags
     async findTag(id: string | string[]): Promise<any> {
         const ids = Array.isArray(id) ? id[0] : id;
         try {
@@ -292,7 +286,6 @@ export class DbService {
         };
     }
 
-    // Organization
     async findOrganizations(
         params: any = {}
     ): Promise<{ items: Organization[] | null; count: number | null }> {
@@ -322,7 +315,6 @@ export class DbService {
         }
     }
 
-    // Territory
     async findTerritories(
         params: { type?: string; ids?: string[] } = {}
     ): Promise<{ items: Territory[]; count: number | null }> {

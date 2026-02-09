@@ -16,25 +16,8 @@ import { Quote } from '@/types/Quote';
 import { Tag } from '@/types/Tag';
 import { redirect } from 'next/navigation';
 import { callLocalApi } from '@/lib/backend/api-client';
-import TagLabel from '@/components/tag';
+import TagLabel from '@/components/tag-label';
 import { Personality } from '@/types/Personality';
-
-export type BaserowQuoteData = {
-  count: number;
-  results: Quote[];
-};
-
-export type BaserowData = {
-  count: number;
-  next: null;
-  previous: null;
-  results: Quote[];
-};
-
-export type BaserowPersonalityData = {
-  count: number;
-  results: Personality[];
-};
 
 export default function Home() {
   const router = useRouter();
@@ -100,7 +83,7 @@ export default function Home() {
           <div className="flex flex-col justify-center items-center">
             <h2 className="text-5xl font-bold text-center">La boussole Gaza</h2>
             <h2 className="text-5xl font-bold text-center text-[#5f49ea]">
-              Plateforme de contrôle citoyen
+              Plateforme de veille citoyenne
             </h2>
           </div>
 

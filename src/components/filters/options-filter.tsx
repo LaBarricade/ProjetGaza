@@ -74,7 +74,7 @@ export function OptionsFilter({ selected, onChange, items, headingNode }: {
                   <span
                     className={`flex items-center gap-2 ${isSelected ? 'text-muted-foreground' : ''}`}
                   >
-                    {item.name}
+                    {item.name} {item.quotes_count && `(${item.quotes_count})`}
                   </span>
                   {isSelected && <span className="text-xs text-muted-foreground">Sélectionné</span>}
                 </button>

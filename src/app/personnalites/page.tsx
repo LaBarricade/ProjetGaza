@@ -1,4 +1,3 @@
-'use server';
 
 import {getDbService} from '@/lib/backend/db-service';
 import {MandateType} from '@/types/MandateType';
@@ -9,7 +8,7 @@ import {PersonalityListCards} from "@/components/list/personality-list-cards";
 import {Suspense} from "react";
 
 //URL Parsing
-function parseIds(param: string | undefined): string[] {
+function parseUrlIds(param: string | undefined): string[] {
     if (!param) return [];
     return param
         .split(',')
@@ -22,7 +21,7 @@ async function computeFilters(urlParams: any): Promise<Filters> {
 
     try {
         if (urlParams.party) {
-            const partyIds = parseIds(urlParams.party);
+            const partyIds = parseUrlIds(urlParams.party);
             const parties = [];
             for (const id of partyIds) {
                 const {item} = await getDbService().findParty(id);
@@ -32,7 +31,7 @@ async function computeFilters(urlParams: any): Promise<Filters> {
         }
 
         if (urlParams.role) {
-            const roleIds = parseIds(urlParams.role);
+            const roleIds = parseUrlIds(urlParams.role);
             const roles: MandateType[] = [];
             for (const id of roleIds) {
                 const roleId = parseInt(id, 10);
@@ -63,49 +62,19 @@ async function computeFilters(urlParams: any): Promise<Filters> {
     return filters;
 }
 
-async function fetchMandateTypes(): Promise<MandateType[]> {
-    try {
-        const {items} = await getDbService().findMandateTypes();
-        return items || [];
-    } catch {
-        return [];
-    }
-}
-
 async function fetchPersonalities(filters: Filters): Promise<{
     items: Personality[];
     count: number;
 }> {
     try {
-        // Collect candidate ID sets from each indirect filter.
-        const idSets: (string[] | null)[] = [];
+        const queryParams: { ids?: string[]; party?: string[]; department?: string[]; role?: string[]; text?: string; page?: string, size?: string } = {};
 
-        // Role → personality IDs via mandats
-        if (filters.roles && filters.roles.length > 0) {
-            const roleIds = filters.roles.map((r) => r.id.toString());
-            idSets.push(await getDbService().findPersonalityIdsByRoles(roleIds));
-        }
-
-        // Intersect all active ID sets (AND semantics across filters).
-        // If any set is empty the intersection is empty — return empty result.
-        let finalIds: string[] | null = null;
-        for (const set of idSets) {
-            if (!set) continue; // filter not active, skip
-            if (set.length === 0) return {items: [], count: 0};
-
-            finalIds = finalIds ? finalIds.filter((id) => set.includes(id)) : set;
-
-            if (finalIds.length === 0) return {items: [], count: 0};
-        }
-
-        const queryParams: { ids?: string[]; party?: string[]; department?: string[]; text?: string; page?: string, size?: string } = {};
-
-        if (finalIds)
-            queryParams.ids = finalIds;
         if (filters.parties && filters.parties.length > 0)
             queryParams.party = filters.parties.map((p) => p.id.toString());
         if (filters.departments && filters.departments.length > 0)
             queryParams.department = filters.departments;
+        if (filters.roles && filters.roles.length > 0)
+            queryParams.role = filters.roles.map((r) => r.id.toString());
         if (filters.text)
             queryParams.text = filters.text
 
@@ -128,9 +97,9 @@ export default async function PersonalitiesPage({
     const urlParams = await searchParams;
     const filters = await computeFilters(urlParams);
 
-    const mandateTypesList = await fetchMandateTypes();
-    const departmentsList = (await getDbService().findTerritories({type: 'departement'})).items;
-    const partiesList = await getDbService().findParties({});
+    const {items: mandateTypesList} = await getDbService().findMandateTypes();
+    const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
+    const {items: partiesList} = await getDbService().findParties({});
     const {items, count: totalCount} = await fetchPersonalities(filters);
 
     return (
@@ -138,11 +107,10 @@ export default async function PersonalitiesPage({
             className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
             <div className="w-full">
                 <FiltersBar
-                    computedFilters={filters}
                     departmentsList={departmentsList || []}
                     personalitiesList={[]}
                     tagsList={[]}
-                    mandateTypesList={mandateTypesList}
+                    mandateTypesList={mandateTypesList || []}
                     partiesList={partiesList}
                     pageName="personnalites"
                     config={{
