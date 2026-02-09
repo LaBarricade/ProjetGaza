@@ -107,7 +107,6 @@ export default async function PersonalitiesPage({
             className="flex flex-1 flex-col items-center w-full px-4 sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto">
             <div className="w-full">
                 <FiltersBar
-                    computedFilters={filters}
                     departmentsList={departmentsList || []}
                     personalitiesList={[]}
                     tagsList={[]}

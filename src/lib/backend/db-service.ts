@@ -6,7 +6,7 @@ import {Personality} from '@/types/Personality';
 import {Tag} from '@/types/Tag';
 import {Territory} from '@/types/Territory';
 
-export class DbService {
+class DbService {
     token: string | undefined;
     url: string | undefined;
 

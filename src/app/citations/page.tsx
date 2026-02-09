@@ -3,7 +3,7 @@
 import {QuoteList} from '@/components/list/quote-list';
 import {Tag} from '@/types/Tag';
 import {Party} from '@/types/Party';
-import {DbService, getDbService} from '@/lib/backend/db-service';
+import {getDbService} from '@/lib/backend/db-service';
 import {MandateType} from '@/types/MandateType';
 import {FiltersBar} from '@/components/filters/filters-bar';
 import {Personality} from '@/types/Personality';
@@ -182,10 +182,8 @@ export default async function QuotesPage({
                     </div>
                     <div className="flex-2/3">
                         <FiltersBar
-                            computedFilters={filters}
                             departmentsList={departmentsList || []}
                             personalitiesList={personalitiesList || []}
-                            quotesList={items}
                             partiesList={partiesList}
                             tagsList={tagsList}
                             mandateTypesList={mandateTypesList || []}
