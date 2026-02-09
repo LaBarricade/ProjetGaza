@@ -176,11 +176,11 @@ export default async function QuotesPage({
         <main
             className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
             <div className="w-full flex items-center justify-center border-slate-200 bg-background border-b">
-                <div className="flex flex-row gap-2 w-full  items-center justify-center">
-                    <div className="flex-1/3 mt-2 text-center ">
+                <div className="flex flex-col gap-2 w-full  items-center justify-center">
+                    <div className=" mt-6 text-center max-w-[600px]">
                         <TagsCloud tagsList={tagsList} />
                     </div>
-                    <div className="flex-2/3">
+                    <div className="">
                         <FiltersBar
                             departmentsList={departmentsList || []}
                             personalitiesList={personalitiesList || []}
@@ -188,6 +188,7 @@ export default async function QuotesPage({
                             tagsList={tagsList}
                             mandateTypesList={mandateTypesList || []}
                             pageName="citations"
+                            alwaysVisible={false}
                             config={{
                                 showPersonalities: true,
                                 showMandates: true,
