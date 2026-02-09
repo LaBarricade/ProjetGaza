@@ -77,35 +77,14 @@ async function fetchPersonalities(filters: Filters): Promise<{
     count: number;
 }> {
     try {
-        // Collect candidate ID sets from each indirect filter.
-        const idSets: (string[] | null)[] = [];
+        const queryParams: { ids?: string[]; party?: string[]; department?: string[]; role?: string[]; text?: string; page?: string, size?: string } = {};
 
-        // Role → personality IDs via mandats
-        if (filters.roles && filters.roles.length > 0) {
-            const roleIds = filters.roles.map((r) => r.id.toString());
-            idSets.push(await getDbService().findPersonalityIdsByRoles(roleIds));
-        }
-
-        // Intersect all active ID sets (AND semantics across filters).
-        // If any set is empty the intersection is empty — return empty result.
-        let finalIds: string[] | null = null;
-        for (const set of idSets) {
-            if (!set) continue; // filter not active, skip
-            if (set.length === 0) return {items: [], count: 0};
-
-            finalIds = finalIds ? finalIds.filter((id) => set.includes(id)) : set;
-
-            if (finalIds.length === 0) return {items: [], count: 0};
-        }
-
-        const queryParams: { ids?: string[]; party?: string[]; department?: string[]; text?: string; page?: string, size?: string } = {};
-
-        if (finalIds)
-            queryParams.ids = finalIds;
         if (filters.parties && filters.parties.length > 0)
             queryParams.party = filters.parties.map((p) => p.id.toString());
         if (filters.departments && filters.departments.length > 0)
             queryParams.department = filters.departments;
+        if (filters.roles && filters.roles.length > 0)
+            queryParams.role = filters.roles.map((r) => r.id.toString());
         if (filters.text)
             queryParams.text = filters.text
 

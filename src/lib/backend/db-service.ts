@@ -32,6 +32,7 @@ export class DbService {
         ids?: string[];
         party?: string[];
         department?: string[];
+        role?: string[];
         text?: string;
         page?: string;
         size?: string;
@@ -39,7 +40,9 @@ export class DbService {
         const query = supabase.from('personnalites').select(
             `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
                      quotes_count:declarations(count),
-                     party:parti_politique_id(id, name:nom, short_name:nom_court, color)`,
+                     party:parti_politique_id(id, name:nom, short_name:nom_court, color),
+                     mandates:mandats${params.role ? '!inner' : ''}(type_mandat_id, id)
+                     `,
             {count: 'exact'}
         );
 
@@ -48,6 +51,9 @@ export class DbService {
 
         if (params.party && params.party.length > 0)
             query.in('parti_politique_id', params.party);
+
+        if (params.role && params.role.length > 0)
+            query.in('mandates.type_mandat_id', params.role);
 
         if (params.department && params.department.length > 0) {
             const {items: departmentsInfo} = await this.findTerritories({ids: params.department});
@@ -107,22 +113,6 @@ export class DbService {
         return {
             item: formattedData as Personality,
         };
-    }
-
-    /**
-     * Resolves a list of MandateType IDs → the unique personality IDs that hold at least 1 of those mandate types.
-     */
-    async findPersonalityIdsByRoles(roleIds: string[]): Promise<string[]> {
-        const resp = await supabase
-            .from('mandats')
-            .select('personnalite_id')
-            .in('type_mandat_id', roleIds);
-
-        this.checkErrors(resp);
-
-        if (!resp.data || resp.data.length === 0) return [];
-
-        return [...new Set(resp.data.map((m: any) => m.personnalite_id.toString()))];
     }
 
     // Parties

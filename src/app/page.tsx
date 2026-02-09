@@ -19,23 +19,6 @@ import { callLocalApi } from '@/lib/backend/api-client';
 import TagLabel from '@/components/tag';
 import { Personality } from '@/types/Personality';
 
-export type BaserowQuoteData = {
-  count: number;
-  results: Quote[];
-};
-
-export type BaserowData = {
-  count: number;
-  next: null;
-  previous: null;
-  results: Quote[];
-};
-
-export type BaserowPersonalityData = {
-  count: number;
-  results: Personality[];
-};
-
 export default function Home() {
   const router = useRouter();
   const [query, setQuery] = useState('');
