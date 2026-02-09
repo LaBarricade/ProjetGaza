@@ -100,7 +100,7 @@ export default function Home() {
           <div className="flex flex-col justify-center items-center">
             <h2 className="text-5xl font-bold text-center">La boussole Gaza</h2>
             <h2 className="text-5xl font-bold text-center text-[#5f49ea]">
-              Plateforme de contrôle citoyen
+              Plateforme de veille citoyenne
             </h2>
           </div>
 
