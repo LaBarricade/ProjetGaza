@@ -1,4 +1,3 @@
-'use server';
 
 import {getDbService} from '@/lib/backend/db-service';
 import {MandateType} from '@/types/MandateType';
@@ -9,7 +8,7 @@ import {PersonalityListCards} from "@/components/list/personality-list-cards";
 import {Suspense} from "react";
 
 //URL Parsing
-function parseIds(param: string | undefined): string[] {
+function parseUrlIds(param: string | undefined): string[] {
     if (!param) return [];
     return param
         .split(',')
@@ -22,7 +21,7 @@ async function computeFilters(urlParams: any): Promise<Filters> {
 
     try {
         if (urlParams.party) {
-            const partyIds = parseIds(urlParams.party);
+            const partyIds = parseUrlIds(urlParams.party);
             const parties = [];
             for (const id of partyIds) {
                 const {item} = await getDbService().findParty(id);
@@ -32,7 +31,7 @@ async function computeFilters(urlParams: any): Promise<Filters> {
         }
 
         if (urlParams.role) {
-            const roleIds = parseIds(urlParams.role);
+            const roleIds = parseUrlIds(urlParams.role);
             const roles: MandateType[] = [];
             for (const id of roleIds) {
                 const roleId = parseInt(id, 10);
@@ -61,15 +60,6 @@ async function computeFilters(urlParams: any): Promise<Filters> {
     }
 
     return filters;
-}
-
-async function fetchMandateTypes(): Promise<MandateType[]> {
-    try {
-        const {items} = await getDbService().findMandateTypes();
-        return items || [];
-    } catch {
-        return [];
-    }
 }
 
 async function fetchPersonalities(filters: Filters): Promise<{
@@ -107,9 +97,9 @@ export default async function PersonalitiesPage({
     const urlParams = await searchParams;
     const filters = await computeFilters(urlParams);
 
-    const mandateTypesList = await fetchMandateTypes();
-    const departmentsList = (await getDbService().findTerritories({type: 'departement'})).items;
-    const partiesList = await getDbService().findParties({});
+    const {items: mandateTypesList} = await getDbService().findMandateTypes();
+    const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
+    const {items: partiesList} = await getDbService().findParties({});
     const {items, count: totalCount} = await fetchPersonalities(filters);
 
     return (
@@ -121,7 +111,7 @@ export default async function PersonalitiesPage({
                     departmentsList={departmentsList || []}
                     personalitiesList={[]}
                     tagsList={[]}
-                    mandateTypesList={mandateTypesList}
+                    mandateTypesList={mandateTypesList || []}
                     partiesList={partiesList}
                     pageName="personnalites"
                     config={{

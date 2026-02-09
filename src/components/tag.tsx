@@ -1,17 +1,19 @@
 import { Tag as TagType } from '@/types/Tag';
 import Link from 'next/link';
 import { HTMLProps } from 'react';
+import {twMerge} from "tailwind-merge";
 
-type TagLabelProps = {
+
+export default function TagLabel({ tag, linkHtmlProps, textClassName }: {
   tag: TagType;
-  htmlProps?: HTMLProps<HTMLAnchorElement>;
-};
-export default function TagLabel({ tag, htmlProps }: TagLabelProps) {
+    linkHtmlProps?: HTMLProps<HTMLAnchorElement>;
+    textClassName?: string;
+}) {
   return (
-    <Link href={`/citations?tag=${tag.id}`} {...htmlProps}>
+    <Link href={`/citations?tag=${tag.id}`} {...linkHtmlProps}>
       <span
         key={tag.id}
-        className="bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs inline-block"
+        className={twMerge("bg-primary/10 text-primary font-bold px-2 py-0.5 mr-1 rounded-full text-xs inline-block ", textClassName)}
       >
         {tag.name}
       </span>

@@ -7,6 +7,8 @@ import {DbService, getDbService} from '@/lib/backend/db-service';
 import {MandateType} from '@/types/MandateType';
 import {FiltersBar} from '@/components/filters/filters-bar';
 import {Personality} from '@/types/Personality';
+import TagLabel from "@/components/tag";
+import TagsCloud from "@/components/tags-cloud";
 
 export type Filters = {
     tags?: Tag[];
@@ -119,18 +121,6 @@ const fetchTags = async (params?: {
     }
 };
 
-const fetchMandateTypes = async (): Promise<{
-    items: MandateType[];
-    count: number | null;
-}> => {
-    try {
-        const apiResp = await getDbService().findMandateTypes();
-        return {items: apiResp.items || [], count: apiResp.count};
-    } catch (error) {
-        console.error('Error fetching mandate types:', error);
-        return {items: [], count: null};
-    }
-};
 
 const fetchQuotes = async (
     filters: Filters,
@@ -179,19 +169,6 @@ const fetchQuotes = async (
     }
 };
 
-const fetchPersonalities = async (): Promise<{
-    items: Personality[];
-    count: number | null;
-}> => {
-    try {
-        const apiResp = await getDbService().findPersonalities({});
-        return {items: apiResp.items || [], count: apiResp.count};
-    } catch (error) {
-        console.error('Error fetching personalities:', error);
-        return {items: [], count: null};
-    }
-};
-
 export default async function QuotesPage({
     searchParams,
 }: {
@@ -199,9 +176,9 @@ export default async function QuotesPage({
 }) {
     const urlParams = await searchParams;
     const filters: Filters = await computeFilters(urlParams);
-    const {items: mandateTypesList} = await fetchMandateTypes();
+    const {items: mandateTypesList} = await getDbService().findMandateTypes();
     const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
-    const {items: personalitiesList} = await fetchPersonalities();
+    const {items: personalitiesList} =  await getDbService().findPersonalities({});
     const {items: partiesList} = await getDbService().findParties({});
     const {items: tagsList} = await fetchTags();
     const {
@@ -213,26 +190,31 @@ export default async function QuotesPage({
     return (
         <main
             className="flex flex-1 flex-col gap-[32px] row-start-2 justify-center sm:items-center items-center w-full px-4 mx-auto">
-            <div className="w-full flex items-center justify-center">
-                <div className="flex flex-col gap-2 w-full">
-                    <FiltersBar
-                        computedFilters={filters}
-                        departmentsList={departmentsList || []}
-                        personalitiesList={personalitiesList}
-                        quotesList={items}
-                        partiesList={partiesList}
-                        tagsList={tagsList}
-                        mandateTypesList={mandateTypesList}
-                        pageName="citations"
-                        config={{
-                            showPersonalities: true,
-                            showMandates: true,
-                            showText: true,
-                            showTags: true,
-                            showParties: true,
-                            layout: 'horizontal',
-                        }}
-                    />
+            <div className="w-full flex items-center justify-center border-slate-200 bg-background border-b">
+                <div className="flex flex-row gap-2 w-full  items-center justify-center">
+                    <div className="flex-1/3 mt-2 text-center ">
+                        <TagsCloud tagsList={tagsList} />
+                    </div>
+                    <div className="flex-2/3">
+                        <FiltersBar
+                            computedFilters={filters}
+                            departmentsList={departmentsList || []}
+                            personalitiesList={personalitiesList || []}
+                            quotesList={items}
+                            partiesList={partiesList}
+                            tagsList={tagsList}
+                            mandateTypesList={mandateTypesList || []}
+                            pageName="citations"
+                            config={{
+                                showPersonalities: true,
+                                showMandates: true,
+                                showText: true,
+                                showTags: true,
+                                showParties: true,
+                                layout: 'horizontal',
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
 

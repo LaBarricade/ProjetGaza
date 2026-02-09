@@ -82,10 +82,10 @@ export function FiltersBar({
 }: {
   personalitiesList: Personality[];
   quotesList?: Quote[];
-  tagsList: TagType[];
-  mandateTypesList: MandateType[];
-  partiesList: Party[];
-  departmentsList: Territory[];
+  tagsList?: TagType[];
+  mandateTypesList?: MandateType[];
+  partiesList?: Party[];
+  departmentsList?: Territory[];
   pageName: string;
   computedFilters: Filters;
   config?: {
@@ -127,23 +127,24 @@ export function FiltersBar({
   };
 
   return (
-    <div className="max-w-screen-lg mx-auto border-b border-slate-200 bg-background">
+    <div className="max-w-screen-lg mx-auto ">
       {/* Header Section */}
-      <div className="bg-background z-10 p-6 border-b">
-        <div className="flex justify-between items-center">
-          <span></span>
+      {hasActiveFilters && (
+        <div className="bg-background z-10 p-6 border-b">
+          <div className="flex justify-between items-center">
+            <span></span>
 
-          {/* Right: clear button — always visible when filters are active, regardless of open state */}
-          {hasActiveFilters && (
-            <Button variant="ghost" size="sm" onClick={handleClearFilters}>
-              Réinitialiser les filtres
-            </Button>
-          )}
+            {/* Right: clear button — always visible when filters are active, regardless of open state */}
+
+              <Button variant="ghost" size="sm" onClick={handleClearFilters}>
+                Réinitialiser les filtres
+              </Button>
+
+          </div>
         </div>
-      </div>
-
+      )}
       {/* Collapsible body — everything below the header */}
-      <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out
+      <div className={`py-6 grid transition-[grid-template-rows,opacity] duration-300 ease-out
           ${filtersOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
       >
         <div className="min-h-0 min-w-0">
@@ -158,12 +159,11 @@ export function FiltersBar({
               />
             )}
 
-            {config.showParties && partiesList.length > 0 && (
+            {config.showParties && partiesList && (
               <>
                 {config.showPersonalities && (
                   <Separator orientation="vertical" className="h-16 opacity-50" />
                 )}
-
                 <OptionsFilter
                   selected={filters.parties}
                   onChange={(selected: string[]) => handleFilterChange('parties', selected)}
@@ -173,7 +173,7 @@ export function FiltersBar({
               </>
             )}
 
-            {config.showMandates && (
+            {config.showMandates && mandateTypesList && (
               <>
                 <Separator orientation="vertical" className="h-16 opacity-50" />
 
@@ -186,7 +186,7 @@ export function FiltersBar({
               </>
             )}
 
-            {config.showDepartments && (
+            {config.showDepartments && departmentsList && (
               <>
                 <Separator orientation="vertical" className="h-16 opacity-50" />
 
@@ -203,7 +203,7 @@ export function FiltersBar({
 
           {/* Text + Tags */}
           <div className="flex w-full items-start min-w-0 overflow-visible">
-            {config.showTags && (
+            {config.showTags && tagsList && (<>
               <div className="flex-1 min-w-0 overflow-y-visible">
                 <div className="py-4 px-6">
                    <OptionsFilter
@@ -215,10 +215,9 @@ export function FiltersBar({
                   />
                 </div>
               </div>
-            )}
-            {config.showTags && (
               <Separator orientation="vertical" className="h-16 my-4 opacity-50" />
-            )}
+            </>)}
+
             {config.showText && (
               <div className="flex-1 overflow-y-visible min-w-0">
                 <div className="py-4 px-6">

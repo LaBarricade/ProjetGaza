@@ -63,7 +63,7 @@ export class DbService {
 
         if (params.text) {
             const search = `%${params.text}%`;
-            query.or(`nom.ilike.${search},prenom.ilike.${search}, ville.ilike.${search}`);
+            query.or(`nom.ilike.${search}, prenom.ilike.${search}, ville.ilike.${search}`);
         }
 
         query.order('nom', {ascending: true, nullsFirst: false});
