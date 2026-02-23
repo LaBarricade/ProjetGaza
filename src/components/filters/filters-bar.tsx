@@ -73,13 +73,11 @@ export function FiltersBar({
     const config = {...DEFAULT_CONFIG, ...userConfig};
     const [filtersOpen, setFiltersOpen] = useState(false);
 
-    const {filters, setFilter, clearAllFilters, hasActiveFilters} = useSearchFilters({
+    const {filters, setFilter, clearAllFilters, hasActiveFilters, countActiveFilters} = useSearchFilters({
         basePath: `/${pageName}`,
     });
 
     console.log('filters', filters);
-    const activeFilterCount = Object.values(filters).reduce(
-        (prev, curr) => prev + (Array.isArray(curr) ? curr.length : (curr ? 1 : 0)), 0);
 
     const vertSeparatorElement = <Separator orientation="vertical" className="hidden lg:block h-16 opacity-50 "/>;
     return (
@@ -99,7 +97,7 @@ export function FiltersBar({
                                 {hasActiveFilters && (
                                     <span
                                         className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-800 text-white text-xs font-semibold">
-                            {activeFilterCount}
+                            {countActiveFilters}
                           </span>
                                 )}
                             </div>
@@ -129,7 +127,8 @@ export function FiltersBar({
                 }>
                 <div className="min-h-0 min-w-0 ">
                     {/* Top Row: Personalities, Parties, Mandates, Departments */}
-                    <div className="flex flex-col sm:flex-row min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">
+                    <div
+                        className="flex flex-col sm:flex-row min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">
                         {config.showPersonalities && (
                             <OptionsFilter
                                 selected={filters.personalities}
@@ -193,20 +192,21 @@ export function FiltersBar({
                     </div>
 
                     {/* Bottom Row: Tags and Text Search */}
-                    <div className="flex flex-col sm:flex-row w-full items-start min-w-0 gap-4 overflow-visible py-4 px-6">
+                    <div
+                        className="flex flex-col sm:flex-row w-full items-start min-w-0 gap-4 overflow-visible py-4 px-6">
                         {config.showTags && tagsList && (
                             <>
                                 <div className="flex-1 min-w-0 overflow-y-visible">
-                                        <OptionsFilter
-                                            selected={filters.tags}
-                                            onChange={(selected: string[]) => setFilter('tags', selected)}
-                                            items={tagsList}
-                                            headingNode={
-                                                <>
-                                                    <TagIcon size={18}/> Tags
-                                                </>
-                                            }
-                                        />
+                                    <OptionsFilter
+                                        selected={filters.tags}
+                                        onChange={(selected: string[]) => setFilter('tags', selected)}
+                                        items={tagsList}
+                                        headingNode={
+                                            <>
+                                                <TagIcon size={18}/> Tags
+                                            </>
+                                        }
+                                    />
                                 </div>
                                 {vertSeparatorElement}
                             </>
@@ -214,11 +214,11 @@ export function FiltersBar({
 
                         {config.showText && (
                             <div className="flex-1 overflow-y-visible min-w-0">
-                                    <TextFilter
-                                        selected={filters.text}
-                                        onChange={(text: string) => setFilter('text', text)}
-                                        config={config.textFilterConfig}
-                                    />
+                                <TextFilter
+                                    selected={filters.text}
+                                    onChange={(text: string) => setFilter('text', text)}
+                                    config={config.textFilterConfig}
+                                />
                             </div>
                         )}
                     </div>

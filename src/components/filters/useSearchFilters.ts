@@ -71,19 +71,18 @@ export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
         };
     }, [searchParams]);
 
+    const countActiveFilters = useMemo(() => {
+        return Object.values(filters).reduce(
+            (prev, curr) => prev + (Array.isArray(curr) ? curr.length : (curr ? 1 : 0))
+            , 0);
+    }, [filters]);
+
     /**
      * Check if any filters are currently active
      */
     const hasActiveFilters = useMemo(() => {
-        return (
-            filters.personalities.length > 0 ||
-            filters.roles.length > 0 ||
-            filters.parties.length > 0 ||
-            filters.tags.length > 0 ||
-            filters.departments.length > 0 ||
-            filters.text.length > 0
-        );
-    }, [filters]);
+        return countActiveFilters > 0;
+    }, [countActiveFilters]);
 
     /**
      * Update a single filter and navigate to the new URL
@@ -167,6 +166,7 @@ export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
         clearAllFilters,
         setMultipleFilters,
         hasActiveFilters,
+        countActiveFilters
     };
 }
 
