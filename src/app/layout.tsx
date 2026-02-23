@@ -22,13 +22,14 @@ export const metadata: Metadata = {
 export default function RootLayout({children }: Readonly<{
   children: React.ReactNode;
 }>) {
+  //flex flex-col items-center justify-items-center
   return (
     <html lang="fr">
     <body
       className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
     <div
-      className="flex flex-col items-center justify-items-center min-h-screen font-[family-name:var(--font-geist-sans)]">
+      className="min-h-screen font-[family-name:var(--font-geist-sans)]">
       <TopBar/>
 
       {children}

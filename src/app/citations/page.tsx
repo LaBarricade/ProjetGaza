@@ -9,6 +9,7 @@ import {FiltersBar} from '@/components/filters/filters-bar';
 import {Personality} from '@/types/Personality';
 import TagLabel from "@/components/tag-label";
 import TagsCloud from "@/components/tags-cloud";
+import {Search} from "lucide-react";
 
 export type Filters = {
     tags?: Tag[];
@@ -112,7 +113,7 @@ const fetchQuotes = async (
 ): Promise<{ items: any[]; count: number | null; apiFilters: ApiFilters }> => {
     const apiFilters: ApiFilters = {
         page,
-        size: '20',
+        size: '21',
     };
 
     // Handle tags (multiple)
@@ -196,6 +197,10 @@ export default async function QuotesPage({
                                 showTags: true,
                                 showParties: true,
                                 layout: 'horizontal',
+                                textFilterConfig: {
+                                    headerTitle: 'Citation',
+                                    inputPlaceholder: 'Rechercher...',
+                                },
                             }}
                         />
                     </div>

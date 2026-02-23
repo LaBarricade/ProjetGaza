@@ -349,7 +349,8 @@ class DbService {
     async findMandateTypes(): Promise<{ items: MandateType[] | null; count: number | null }> {
         try {
             const query = supabase.from('types_mandat')
-                .select(`id, code, label:libelle, name:libelle`);
+                .select(`id, code, label:libelle, name:libelle`)
+                .order('ordre');
 
             const resp = await query;
             this.checkErrors(resp);

@@ -8,16 +8,20 @@ export function NewsList({ news }: { news: News[] }) {
       {news.map((item, index) => (
         <Card
           key={index} 
-          className="border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+          className="border border-gray-200 hover:shadow-lg transition-shadow duration-300 p-6"
         >
-          <CardHeader className="flex justify-between items-center">
-            <span className="text-sm text-gray-500">{new Date(item.date).toLocaleDateString()}</span>
+          <CardHeader className="flex justify-between items-center px-0 ">
+            <span className="text-sm text-gray-500">
+              {new Intl.DateTimeFormat('fr').format(new Date(item.date))}
+            </span>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-0">
             <p
-              className="text-gray-800 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: item.text }}
-            ></p>
+                className="text-gray-800 leading-relaxed"
+            >
+              <article dangerouslySetInnerHTML={{__html: item.text}} className="prose lg:prose-lg mx-auto p-0">
+              </article>
+            </p>
           </CardContent>
           <CardFooter className="text-right">
             <span className="text-xs text-gray-400">Actualité #{index + 1}</span>

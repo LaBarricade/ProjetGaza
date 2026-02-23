@@ -37,7 +37,7 @@ export default function Home() {
   const fetchData = useCallback(async () => {
     try {
       const personalitiesData = await callLocalApi(`/api/v2/personalities?size=1`);
-      const quotesData = await callLocalApi(`/api/v2/quotes?page=1&size=5`);
+      const quotesData = await callLocalApi(`/api/v2/quotes?page=1&size=6`);
       const popularTags = await callLocalApi(`/api/v2/tags?popular=1`);
       setPopularTags(popularTags.items);
 
@@ -154,7 +154,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="p-8">
+      <div className="py-8 px-6">
         <div className="flex justify-between items-center my-8">
           <h2 className="text-3xl font-bold">Dernières citations</h2>
           <Link href={'/citations'}>
@@ -209,7 +209,7 @@ export default function Home() {
                 transition-all duration-300"
             >
               <Link
-                href="https://baserow.io/form/f0E5WXs2bZZyKRfJIteDPHdv43QOH2BFNhjnNO4gQ6E"
+                href={process.env.NEXT_PUBLIC_FORM_URL || ''}
                 target="_blank"
               >
                 Contribuer
