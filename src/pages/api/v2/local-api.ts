@@ -23,6 +23,8 @@ export default async function localApiHandler(req: NextApiRequest, res: NextApiR
       respData = await api.findPopularTags();
     } else if (path === 'parties' && req.query.id) {
       respData = await api.findParty(req.query.id);
+    } else if (path === 'generalStats') {
+      respData = await api.findGeneralStats();
     } else
       throw new Error('Invalid path');
 

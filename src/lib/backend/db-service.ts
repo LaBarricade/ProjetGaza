@@ -145,6 +145,18 @@ class DbService {
         }
     }
 
+    async findGeneralStats(): Promise<any> {
+        let select = `min_date:date.min(), max_date:date.max()`;
+        const query = supabase.from('declarations').select(select).single();
+        const resp: any = await query;
+
+        this.checkErrors(resp);
+        return {
+            min_year: resp.data.min_date.split('-').at(0),
+            max_year: resp.data.max_date.split('-').at(0)
+        };
+    }
+
     async findQuotes(params: any): Promise<any> {
         let select = `id, 
             text:citation, 
