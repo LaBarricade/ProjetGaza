@@ -23,9 +23,11 @@ export default function Home() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [quotes, setQuotes] = useState<Quote[] | null>([]);
-  const [stats, setStats] = useState<{ personalities_count: number; quotes_count: number }>({
+  const [stats, setStats] = useState<{ personalities_count: number; quotes_count: number; min_year: number; max_year: number }>({
     personalities_count: 0,
     quotes_count: 0,
+    min_year: 0,
+    max_year: 0
   });
   const [loading, setLoading] = useState(true);
   const [popularTags, setPopularTags] = useState<Tag[] | null>([]);
@@ -39,11 +41,15 @@ export default function Home() {
       const personalitiesData = await callLocalApi(`/api/v2/personalities?size=1`);
       const quotesData = await callLocalApi(`/api/v2/quotes?page=1&size=6`);
       const popularTags = await callLocalApi(`/api/v2/tags?popular=1`);
+      const generalStats = await callLocalApi(`/api/v2/general-stats`);
+
       setPopularTags(popularTags.items);
 
       setStats({
         personalities_count: personalitiesData.count,
         quotes_count: quotesData.count,
+        min_year: generalStats.min_year,
+        max_year: generalStats.max_year
       });
       setQuotes(quotesData.items);
     } catch (err) {
@@ -63,7 +69,7 @@ export default function Home() {
     (e: React.FormEvent) => {
       e.preventDefault();
       if (query.trim()) {
-        router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+        router.push(`/citations?text=${encodeURIComponent(query.trim())}`);
       }
     },
     [query, router]
@@ -101,7 +107,7 @@ export default function Home() {
             <div className="relative w-full md:max-w-md">
               <Input
                 type="text"
-                placeholder="Rechercher un politicien, un tag, ou un mot-clé..."
+                placeholder="Rechercher un mot-clé"
                 className="bg-white pr-10"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -145,8 +151,8 @@ export default function Home() {
                 <Calendar1 />
               </div>
               <div className="font-bold text-gray-800 text-xl">
-                2019&nbsp;-&nbsp;
-                <CountUp end={2025} duration={1.2} separator={''} start={2019} />
+                {stats.min_year}&nbsp;-&nbsp;
+                <CountUp end={stats.max_year} duration={1.2} separator={''} start={stats.min_year} />
               </div>
               <div className="text-center text-gray-500">Période couverte</div>
             </div>
