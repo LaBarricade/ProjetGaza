@@ -30,14 +30,23 @@ export function TopBar() {
       <div className="flex items-center gap-3 p-4">
         {/* Logo placeholder */}
 
-        <Link href={'/'}>
-          <Image
-            src="/logo-with-text.png"
-            alt="Logo de La boussole de Gaza"
-            width={120}
-            height={50}
-          />
-        </Link>
+        <h1>
+          <Link href={'/'}>
+            <Image
+              src="/logo-with-text.png"
+              alt="La boussole de Gaza"
+              width={120}
+              height={50}
+            />
+          </Link>
+        </h1>
+        <div className="text-xs beta-notice">
+          <p className="bg-red-100">Version BÊTA</p>
+          <Link href={'https://github.com/LaBarricade/ProjetGaza/issues'}>
+            <span className="">Signaler un problème</span>
+          </Link>
+
+        </div>
       </div>
 
       {/* Navigation (desktop) */}
