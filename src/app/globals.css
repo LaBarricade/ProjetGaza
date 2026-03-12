@@ -170,3 +170,8 @@
   font-weight: bold;
   margin-top: 2em
 }
+
+.beta-notice {font-size: 60%; text-align: center; padding: 2px; border: 1px solid #eee; letter-spacing: -.5px;
+  border-radius: 5px; position: relative; left: -2em; top: 2em}
+.beta-notice p {font-weight: bold;  opacity: .7; border-radius: 3px}
+.beta-notice a {font-size: 90%; opacity: .6}
