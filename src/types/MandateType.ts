@@ -1,4 +1,3 @@
-
 export type MandateType = {
   id: number;
   code: string;

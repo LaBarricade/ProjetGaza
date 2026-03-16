@@ -1,22 +1,25 @@
-import type {NextApiRequest, NextApiResponse} from 'next';
-import {getDbService} from "@/lib/backend/db-service";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getDbService } from '@/lib/backend/db-service';
 
-
-export default async function localApiHandler(req: NextApiRequest, res: NextApiResponse, path: string | undefined = undefined) {
+export default async function localApiHandler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  path: string | undefined = undefined
+) {
   try {
     const api = getDbService();
     let respData;
 
-    path = path || req.query.path as string;
+    path = path || (req.query.path as string);
 
-    if (path === 'personalities' && req.query.id ) {
+    if (path === 'personalities' && req.query.id) {
       respData = await api.findPersonality(req.query.id as string);
     } else if (path === 'personalities') {
-      respData = await api.findPersonalities(req.query)
+      respData = await api.findPersonalities(req.query);
     } else if (path === 'quotes') {
       respData = await api.findQuotes(req.query);
     } else if (path === 'news') {
-      respData = await api.findNews(req.query);
+      respData = await api.findNews();
     } else if (path === 'tags' && req.query.id) {
       respData = await api.findTag(req.query.id);
     } else if (path === 'tags' && req.query.popular) {
@@ -25,12 +28,11 @@ export default async function localApiHandler(req: NextApiRequest, res: NextApiR
       respData = await api.findParty(req.query.id);
     } else if (path === 'generalStats') {
       respData = await api.findGeneralStats();
-    } else
-      throw new Error('Invalid path');
+    } else throw new Error('Invalid path');
 
     res.status(200).json(respData);
   } catch (error: any) {
-    res.status(500).json({error: 'Something went wrong', details: error.message});
+    res.status(500).json({ error: 'Something went wrong', details: error.message });
     //throw error;
   }
 }

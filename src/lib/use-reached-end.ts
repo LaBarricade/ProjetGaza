@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export function useEndReached(
   onEndReached?: () => void,
-  { rootMargin = "200px", debounceMs = 500 } = {}
+  { rootMargin = '200px', debounceMs = 500 } = {}
 ) {
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const lastCalledRef = useRef<number>(0);

@@ -1,15 +1,20 @@
-import {useState, useRef, useEffect, ReactNode} from 'react';
+import { useState, useRef, useEffect, ReactNode } from 'react';
 import { Input } from '@/components/ui/input';
 import { Building2, X } from 'lucide-react';
 import { Tag } from '@/components/ui/tag';
 import { useHorizontalScroll } from './useHorizontalScroll';
-import {FilterableType} from "@/types/FilterableType";
+import { FilterableType } from '@/types/FilterableType';
 
-export function OptionsFilter({ selected, onChange, items, headingNode }: {
+export function OptionsFilter({
+  selected,
+  onChange,
+  items,
+  headingNode,
+}: {
   selected: string[];
   onChange: (selected: string[]) => void;
   items: FilterableType[];
-  headingNode: ReactNode
+  headingNode: ReactNode;
 }) {
   const [search, setSearch] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -42,9 +47,7 @@ export function OptionsFilter({ selected, onChange, items, headingNode }: {
 
   return (
     <div className="space-y-3 min-w-0 flex-1">
-      <h3 className="font-semibold text-md flex items-center justify-start gap-2">
-          {headingNode}
-      </h3>
+      <h3 className="font-semibold text-md flex items-center justify-start gap-2">{headingNode}</h3>
       <div className="relative">
         <Input
           ref={inputRef}
@@ -54,7 +57,7 @@ export function OptionsFilter({ selected, onChange, items, headingNode }: {
             setSearch(e.target.value);
             setShowDropdown(e.target.value.length > 0);
           }}
-          onFocus={() =>  setShowDropdown(true)}
+          onFocus={() => setShowDropdown(true)}
           className="h-8"
         />
         {showDropdown && filtered.length > 0 && (

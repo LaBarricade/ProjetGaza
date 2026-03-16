@@ -32,12 +32,7 @@ export function TopBar() {
 
         <h1>
           <Link href={'/'}>
-            <Image
-              src="/logo-with-text.png"
-              alt="La boussole de Gaza"
-              width={120}
-              height={50}
-            />
+            <Image src="/logo-with-text.png" alt="La boussole de Gaza" width={120} height={50} />
           </Link>
         </h1>
         <div className="text-xs beta-notice">
@@ -45,7 +40,6 @@ export function TopBar() {
           <Link href={'https://github.com/LaBarricade/ProjetGaza/issues'}>
             <span className="">Signaler un problème</span>
           </Link>
-
         </div>
       </div>
 

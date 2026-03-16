@@ -72,9 +72,9 @@ export function QuoteCard({ quote, hidePersonality }: { quote: Quote; hidePerson
       </CardHeader>
 
       <CardContent className="space-y-3 flex-1 overflow-hidden flex flex-col">
-          <blockquote className="scroll-shadows italic text-sm border-l-4 px-4 pl-3 border-primary overflow-y-auto ">
-            {quote.text}
-          </blockquote>
+        <blockquote className="scroll-shadows italic text-sm border-l-4 px-4 pl-3 border-primary overflow-y-auto ">
+          {quote.text}
+        </blockquote>
 
         <div className="text-sm space-y-1">
           {/* <p><span className="font-medium">commune :</span> {quote.commune}</p>

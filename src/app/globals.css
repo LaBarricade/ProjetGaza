@@ -143,35 +143,46 @@
   overflow-scrolling: touch;
 
   background:
-    linear-gradient(
-      white 30%,
-      rgba(255, 255, 255, 0)
-    ) center top,
-
-    linear-gradient(
-      rgba(255, 255, 255, 0),
-      white 70%
-    ) center bottom,
-
+    linear-gradient(white 30%, rgba(255, 255, 255, 0)) center top,
+    linear-gradient(rgba(255, 255, 255, 0), white 70%) center bottom,
     linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top,
-
     linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2)) center bottom;
   /*background: linear-gradient(transparent, white);*/
   background-repeat: no-repeat;
-  background-size: 100% 80px, 100% 80px, 100% 40px, 100% 40px;
+  background-size:
+    100% 80px,
+    100% 80px,
+    100% 40px,
+    100% 40px;
   background-attachment: local, local, scroll, scroll;
 }
 
 .html-text p {
-  margin: .5em 0;
+  margin: 0.5em 0;
   text-indent: 2em;
 }
 .html-text h2 {
   font-weight: bold;
-  margin-top: 2em
+  margin-top: 2em;
 }
 
-.beta-notice {font-size: 60%; text-align: center; padding: 2px; border: 1px solid #eee; letter-spacing: -.5px;
-  border-radius: 5px; position: relative; left: -2em; top: 2em}
-.beta-notice p {font-weight: bold;  opacity: .7; border-radius: 3px}
-.beta-notice a {font-size: 90%; opacity: .6}
+.beta-notice {
+  font-size: 60%;
+  text-align: center;
+  padding: 2px;
+  border: 1px solid #eee;
+  letter-spacing: -0.5px;
+  border-radius: 5px;
+  position: relative;
+  left: -2em;
+  top: 2em;
+}
+.beta-notice p {
+  font-weight: bold;
+  opacity: 0.7;
+  border-radius: 3px;
+}
+.beta-notice a {
+  font-size: 90%;
+  opacity: 0.6;
+}

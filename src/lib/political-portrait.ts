@@ -1,5 +1,5 @@
 export async function getPoliticalPortrait(fullName: string) {
-  const endpoint = "https://query.wikidata.org/sparql";
+  const endpoint = 'https://query.wikidata.org/sparql';
 
   // Requête SPARQL : on cherche une personne (Q5) avec un label FR égal au nom complet
   const query = `
@@ -14,20 +14,17 @@ export async function getPoliticalPortrait(fullName: string) {
 
   try {
     const res = await fetch(url, {
-      headers: { "Accept": "application/sparql-results+json" }
+      headers: { Accept: 'application/sparql-results+json' },
     });
     const data = await res.json();
-    
-    if (
-      data.results.bindings.length > 0 &&
-      data.results.bindings[0].image
-    ) {
+
+    if (data.results.bindings.length > 0 && data.results.bindings[0].image) {
       return data.results.bindings[0].image.value;
     } else {
       return null; // pas trouvé
     }
   } catch (err) {
-    console.error("Erreur Wikidata:", err);
+    console.error('Erreur Wikidata:', err);
     return null;
   }
 }

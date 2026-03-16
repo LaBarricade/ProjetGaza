@@ -1,13 +1,13 @@
 export async function getWikipediaImage(keyword: string) {
-  const endpoint = "https://fr.wikipedia.org/w/api.php";
+  const endpoint = 'https://fr.wikipedia.org/w/api.php';
 
   const params = new URLSearchParams({
-    action: "query",
+    action: 'query',
     titles: keyword,
-    prop: "pageimages",
-    format: "json",
-    origin: "*",        // nécessaire pour éviter les erreurs CORS
-    pithumbsize: "600", // taille de l’image retournée
+    prop: 'pageimages',
+    format: 'json',
+    origin: '*', // nécessaire pour éviter les erreurs CORS
+    pithumbsize: '600', // taille de l’image retournée
   });
 
   const url = `${endpoint}?${params.toString()}`;
@@ -22,7 +22,7 @@ export async function getWikipediaImage(keyword: string) {
     const firstPage = Object.values(pages)[0] as { thumbnail: { source: string } };
     return firstPage?.thumbnail?.source || null;
   } catch (err) {
-    console.error("Erreur Wikipédia:", err);
+    console.error('Erreur Wikipédia:', err);
     return null;
   }
 }
