@@ -34,7 +34,7 @@ export function PersonalityListCards({initialItems, totalCount, filters}:
             <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <LazyLoadingList initialItems={initialItems}
                      key={JSON.stringify(filters)}
-                     createNode={(item) => <PersonalityCard key={item.id} p={item}/>}
+                     createNode={(item) => <PersonalityCard key={item.id} item={item}/>}
                      totalCount={totalCount}
                      loadItems={loadNewItems}
                 />

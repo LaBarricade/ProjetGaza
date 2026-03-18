@@ -21,7 +21,7 @@ class DbService {
             throw new Error('No data returned from supabase');
     }
 
-    async findParties(): Promise<any> {
+    async findParties(params: any = {}): Promise<any> {
         const query = supabase.from('partis_politiques')
             .select(`id, name:nom, short_name:nom_court, color`, {count: 'exact'});
         const resp = await query;
@@ -220,7 +220,7 @@ class DbService {
         };
     }
 
-    async findNews(): Promise<any> {
+    async findNews(params: any = {}): Promise<any> {
         const query = supabase
             .from('actualites')
             .select(`id, text:texte, date`)

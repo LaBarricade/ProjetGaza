@@ -164,7 +164,7 @@ export default async function QuotesPage({
     const {items: mandateTypesList} = await getDbService().findMandateTypes();
     const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
     const {items: personalitiesList} =  await getDbService().findPersonalities({});
-    const {items: partiesList} = await getDbService().findParties({});
+    const {items: partiesList} = await getDbService().findParties();
     const {items: tagsList} = await getDbService().findTags({});
 
     const {

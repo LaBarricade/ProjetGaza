@@ -1,4 +1,4 @@
-import {Personality} from "@/types/Personality";
+import {createPersonalityViewModel, Personality} from "@/types/Personality";
 import {Card, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import Link from "next/link";
 import {ExternalLink} from "lucide-react";
@@ -7,17 +7,19 @@ import React, {useEffect, useState} from "react";
 import {getWikipediaImage} from "@/lib/wiki-img";
 import {LogoParti} from "@/components/logo/parti";
 
-export function PersonalityCard({p}: { p: Personality; }) {
+export function PersonalityCard({item}: { item: Personality; }) {
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-    const fullName = `${p.firstname} ${p.lastname}`;
+
+    const p = createPersonalityViewModel(item);
+
     useEffect(() => {
         const fetchImage = async () => {
-            const url = await getWikipediaImage(fullName);
+            const url = await p.getImageUrl();
             setImageUrl(url);
         };
 
         fetchImage();
-    }, [p, fullName]);
+    }, [p]);
 
     return (
             <Card className={`rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden flex flex-col gap-1
@@ -26,7 +28,7 @@ export function PersonalityCard({p}: { p: Personality; }) {
                     <div className="flex flex-row justify-between gap-1">
                         <div>
                             <Link
-                                href={`/personnalites/${p.id}`}
+                                href={p.getUrl()}
                                 className="relative inline-block group -mx-2"
                             >
                                 {/* Background simple */}
@@ -42,7 +44,7 @@ export function PersonalityCard({p}: { p: Personality; }) {
                                                  transition-colors duration-200
                                                  group-hover:text-neutral-600 dark:group-hover:text-neutral-400 leading-none"
                                 >
-                                 {p.firstname + ' ' + p.lastname}
+                                 {p.getFullName()}
                                 </CardTitle>
                             </Link>
                             <p className="text-xs text-muted-foreground mt-1">
@@ -74,7 +76,7 @@ export function PersonalityCard({p}: { p: Personality; }) {
                     </div>
                     <Button asChild size="sm" variant="outline">
                         <a
-                            href={`/personnalites/${p.id}`}
+                            href={p.getUrl()}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-1"

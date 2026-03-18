@@ -5,21 +5,25 @@ import Link from "next/link";
 import {FacebookIcon, InstagramIcon, TwitterIcon} from "@/components/logo/socials";
 import {QuotesTimeline} from "@/components/quotes-timeline";
 import {MailIcon} from "lucide-react";
-import {Personality} from "@/types/Personality";
+import {createPersonalityViewModel, Personality} from "@/types/Personality";
 import {getDbService} from "@/lib/backend/db-service";
 
 export default async function PersonalityPage({params}: { params: Promise<{ id: string }> }) {
-    const {id} = await params;
-    const {item: p}: {item: Personality | null} = await getDbService().findPersonality(id);
+    const {id: idParam} = await params;
 
-    if (!p) return (
+    //-- prise en charge URL de formats /perso/67 ET /pers/67-nom-perso
+    const id = idParam.match(/^\d+-.*/) ? idParam.split('-')[0] : idParam;
+
+    const {item}: {item: Personality | null} = await getDbService().findPersonality(id);
+
+    if (!item) return (
         <div className="h-screen flex justify-center items-center">
             <p>Personnalité non trouvée</p>
         </div>
     )
 
-    const fullName = `${p.firstname} ${p.lastname}`;
-    const imageUrl = await getWikipediaImage(fullName);
+    const p = createPersonalityViewModel(item);
+    const imageUrl = await p.getImageUrl();
 
     return (
         <div className="mx-auto p-6 w-4xl ">
@@ -34,7 +38,7 @@ export default async function PersonalityPage({params}: { params: Promise<{ id: 
                 />
 
                 <div className="ml-4 self-center mr-4">
-                    <h1 className="text-3xl font-bold mb-2">{fullName}</h1>
+                    <h1 className="text-3xl font-bold mb-2">{p.getFullName()}</h1>
                     <div className="space-y-2 text-gray-700">
                         <p>{p.role}</p>
                     </div>

@@ -99,7 +99,7 @@ export default async function PersonalitiesPage({
 
     const {items: mandateTypesList} = await getDbService().findMandateTypes();
     const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
-    const {items: partiesList} = await getDbService().findParties({});
+    const {items: partiesList} = await getDbService().findParties();
     const {items, count: totalCount} = await fetchPersonalities(filters);
 
     return (
