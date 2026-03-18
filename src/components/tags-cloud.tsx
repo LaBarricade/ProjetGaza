@@ -9,8 +9,8 @@ export default function TagsCloud({tagsList}: {tagsList: Tag[]}) {
 
     return <ul className="">
     {tagsList.map(tag =>
-        <li className="inline-block">
-            <TagLabel tag={tag} key={`quote-filter-tag-${tag.id}`} withCount={true} textClassName={"text-sm mt-1 "
+        <li className="inline-block" key={`quote-filter-tag-${tag.id}`}>
+            <TagLabel tag={tag} withCount={true} textClassName={"text-sm mt-1 "
                 + (currentFilteredTags.includes(tag.id.toString()) && ' bg-black text-white')}/>
         </li>
     )}
