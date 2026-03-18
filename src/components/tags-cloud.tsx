@@ -4,8 +4,8 @@ import {Tag} from "@/types/Tag";
 import {useSearchFilters} from "@/components/filters/useSearchFilters";
 
 export default function TagsCloud({tagsList}: {tagsList: Tag[]}) {
-    const {filters: currentFilters} = useSearchFilters({basePath: "citations"});
-    const currentFilteredTags = currentFilters.tags;
+    const {filtersDto: currentFilters} = useSearchFilters({basePath: "citations"});
+    const currentFilteredTags = currentFilters.tags || [];
 
     return <ul className="">
     {tagsList.map(tag =>

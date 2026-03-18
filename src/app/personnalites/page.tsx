@@ -1,12 +1,10 @@
 
 import {ApiParams, getDbService} from '@/lib/backend/db-service';
-import {MandateType} from '@/types/MandateType';
 import {Personality} from '@/types/Personality';
-import {Filters} from '@/types/Filters';
 import {FiltersBar} from '@/components/filters/filters-bar';
 import {PersonalityListCards} from "@/components/list/personality-list-cards";
 import {Suspense} from "react";
-import {EntitiesFilter} from "@/lib/EntitiesFilter";
+import {EntitiesFilter} from "@/lib/entities-filter";
 
 async function fetchPersonalities(entitiesFilter: EntitiesFilter): Promise<{
     items: Personality[];

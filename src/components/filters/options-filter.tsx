@@ -1,6 +1,6 @@
 import {useState, useRef, useEffect, ReactNode} from 'react';
 import { Input } from '@/components/ui/input';
-import { Building2, X } from 'lucide-react';
+import {  X } from 'lucide-react';
 import { Tag } from '@/components/ui/tag';
 import { useHorizontalScroll } from './useHorizontalScroll';
 import {FilterableType} from "@/types/FilterableType";
@@ -16,6 +16,8 @@ export function OptionsFilter({ selected, onChange, items, headingNode }: {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const scroll = useHorizontalScroll<HTMLDivElement>();
+
+  console.log('OptionsFilter', items, selected);
 
   const filtered = items.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 

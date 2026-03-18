@@ -1,11 +1,24 @@
-import { createClient } from '@supabase/supabase-js';
+import {createClient} from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY;
+type SupabaseClientType = ReturnType<typeof createClient>;
 
-if (!supabaseUrl || !supabaseKey)
-  throw new Error('No supabase url or key. Create .env.local file with supabase url and key');
+let supabase :  SupabaseClientType;
 
-console.error('Supabase URL:', supabaseUrl);
+export function getSupabaseClient(): SupabaseClientType {
+    if (!supabase) {
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+        if (!supabaseUrl || !supabaseKey) {
+            throw new Error('No supabase url or key xxx. Create .env.local file with supabase url and key');
+        }
+
+        supabase = createClient(supabaseUrl, supabaseKey);
+
+        if (!supabase) {
+            throw new Error('Supabase could not be instatiated');
+        }
+    }
+    return supabase;
+
+}

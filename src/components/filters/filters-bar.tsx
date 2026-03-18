@@ -73,11 +73,11 @@ export function FiltersBar({
     const config = {...DEFAULT_CONFIG, ...userConfig};
     const [filtersOpen, setFiltersOpen] = useState(false);
 
-    const {filters, setFilter, clearAllFilters, hasActiveFilters, countActiveFilters} = useSearchFilters({
+    const {filtersDto, setFilter, clearAllFilters, hasActiveFilters, countActiveFilters} = useSearchFilters({
         basePath: `/${pageName}`,
     });
 
-    console.log('filters', filters);
+    console.log('FiltersBar filtersDto', filtersDto);
 
     const vertSeparatorElement = <Separator orientation="vertical" className="hidden lg:block h-16 opacity-50 "/>;
     return (
@@ -131,7 +131,7 @@ export function FiltersBar({
                         className="flex flex-col sm:flex-row min-w-0 w-full items-start gap-4 overflow-visible py-4 px-6">
                         {config.showPersonalities && (
                             <OptionsFilter
-                                selected={filters.personalities}
+                                selected={filtersDto.personalities || []}
                                 onChange={(selected: string[]) => setFilter('personalities', selected)}
                                 items={personalitiesList}
                                 headingNode={
@@ -146,7 +146,7 @@ export function FiltersBar({
                             <>
                                 {config.showPersonalities && vertSeparatorElement}
                                 <OptionsFilter
-                                    selected={filters.parties}
+                                    selected={filtersDto.parties || []}
                                     onChange={(selected: string[]) => setFilter('parties', selected)}
                                     items={partiesList}
                                     headingNode={
@@ -162,7 +162,7 @@ export function FiltersBar({
                             <>
                                 {vertSeparatorElement}
                                 <OptionsFilter
-                                    selected={filters.roles}
+                                    selected={filtersDto.roles || []}
                                     onChange={(selected: string[]) => setFilter('roles', selected)}
                                     items={mandateTypesList}
                                     headingNode={
@@ -178,7 +178,7 @@ export function FiltersBar({
                             <>
                                 {vertSeparatorElement}
                                 <OptionsFilter
-                                    selected={filters.departments}
+                                    selected={filtersDto.departments || []}
                                     onChange={(selected: string[]) => setFilter('departments', selected)}
                                     items={departmentsList}
                                     headingNode={
@@ -198,7 +198,7 @@ export function FiltersBar({
                             <>
                                 <div className="flex-1 min-w-0 overflow-y-visible">
                                     <OptionsFilter
-                                        selected={filters.tags}
+                                        selected={filtersDto.tags || []}
                                         onChange={(selected: string[]) => setFilter('tags', selected)}
                                         items={tagsList}
                                         headingNode={
@@ -215,7 +215,7 @@ export function FiltersBar({
                         {config.showText && (
                             <div className="flex-1 overflow-y-visible min-w-0">
                                 <TextFilter
-                                    selected={filters.text}
+                                    selected={filtersDto.text || ''}
                                     onChange={(text: string) => setFilter('text', text)}
                                     config={config.textFilterConfig}
                                 />

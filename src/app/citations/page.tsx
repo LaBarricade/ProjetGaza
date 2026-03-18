@@ -1,16 +1,10 @@
 'use server';
 
 import {QuoteList} from '@/components/list/quote-list';
-import {Tag} from '@/types/Tag';
-import {Party} from '@/types/Party';
 import {ApiParams, getDbService} from '@/lib/backend/db-service';
-import {MandateType} from '@/types/MandateType';
 import {FiltersBar} from '@/components/filters/filters-bar';
-import {Personality} from '@/types/Personality';
-import TagLabel from "@/components/tag-label";
 import TagsCloud from "@/components/tags-cloud";
-import {Search} from "lucide-react";
-import {EntitiesFilter} from "@/lib/EntitiesFilter";
+import {EntitiesFilter} from "@/lib/entities-filter";
 
 
 const fetchQuotes = async (
@@ -45,8 +39,8 @@ export default async function QuotesPage({
 }) {
     const urlParams = await searchParams;
 
-    const entitiesFilter = new EntitiesFilter();
-    await entitiesFilter.fromUrlParams(urlParams)
+    const entitiesFilter = EntitiesFilter.fromUrlParams(urlParams);
+
     //const filters: Filters = await computeFilters(urlParams);
     const {items: mandateTypesList} = await getDbService().findMandateTypes();
     const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});

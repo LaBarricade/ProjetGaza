@@ -1,26 +1,8 @@
+'use client'
+
 import {useSearchParams, useRouter} from 'next/navigation';
 import {useCallback, useMemo} from 'react';
-
-export type SearchFilters = {
-    personalities: string[];
-    roles: string[];
-    parties: string[];
-    tags: string[];
-    departments: string[];
-    text: string;
-};
-
-/**
- * Mapping between filter keys and their URL parameter names
- */
-const FILTER_URL_KEYS = {
-    personalities: 'personality',
-    roles: 'role',
-    parties: 'party',
-    tags: 'tag',
-    departments: 'department',
-    text: 'text',
-} as const satisfies Record<keyof SearchFilters, string>;
+import {EntitiesFilter, FiltersDto, FiltersUrlParams} from "@/lib/entities-filter";
 
 type UseSearchFiltersOptions = {
     /**
@@ -54,60 +36,53 @@ type UseSearchFiltersOptions = {
  * ```
  */
 export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
-    const searchParams = useSearchParams();
+    const urlParams = useSearchParams();
     const router = useRouter();
 
+    console.log('useSearchFilters', urlParams && urlParams.entries().toArray());
     /**
      * Parse current filters from URL search params.
      */
-    const filters: SearchFilters = useMemo(() => {
-        return {
-            personalities: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.personalities)),
-            roles: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.roles)),
-            parties: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.parties)),
-            tags: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.tags)),
-            departments: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.departments)),
-            text: searchParams?.get(FILTER_URL_KEYS.text) ?? '',
-        };
-    }, [searchParams]);
+    const entitiesFilter: EntitiesFilter = useMemo((): EntitiesFilter => {
+        const entitiesFilter = EntitiesFilter.fromUrlParams(urlParams ? Object.fromEntries(urlParams.entries()) as FiltersUrlParams : {});
+        return entitiesFilter;
+    }, [urlParams]);
 
     const countActiveFilters = useMemo(() => {
-        return Object.values(filters).reduce(
-            (prev, curr) => prev + (Array.isArray(curr) ? curr.length : (curr ? 1 : 0))
-            , 0);
-    }, [filters]);
+        return entitiesFilter.countActiveFilters();
+    }, [entitiesFilter]);
 
     /**
      * Check if any filters are currently active
      */
     const hasActiveFilters = useMemo(() => {
-        return countActiveFilters > 0;
-    }, [countActiveFilters]);
+        return entitiesFilter.hasActiveFilters();
+    }, [entitiesFilter]);
 
     /**
      * Update a single filter and navigate to the new URL
      */
     const setFilter = useCallback(
-        <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
-            const newParams = new URLSearchParams(searchParams as URLSearchParams);
+        <K extends keyof FiltersDto>(key: K, value: FiltersDto[K]) => {
+            const newParams = new URLSearchParams(urlParams as URLSearchParams);
 
             // Always reset to page 1 when filters change
             newParams.delete('page');
 
-            const urlKey = FILTER_URL_KEYS[key];
+            //const urlKey = FILTER_URL_KEYS[key];
             const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
 
             if (isEmpty) {
-                newParams.delete(urlKey);
+                newParams.delete(key);
             } else {
                 const stringValue = Array.isArray(value) ? value.join(',') : value;
-                newParams.set(urlKey, stringValue as string);
+                newParams.set(key, stringValue as string);
             }
 
             const newUrl = `${basePath}?${newParams.toString()}`;
             router.push(newUrl);
         },
-        [basePath, router, searchParams]
+        [basePath, router, urlParams]
     );
 
     /**
@@ -115,15 +90,16 @@ export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
      * Useful for multi-select filters.
      */
     const toggleFilterValue = useCallback(
-        (key: Exclude<keyof SearchFilters, 'text'>, value: string) => {
-            const currentValues = filters[key] as string[];
+        (key: Exclude<keyof FiltersDto, 'text'>, value: string) => {
+            const allFiltersDto = entitiesFilter.toDto();
+            const currentValues = allFiltersDto[key] as string[];
             const newValues = currentValues.includes(value)
                 ? currentValues.filter((item) => item !== value)
                 : [...currentValues, value];
 
             setFilter(key, newValues);
         },
-        [filters, setFilter]
+        [entitiesFilter, setFilter]
     );
 
     /**
@@ -137,30 +113,31 @@ export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
      * Update multiple filters at once (useful for batch operations)
      */
     const setMultipleFilters = useCallback(
-        (updates: Partial<SearchFilters>) => {
-            const newParams = new URLSearchParams(searchParams as URLSearchParams);
+        (updates: Partial<FiltersDto>) => {
+            const newParams = new URLSearchParams(urlParams as URLSearchParams);
             newParams.delete('page');
 
             Object.entries(updates).forEach(([key, value]) => {
-                const urlKey = FILTER_URL_KEYS[key as keyof SearchFilters];
                 const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
 
                 if (isEmpty) {
-                    newParams.delete(urlKey);
+                    newParams.delete(key);
                 } else {
                     const stringValue = Array.isArray(value) ? value.join(',') : value;
-                    newParams.set(urlKey, stringValue);
+                    newParams.set(key, stringValue);
                 }
             });
 
             const newUrl = `${basePath}?${newParams.toString()}`;
             router.push(newUrl);
         },
-        [basePath, router, searchParams]
+        [basePath, router, urlParams]
     );
 
     return {
-        filters,
+        //filters,
+        filtersDto: entitiesFilter.toDto(),
+        entitiesFilter,
         setFilter,
         toggleFilterValue,
         clearAllFilters,
@@ -168,15 +145,4 @@ export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
         hasActiveFilters,
         countActiveFilters
     };
-}
-
-/**
- * Parse a comma-separated string into an array of strings.
- * Returns empty array if null/undefined/empty.
- */
-function parseArrayParam(param: string | null | undefined): string[] {
-    if (!param || param.trim() === '') {
-        return [];
-    }
-    return param.split(',').filter(Boolean);
 }
