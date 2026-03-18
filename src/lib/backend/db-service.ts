@@ -4,9 +4,17 @@ import {MandateType} from '@/types/MandateType';
 import {Organization} from '@/types/Organization';
 import {Personality} from '@/types/Personality';
 import {Tag} from '@/types/Tag';
-import {Territory} from '@/types/Territory';
+import {Territory, TerritoryType} from '@/types/Territory';
 import {Party} from "@/types/Party";
 import {PostgrestResponseSuccess, PostgrestSingleResponse} from "@supabase-js/source/packages/core/postgrest-js/src";
+import {FiltersDto} from "@/lib/EntitiesFilter";
+
+
+export type ApiParams = FiltersDto & {
+    page?: string;
+    size?: string;
+    ids?: string[]
+}
 
 class DbService {
     token: string | undefined;
@@ -39,7 +47,7 @@ class DbService {
         };
     }
 
-    async findPersonalities(params: {
+    async findPersonalities(params: ApiParams/*{
         ids?: string[];
         party?: string[];
         department?: string[];
@@ -47,7 +55,7 @@ class DbService {
         text?: string;
         page?: string;
         size?: string;
-    }): Promise<{ items: Personality[] | null; count: number }> {
+    }*/): Promise<{ items: Personality[] | null; count: number }> {
         const query = supabase.from('personnalites').select(
             `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
                      quotes_count:declarations(count),
@@ -110,7 +118,7 @@ class DbService {
         this.checkErrors(resp);
         const data = resp.data?.at(0);
 
-        const quotes = await this.findQuotes({personality: id});
+        const quotes = await this.findQuotes({personality: [id]});
         const formattedData = data && {
             ...data,
             quotes_count: data.quotes_count.length > 0 ? data.quotes_count[0].count : 0,
@@ -157,7 +165,7 @@ class DbService {
         };
     }
 
-    async findQuotes(params: any): Promise<any> {
+    async findQuotes(params: ApiParams): Promise<any> {
         let select = `id, 
             text:citation, 
             source:source_id(name:nom, id), 
@@ -328,7 +336,7 @@ class DbService {
     }
 
     async findTerritories(
-        params: { type?: string; ids?: string[] } = {}
+        params: { type?: TerritoryType; ids?: string[] } = {}
     ): Promise<{ items: Territory[]; count: number | null }> {
         try {
             const query = supabase

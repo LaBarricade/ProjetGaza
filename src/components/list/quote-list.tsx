@@ -14,12 +14,12 @@ export function QuoteList({
   initialItems,
   totalCount,
   hidePersonality,
-  apiFilters = {},
+                            apiParams = {},
 }: {
   initialItems: Quote[];
   totalCount?: number | null;
   hidePersonality?: boolean;
-  apiFilters?: any;
+  apiParams?: any;
 }) {
   const [items, setItems] = useState<Quote[]>(initialItems);
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export function QuoteList({
   useEffect(() => {
     setItems(initialItems);
     pageRef.current = 1;
-  }, [initialItems, JSON.stringify(apiFilters)]);
+  }, [initialItems, JSON.stringify(apiParams)]);
 
   const fetchData = useCallback(async (pageToLoad: number, filters: ApiFilters) => {
     const qs = objectToQueryString(Object.assign(filters, {page: pageToLoad.toString()}));
@@ -54,7 +54,7 @@ export function QuoteList({
     setLoading(true);
     const nextPage = pageRef.current + 1;
     pageRef.current = nextPage;
-    fetchData(nextPage, apiFilters);
+    fetchData(nextPage, apiParams);
   };
 
   const loaderRef = useEndReached(loadMore);

@@ -6,16 +6,17 @@ import {LazyLoadingList} from "@/components/list/lazy-loading-list";
 import {Filters} from "@/types/Filters";
 import {callLocalApi} from "@/lib/backend/api-client";
 import {objectToQueryString} from "@/lib/utils";
+import {ApiParams} from "@/lib/backend/db-service";
 
-export function PersonalityListCards({initialItems, totalCount, filters}:
+export function PersonalityListCards({initialItems, totalCount, apiParams}:
 {
     initialItems: Personality[],
     totalCount: number,
-    filters: Filters
+    apiParams: ApiParams
 }) {
 
     async function loadNewItems(pageToLoad: number) {
-        const qs = objectToQueryString(Object.assign(filters, {
+        const qs = objectToQueryString(Object.assign(apiParams, {
             page: pageToLoad.toString(),
             size: 20
         }));
@@ -33,7 +34,7 @@ export function PersonalityListCards({initialItems, totalCount, filters}:
             }
             <div className="w-screen max-w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <LazyLoadingList initialItems={initialItems}
-                     key={JSON.stringify(filters)}
+                     key={JSON.stringify(apiParams)}
                      createNode={(item) => <PersonalityCard key={item.id} item={item}/>}
                      totalCount={totalCount}
                      loadItems={loadNewItems}

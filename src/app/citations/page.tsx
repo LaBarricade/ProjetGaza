@@ -3,154 +3,38 @@
 import {QuoteList} from '@/components/list/quote-list';
 import {Tag} from '@/types/Tag';
 import {Party} from '@/types/Party';
-import {getDbService} from '@/lib/backend/db-service';
+import {ApiParams, getDbService} from '@/lib/backend/db-service';
 import {MandateType} from '@/types/MandateType';
 import {FiltersBar} from '@/components/filters/filters-bar';
 import {Personality} from '@/types/Personality';
 import TagLabel from "@/components/tag-label";
 import TagsCloud from "@/components/tags-cloud";
 import {Search} from "lucide-react";
+import {EntitiesFilter} from "@/lib/EntitiesFilter";
 
-export type Filters = {
-    tags?: Tag[];
-    text?: string;
-    parties?: Party[];
-    roles?: MandateType[];
-    personalities?: Personality[];
-};
-
-export type ApiFilters = {
-    page?: string;
-    size?: string;
-    tag?: string | string[];
-    text?: string;
-    personality?: string | string[];
-    party?: string | string[];
-    role?: string | string[];
-};
-
-function parseIds(param: string | undefined): string[] {
-    if (!param) return [];
-    return param
-        .split(',')
-        .map((id) => id.trim())
-        .filter(Boolean);
-}
-
-async function computeFilters(urlParams: any): Promise<Filters> {
-    const filters: Filters = {};
-
-    try {
-        // Handle tags (multiple)
-        if (urlParams.tag) {
-            const tagIds = parseIds(urlParams.tag);
-            if (tagIds.length > 0) {
-                const apiResp = await getDbService().findTags({
-                    ids: tagIds.map((id) => parseInt(id, 10)),
-                });
-                filters.tags = apiResp.items;
-            }
-        }
-
-        // Handle parties (multiple)
-        if (urlParams.party) {
-            const partyIds = parseIds(urlParams.party);
-            if (partyIds.length > 0) {
-                const parties: Party[] = [];
-                for (const id of partyIds) {
-                    const apiResp = await getDbService().findParty(id);
-                    if (apiResp.item) {
-                        parties.push(apiResp.item);
-                    }
-                }
-                filters.parties = parties;
-            }
-        }
-
-        // Handle text search
-        if (urlParams.text) {
-            filters.text = urlParams.text;
-        }
-
-        // Handle roles (multiple)
-        if (urlParams.role) {
-            const roleIds = parseIds(urlParams.role);
-            if (roleIds.length > 0) {
-                const roles: MandateType[] = [];
-                for (const id of roleIds) {
-                    const roleId = parseInt(id, 10);
-                    if (!isNaN(roleId)) {
-                        const apiResp = await getDbService().findMandateType(roleId);
-                        if (apiResp.item) {
-                            roles.push(apiResp.item);
-                        }
-                    }
-                }
-                filters.roles = roles;
-            }
-        }
-
-        // Handle personalities (multiple)
-        if (urlParams.personality) {
-            const personalityIds = parseIds(urlParams.personality);
-            if (personalityIds.length > 0) {
-                const apiResp = await getDbService().findPersonalities({
-                    ids: personalityIds,
-                });
-                filters.personalities = apiResp.items || [];
-            }
-        }
-    } catch (error) {
-        console.error('Error computing filters:', error);
-    }
-
-    return filters;
-}
 
 const fetchQuotes = async (
-    filters: Filters,
+    filters: EntitiesFilter,
     page: string
-): Promise<{ items: any[]; count: number | null; apiFilters: ApiFilters }> => {
-    const apiFilters: ApiFilters = {
+): Promise<{ items: any[]; count: number | null; apiParams: ApiParams }> => {
+
+    const filtersDto = filters.toDto();
+    const apiParams = {
         page,
         size: '21',
+        ...filtersDto
     };
 
-    // Handle tags (multiple)
-    if (filters.tags && filters.tags.length > 0) {
-        apiFilters.tag = filters.tags.map((t) => t.id.toString());
-    }
-
-    // Handle text search
-    if (filters.text) {
-        apiFilters.text = filters.text;
-    }
-
-    // Handle parties (multiple)
-    if (filters.parties && filters.parties.length > 0) {
-        apiFilters.party = filters.parties.map((p) => p.id.toString());
-    }
-
-    // Handle roles (multiple)
-    if (filters.roles && filters.roles.length > 0) {
-        apiFilters.role = filters.roles.map((r) => r.id.toString());
-    }
-
-    // Handle personalities (multiple)
-    if (filters.personalities && filters.personalities.length > 0) {
-        apiFilters.personality = filters.personalities.map((p) => p.id.toString());
-    }
-
     try {
-        const apiResp = await getDbService().findQuotes(apiFilters);
+        const apiResp = await getDbService().findQuotes(apiParams);
         return {
             items: apiResp.items || [],
             count: apiResp.count ?? 0,
-            apiFilters,
+            apiParams
         };
     } catch (error) {
         console.error('Error fetching quotes:', error);
-        return {items: [], count: null, apiFilters};
+        return {items: [], count: null, apiParams};
     }
 };
 
@@ -160,7 +44,10 @@ export default async function QuotesPage({
     searchParams: any;
 }) {
     const urlParams = await searchParams;
-    const filters: Filters = await computeFilters(urlParams);
+
+    const entitiesFilter = new EntitiesFilter();
+    await entitiesFilter.fromUrlParams(urlParams)
+    //const filters: Filters = await computeFilters(urlParams);
     const {items: mandateTypesList} = await getDbService().findMandateTypes();
     const {items: departmentsList} = await getDbService().findTerritories({type: 'departement'});
     const {items: personalitiesList} =  await getDbService().findPersonalities({});
@@ -170,8 +57,8 @@ export default async function QuotesPage({
     const {
         items,
         count: totalCount,
-        apiFilters,
-    } = await fetchQuotes(filters, urlParams?.page || '1');
+        apiParams,
+    } = await fetchQuotes(entitiesFilter, urlParams?.page || '1');
 
     return (
         <main
@@ -212,7 +99,7 @@ export default async function QuotesPage({
                     initialItems={items}
                     totalCount={totalCount}
                     hidePersonality={false}
-                    apiFilters={apiFilters}
+                    apiParams={apiParams}
                 />
             )}
 
