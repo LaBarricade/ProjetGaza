@@ -1,6 +1,6 @@
-import {Personality} from "@/types/Personality";
-import {Tag} from "@/types/Tag";
-import {Source} from "@/types/Source";
+import { Personality } from '@/types/Personality';
+import { Tag } from '@/types/Tag';
+import { Source } from '@/types/Source';
 
 export type Quote = {
   id: number;

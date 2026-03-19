@@ -23,11 +23,16 @@ export default function Home() {
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [quotes, setQuotes] = useState<Quote[] | null>([]);
-  const [stats, setStats] = useState<{ personalities_count: number; quotes_count: number; min_year: number; max_year: number }>({
+  const [stats, setStats] = useState<{
+    personalities_count: number;
+    quotes_count: number;
+    min_year: number;
+    max_year: number;
+  }>({
     personalities_count: 0,
     quotes_count: 0,
     min_year: 0,
-    max_year: 0
+    max_year: 0,
   });
   const [loading, setLoading] = useState(true);
   const [popularTags, setPopularTags] = useState<Tag[] | null>([]);
@@ -49,7 +54,7 @@ export default function Home() {
         personalities_count: personalitiesData.count,
         quotes_count: quotesData.count,
         min_year: generalStats.min_year,
-        max_year: generalStats.max_year
+        max_year: generalStats.max_year,
       });
       setQuotes(quotesData.items);
     } catch (err) {
@@ -152,7 +157,12 @@ export default function Home() {
               </div>
               <div className="font-bold text-gray-800 text-xl">
                 {stats.min_year}&nbsp;-&nbsp;
-                <CountUp end={stats.max_year} duration={1.2} separator={''} start={stats.min_year} />
+                <CountUp
+                  end={stats.max_year}
+                  duration={1.2}
+                  separator={''}
+                  start={stats.min_year}
+                />
               </div>
               <div className="text-center text-gray-500">Période couverte</div>
             </div>
@@ -214,10 +224,7 @@ export default function Home() {
                 bg-gradient-to-r from-[#335eeb] to-[#8c35ea] 
                 transition-all duration-300"
             >
-              <Link
-                href={process.env.NEXT_PUBLIC_FORM_URL || ''}
-                target="_blank"
-              >
+              <Link href={process.env.NEXT_PUBLIC_FORM_URL || ''} target="_blank">
                 Contribuer
               </Link>
             </Button>
