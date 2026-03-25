@@ -1,32 +1,14 @@
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+'use client'
 
-export type SearchFilters = {
-  personalities: string[];
-  roles: string[];
-  parties: string[];
-  tags: string[];
-  departments: string[];
-  text: string;
-};
-
-/**
- * Mapping between filter keys and their URL parameter names
- */
-const FILTER_URL_KEYS = {
-  personalities: 'personality',
-  roles: 'role',
-  parties: 'party',
-  tags: 'tag',
-  departments: 'department',
-  text: 'text',
-} as const satisfies Record<keyof SearchFilters, string>;
+import {useSearchParams, useRouter} from 'next/navigation';
+import {useCallback, useMemo} from 'react';
+import {EntitiesFilter, FiltersDto, FiltersUrlParams} from "@/lib/entities-filter";
 
 type UseSearchFiltersOptions = {
-  /**
-   * Base path for navigation (e.g., '/citations')
-   */
-  basePath: string;
+    /**
+     * Base path for navigation (e.g., '/citations')
+     */
+    basePath: string;
 };
 
 /**
@@ -53,131 +35,113 @@ type UseSearchFiltersOptions = {
  * clearAllFilters();
  * ```
  */
-export function useSearchFilters({ basePath }: UseSearchFiltersOptions) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
+    const urlParams = useSearchParams();
+    const router = useRouter();
 
-  /**
-   * Parse current filters from URL search params.
-   */
-  const filters: SearchFilters = useMemo(() => {
-    return {
-      personalities: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.personalities)),
-      roles: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.roles)),
-      parties: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.parties)),
-      tags: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.tags)),
-      departments: parseArrayParam(searchParams?.get(FILTER_URL_KEYS.departments)),
-      text: searchParams?.get(FILTER_URL_KEYS.text) ?? '',
-    };
-  }, [searchParams]);
+    /**
+     * Parse current filters from URL search params.
+     */
+    const entitiesFilter: EntitiesFilter = useMemo((): EntitiesFilter => {
+        const entitiesFilter = EntitiesFilter.fromUrlParams(urlParams ? Object.fromEntries(urlParams.entries()) as FiltersUrlParams : {});
+        return entitiesFilter;
+    }, [urlParams]);
 
-  const countActiveFilters = useMemo(() => {
-    return Object.values(filters).reduce(
-      (prev, curr) => prev + (Array.isArray(curr) ? curr.length : curr ? 1 : 0),
-      0
+    const countActiveFilters = useMemo(() => {
+        return entitiesFilter.countActiveFilters();
+    }, [entitiesFilter]);
+
+    /**
+     * Check if any filters are currently active
+     */
+    const hasActiveFilters = useMemo(() => {
+        return entitiesFilter.hasActiveFilters();
+    }, [entitiesFilter]);
+
+    /**
+     * Update a single filter and navigate to the new URL
+     */
+    const setFilter = useCallback(
+        <K extends keyof FiltersDto>(key: K, value: FiltersDto[K]) => {
+            const newParams = new URLSearchParams(urlParams as URLSearchParams);
+
+            // Always reset to page 1 when filters change
+            newParams.delete('page');
+
+            //const urlKey = FILTER_URL_KEYS[key];
+            const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
+
+            if (isEmpty) {
+                newParams.delete(key);
+            } else {
+                const stringValue = Array.isArray(value) ? value.join(',') : value;
+                newParams.set(key, stringValue as string);
+            }
+
+            const newUrl = `${basePath}?${newParams.toString()}`;
+            router.push(newUrl);
+        },
+        [basePath, router, urlParams]
     );
-  }, [filters]);
 
-  /**
-   * Check if any filters are currently active
-   */
-  const hasActiveFilters = useMemo(() => {
-    return countActiveFilters > 0;
-  }, [countActiveFilters]);
+    /**
+     * Toggle a value in an array-type filter.
+     * Useful for multi-select filters.
+     */
+    const toggleFilterValue = useCallback(
+        (key: Exclude<keyof FiltersDto, 'text'>, value: string) => {
+            const allFiltersDto = entitiesFilter.toDto();
+            const currentValues = allFiltersDto[key] as string[];
+            const newValues = currentValues.includes(value)
+                ? currentValues.filter((item) => item !== value)
+                : [...currentValues, value];
 
-  /**
-   * Update a single filter and navigate to the new URL
-   */
-  const setFilter = useCallback(
-    <K extends keyof SearchFilters>(key: K, value: SearchFilters[K]) => {
-      const newParams = new URLSearchParams(searchParams as URLSearchParams);
+            setFilter(key, newValues);
+        },
+        [entitiesFilter, setFilter]
+    );
 
-      // Always reset to page 1 when filters change
-      newParams.delete('page');
+    /**
+     * Clear all filters and navigate to base path
+     */
+    const clearAllFilters = useCallback(() => {
+        router.push(basePath);
+    }, [basePath, router]);
 
-      const urlKey = FILTER_URL_KEYS[key];
-      const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
+    /**
+     * Update multiple filters at once (useful for batch operations)
+     */
+    const setMultipleFilters = useCallback(
+        (updates: Partial<FiltersDto>) => {
+            const newParams = new URLSearchParams(urlParams as URLSearchParams);
+            newParams.delete('page');
 
-      if (isEmpty) {
-        newParams.delete(urlKey);
-      } else {
-        const stringValue = Array.isArray(value) ? value.join(',') : value;
-        newParams.set(urlKey, stringValue as string);
-      }
+            Object.entries(updates).forEach(([key, value]) => {
+                const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
 
-      const newUrl = `${basePath}?${newParams.toString()}`;
-      router.push(newUrl);
-    },
-    [basePath, router, searchParams]
-  );
+                if (isEmpty) {
+                    newParams.delete(key);
+                } else {
+                    const stringValue = Array.isArray(value) ? value.join(',') : value;
+                    newParams.set(key, stringValue);
+                }
+            });
 
-  /**
-   * Toggle a value in an array-type filter.
-   * Useful for multi-select filters.
-   */
-  const toggleFilterValue = useCallback(
-    (key: Exclude<keyof SearchFilters, 'text'>, value: string) => {
-      const currentValues = filters[key] as string[];
-      const newValues = currentValues.includes(value)
-        ? currentValues.filter((item) => item !== value)
-        : [...currentValues, value];
+            const newUrl = `${basePath}?${newParams.toString()}`;
+            router.push(newUrl);
+        },
+        [basePath, router, urlParams]
+    );
 
-      setFilter(key, newValues);
-    },
-    [filters, setFilter]
-  );
-
-  /**
-   * Clear all filters and navigate to base path
-   */
-  const clearAllFilters = useCallback(() => {
-    router.push(basePath);
-  }, [basePath, router]);
-
-  /**
-   * Update multiple filters at once (useful for batch operations)
-   */
-  const setMultipleFilters = useCallback(
-    (updates: Partial<SearchFilters>) => {
-      const newParams = new URLSearchParams(searchParams as URLSearchParams);
-      newParams.delete('page');
-
-      Object.entries(updates).forEach(([key, value]) => {
-        const urlKey = FILTER_URL_KEYS[key as keyof SearchFilters];
-        const isEmpty = Array.isArray(value) ? value.length === 0 : !value;
-
-        if (isEmpty) {
-          newParams.delete(urlKey);
-        } else {
-          const stringValue = Array.isArray(value) ? value.join(',') : value;
-          newParams.set(urlKey, stringValue);
-        }
-      });
-
-      const newUrl = `${basePath}?${newParams.toString()}`;
-      router.push(newUrl);
-    },
-    [basePath, router, searchParams]
-  );
-
-  return {
-    filters,
-    setFilter,
-    toggleFilterValue,
-    clearAllFilters,
-    setMultipleFilters,
-    hasActiveFilters,
-    countActiveFilters,
-  };
-}
-
-/**
- * Parse a comma-separated string into an array of strings.
- * Returns empty array if null/undefined/empty.
- */
-function parseArrayParam(param: string | null | undefined): string[] {
-  if (!param || param.trim() === '') {
-    return [];
-  }
-  return param.split(',').filter(Boolean);
+    return {
+        //filters,
+        filtersDto: entitiesFilter.toDto(),
+        entitiesFilter,
+        setFilter,
+        toggleFilterValue,
+        clearAllFilters,
+        setMultipleFilters,
+        hasActiveFilters,
+        countActiveFilters
+    };
 }

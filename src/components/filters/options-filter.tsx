@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, ReactNode } from 'react';
 import { Input } from '@/components/ui/input';
-import { Building2, X } from 'lucide-react';
+import {  X } from 'lucide-react';
 import { Tag } from '@/components/ui/tag';
 import { useHorizontalScroll } from './useHorizontalScroll';
 import { FilterableType } from '@/types/FilterableType';
@@ -21,6 +21,7 @@ export function OptionsFilter({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const scroll = useHorizontalScroll<HTMLDivElement>();
+
 
   const filtered = items.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -77,7 +78,7 @@ export function OptionsFilter({
                   <span
                     className={`flex items-center gap-2 ${isSelected ? 'text-muted-foreground' : ''}`}
                   >
-                    {item.name} {item.quotes_count && `(${item.quotes_count})`}
+                    {item.name} {item.quotes_count ? `(${item.quotes_count})` : ''}
                   </span>
                   {isSelected && <span className="text-xs text-muted-foreground">Sélectionné</span>}
                 </button>
