@@ -51,7 +51,7 @@ class DbService {
     async findPersonalities(params: ApiParams): Promise<{ items: Personality[] | null; count: number }> {
         const query = getSupabaseClient().from('personnalites').select(
             `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
-                     quotes_count:declarations(count),
+                     quotes_count:declarations(count), photo_url_none, photo_url,
                      party:parti_politique_id(id, name:nom, short_name:nom_court, color),
                      mandates:mandats${params.roles ? '!inner' : ''}(type_mandat_id, id)
                      `,
@@ -103,7 +103,7 @@ class DbService {
             .from('personnalites')
             .select(
                 `id, lastname:nom, firstname:prenom, role:fonction, city:ville, department:departement, region,
-                social1_url, social2_url, photo_url, public_contact,
+                social1_url, social2_url, photo_url, public_contact, photo_url_none,
                 party:parti_politique_id(name:nom, id, short_name:nom_court, color), quotes_count:declarations(count)`
             )
             .eq('id', id);
