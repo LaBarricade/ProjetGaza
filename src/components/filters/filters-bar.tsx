@@ -77,7 +77,6 @@ export function FiltersBar({
         basePath: `/${pageName}`,
     });
 
-    console.log('FiltersBar filtersDto', filtersDto);
 
     const vertSeparatorElement = <Separator orientation="vertical" className="hidden lg:block h-16 opacity-50 "/>;
     return (

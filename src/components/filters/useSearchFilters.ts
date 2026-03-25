@@ -39,7 +39,6 @@ export function useSearchFilters({basePath}: UseSearchFiltersOptions) {
     const urlParams = useSearchParams();
     const router = useRouter();
 
-    console.log('useSearchFilters', urlParams && urlParams.entries().toArray());
     /**
      * Parse current filters from URL search params.
      */

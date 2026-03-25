@@ -22,7 +22,6 @@ export function OptionsFilter({
   const inputRef = useRef<HTMLInputElement>(null);
   const scroll = useHorizontalScroll<HTMLDivElement>();
 
-  console.log('OptionsFilter', items, selected);
 
   const filtered = items.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 

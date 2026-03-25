@@ -22,8 +22,10 @@ class DbService {
 
     checkErrors(supabaseResp: PostgrestSingleResponse<any>)
         : asserts supabaseResp is (PostgrestResponseSuccess<any> & { data: any }) {
-        if (supabaseResp.error)
+        if (supabaseResp.error) {
+            console.error('Supabase error', supabaseResp);
             throw new Error(supabaseResp.error.message);
+        }
         else if (!supabaseResp.data)
             throw new Error('No data returned from supabase');
     }
@@ -173,12 +175,12 @@ class DbService {
             link:lien, 
             tags${params.tags ? '!inner' : ''}(name:nom, id)`;
 
-        select += `, personality:personnalite_id${params.parties || params.personalities || params.roles ? '!inner' : ''}
+        select += `, personality:personnalite_id${params.parties || params.personalities || params.roles || params.departments ? '!inner' : ''}
             (
                 id, lastname:nom, firstname:prenom, role:fonction, 
                 city:ville, department:departement, region,
                 party:parti_politique_id${params.parties ? '!inner' : ''}(name:nom, id, color),
-                mandates:mandats${params.roles ? '!inner' : ''}(type_mandat_id, id)
+                mandates:mandats${params.roles || params.departments ? '!inner' : ''}(type_mandat_id, id)
             )`;
 
         const query = getSupabaseClient().from('declarations').select(select, {count: 'exact'});
@@ -207,6 +209,11 @@ class DbService {
         if (params.parties) {
             const ids = this.normalizeIdsParam(params.parties);
             query.in('personality.party.id', ids);
+        }
+
+        if (params.departments) {
+            const ids = this.normalizeIdsParam(params.departments);
+            query.in('personality.mandates.territoire_id', ids);
         }
 
         this.addPaginationFilters(params, query);
